@@ -18,7 +18,7 @@ Direct users of the application.
 Indirect users of the application.
 
 * Admin: Overseeing high-level analytics and managing registered doctor schedules.
-* Medicine Suppliers: sales analytics and order placements.
+* Medicine Suppliers: sales analytics and order placements alerts.
 
 ### Tertiary Users
 
