@@ -46,6 +46,7 @@ const Register = () => {
     try {
       const hash = bcrypt.hashSync(form.password, 10);
 
+      // Customer Registration
       if (role === 'customer') {
         // const { data, error } = await supabase
         //   .from('users')
@@ -56,7 +57,7 @@ const Register = () => {
         const data = {
           "email": "vikram@gmail.com",
           "name": "Vikram",
-          "password": "vik",
+          "password": hash,
           "status": "valid",
           "user_id": 1,
           "role": "customer",
@@ -74,6 +75,7 @@ const Register = () => {
         toast.success('Account created! Welcome to MedEase.');
         navigate('/customer/doctors');
       } else {
+        // Employee Registration
         // const { error } = await supabase
         //   .from('employee_signup_requests')
         //   .insert({ name: form.name, email: form.email, phone: form.phone, password_hash: hash });

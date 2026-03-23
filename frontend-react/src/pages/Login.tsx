@@ -11,12 +11,13 @@ import { toast } from 'sonner';
 import bcrypt from 'bcryptjs';
 
 const Login = () => {
+  const { login } = useAuthStore();
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { login } = useAuthStore();
-  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,6 +32,9 @@ const Login = () => {
       //   .limit(1);
 
       // JWT use here.
+      // const response = await fetch("http://localhost:8000/users");
+      // const data = await response.json();
+
       const users = [
         {
           "email": "vikram@gmail.com",
