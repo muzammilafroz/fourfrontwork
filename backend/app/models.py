@@ -11,11 +11,13 @@ class UserRole(str, Enum):
     EMPLOYEE = "employee"
     CUSTOMER = "customer"
 
+
 class RequestStatus(str, Enum):
     PENDING = "pending"
     APPROVED = "approved"
     REJECTED = "rejected"
     COMPLETED = "completed"
+
 
 class AppointmentStatus(str, Enum):
     SCHEDULED = "scheduled"
@@ -40,19 +42,19 @@ class User(UserBase, table=True):
     # Relationships
     orders: List["Order"] = Relationship(
         back_populates="customer",
-        sa_relationship_kwargs={"foreign_keys": "Order.customer_id"}
+        sa_relationship_kwargs={"foreign_keys": "Order.customer_id"},
     )
     handled_orders: List["Order"] = Relationship(
         back_populates="employee",
-        sa_relationship_kwargs={"foreign_keys": "Order.employee_id"}
+        sa_relationship_kwargs={"foreign_keys": "Order.employee_id"},
     )
     requested_medicines: List["MedicineRequest"] = Relationship(
         back_populates="requester",
-        sa_relationship_kwargs={"foreign_keys": "MedicineRequest.requested_by"}
+        sa_relationship_kwargs={"foreign_keys": "MedicineRequest.requested_by"},
     )
     handled_requests: List["MedicineRequest"] = Relationship(
         back_populates="handler",
-        sa_relationship_kwargs={"foreign_keys": "MedicineRequest.handled_by"}
+        sa_relationship_kwargs={"foreign_keys": "MedicineRequest.handled_by"},
     )
     feedbacks: List["Feedback"] = Relationship(back_populates="customer")
     appointments: List["Appointment"] = Relationship(back_populates="customer")
@@ -113,11 +115,11 @@ class Order(OrderBase, table=True):
     # Relationships
     customer: User = Relationship(
         back_populates="orders",
-        sa_relationship_kwargs={"foreign_keys": "Order.customer_id"}
+        sa_relationship_kwargs={"foreign_keys": "Order.customer_id"},
     )
     employee: Optional[User] = Relationship(
         back_populates="handled_orders",
-        sa_relationship_kwargs={"foreign_keys": "Order.employee_id"}
+        sa_relationship_kwargs={"foreign_keys": "Order.employee_id"},
     )
     cart_items: List["CartItem"] = Relationship(back_populates="order")
 
@@ -158,11 +160,11 @@ class MedicineRequest(MedicineRequestBase, table=True):
     # Relationships
     requester: User = Relationship(
         back_populates="requested_medicines",
-        sa_relationship_kwargs={"foreign_keys": "MedicineRequest.requested_by"}
+        sa_relationship_kwargs={"foreign_keys": "MedicineRequest.requested_by"},
     )
     handler: Optional[User] = Relationship(
         back_populates="handled_requests",
-        sa_relationship_kwargs={"foreign_keys": "MedicineRequest.handled_by"}
+        sa_relationship_kwargs={"foreign_keys": "MedicineRequest.handled_by"},
     )
 
 
@@ -206,7 +208,7 @@ class Appointment(AppointmentBase, table=True):
 
 # --- Feedback ---
 class FeedbackBase(SQLModel):
-    rating: int = Field(ge=1, le=5) # Added validation for 1-5 stars
+    rating: int = Field(ge=1, le=5)  # Added validation for 1-5 stars
     comment: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
