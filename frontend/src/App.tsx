@@ -4,8 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-// import { RouteGuard } from "@/components/RouteGuard";
-// import { DashboardLayout } from "@/components/DashboardLayout";
+import { RouteGuard } from "@/components/RouteGuard";
+import { DashboardLayout } from "@/components/DashboardLayout";
 
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -45,9 +45,9 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// const Dash = ({ children, roles }: { children: React.ReactNode; roles: string[] }) => (
-//   <RouteGuard allowedRoles={roles}><DashboardLayout>{children}</DashboardLayout></RouteGuard>
-// );
+const Dash = ({ children, roles }: { children: React.ReactNode; roles: string[] }) => (
+  <RouteGuard allowedRoles={roles}><DashboardLayout>{children}</DashboardLayout></RouteGuard>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
