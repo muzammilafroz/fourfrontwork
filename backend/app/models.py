@@ -34,7 +34,6 @@ class UserBase(SQLModel):
 
 
 class User(UserBase, table=True):
-    __tablename__ = "users"
     id: Optional[int] = Field(default=None, primary_key=True)
     hashed_password: str
     role: UserRole = Field(default=UserRole.CUSTOMER)
@@ -91,7 +90,6 @@ class MedicineBase(SQLModel):
 
 
 class Medicine(MedicineBase, table=True):
-    __tablename__ = "medicines"
     id: Optional[int] = Field(default=None, primary_key=True)
 
     cart_items: List["CartItem"] = Relationship(back_populates="medicine")
@@ -106,11 +104,10 @@ class OrderBase(SQLModel):
 
 
 class Order(OrderBase, table=True):
-    __tablename__ = "orders"
     id: Optional[int] = Field(default=None, primary_key=True)
 
-    customer_id: int = Field(foreign_key="users.id")
-    employee_id: Optional[int] = Field(default=None, foreign_key="users.id")
+    customer_id: int = Field(foreign_key="user.id")
+    employee_id: Optional[int] = Field(default=None, foreign_key="user.id")
 
     # Relationships
     customer: User = Relationship(
@@ -131,11 +128,10 @@ class CartItemBase(SQLModel):
 
 
 class CartItem(CartItemBase, table=True):
-    __tablename__ = "cart_items"
     id: Optional[int] = Field(default=None, primary_key=True)
 
-    order_id: int = Field(foreign_key="orders.id")
-    medicine_id: int = Field(foreign_key="medicines.id")
+    order_id: int = Field(foreign_key="order.id")
+    medicine_id: int = Field(foreign_key="medicine.id")
 
     # Relationships
     order: "Order" = Relationship(back_populates="cart_items")
@@ -151,11 +147,10 @@ class MedicineRequestBase(SQLModel):
 
 
 class MedicineRequest(MedicineRequestBase, table=True):
-    __tablename__ = "medicine_requests"
     id: Optional[int] = Field(default=None, primary_key=True)
 
-    requested_by: int = Field(foreign_key="users.id")
-    handled_by: Optional[int] = Field(default=None, foreign_key="users.id")
+    requested_by: int = Field(foreign_key="user.id")
+    handled_by: Optional[int] = Field(default=None, foreign_key="user.id")
 
     # Relationships
     requester: User = Relationship(
@@ -177,7 +172,6 @@ class DoctorBase(SQLModel):
 
 
 class Doctor(DoctorBase, table=True):
-    __tablename__ = "doctors"
     id: Optional[int] = Field(default=None, primary_key=True)
 
     appointments: List["Appointment"] = Relationship(back_populates="doctor")
@@ -195,11 +189,10 @@ class AppointmentBase(SQLModel):
 
 
 class Appointment(AppointmentBase, table=True):
-    __tablename__ = "appointments"
     id: Optional[int] = Field(default=None, primary_key=True)
 
-    doctor_id: int = Field(foreign_key="doctors.id")
-    customer_id: int = Field(foreign_key="users.id")
+    doctor_id: int = Field(foreign_key="doctor.id")
+    customer_id: int = Field(foreign_key="user.id")
 
     # Relationships
     doctor: Doctor = Relationship(back_populates="appointments")
@@ -214,9 +207,8 @@ class FeedbackBase(SQLModel):
 
 
 class Feedback(FeedbackBase, table=True):
-    __tablename__ = "feedbacks"
     id: Optional[int] = Field(default=None, primary_key=True)
-    customer_id: int = Field(foreign_key="users.id")
+    customer_id: int = Field(foreign_key="user.id")
 
     # Relationships
     customer: User = Relationship(back_populates="feedbacks")
