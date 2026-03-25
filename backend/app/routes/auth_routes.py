@@ -13,8 +13,8 @@ from ..models import Token, UserCreate, UserPublic
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 
-@router.post("/signup", response_model=UserPublic)
-def signup(user_in: UserCreate, session: Session = Depends(get_session)):
+@router.post("/register", response_model=UserPublic)
+def register(user_in: UserCreate, session: Session = Depends(get_session)):
     user = get_user_by_email(session, user_in.email)
 
     if user:
