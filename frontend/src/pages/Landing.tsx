@@ -66,17 +66,30 @@ const Landing = () => {
               MedEase brings together pharmacy management, doctor consultations, AI prescription reading,
               and smart medicine tracking — all in one beautifully simple platform.
             </p>
+
+            {isAuthenticated ? (
+              <Link to={dashPath}>
+                <Button>
+                  Dashboard <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+              // TODO: Logout Button Here
+            ) : (
+              <>
+                <Link to="/register">
+                  <Button size="lg" className="gap-2 px-8">
+                    Get Started <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link to="/login">
+                  <Button variant="outline" size="lg" className="px-8">
+                    Sign In
+                  </Button>
+                </Link>
+              </>
+            )}
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/register">
-                <Button size="lg" className="gap-2 px-8">
-                  Get Started <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <Link to="/login">
-                <Button variant="outline" size="lg" className="px-8">
-                  Sign In
-                </Button>
-              </Link>
             </div>
           </motion.div>
         </div>

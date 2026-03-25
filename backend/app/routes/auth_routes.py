@@ -1,14 +1,11 @@
-from datetime import timedelta
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session
 
 from ..auth import create_access_token, verify_password
-from ..config import settings
 from ..crud import create_user, get_user_by_email
 from ..database import get_session
-from ..models import Token, UserCreate, UserPublic
+from ..models import TokenPublic, UserCreate, UserPublic
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -23,7 +20,7 @@ def register(user_in: UserCreate, session: Session = Depends(get_session)):
     return create_user(session, user_in)
 
 
-@router.post("/login", response_model=Token)
+@router.post("/login", response_model=TokenPublic)
 def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: Session = Depends(get_session),
@@ -34,9 +31,11 @@ def login(
     if (not user) or (not verify_password(form_data.password, user.hashed_password)):
         raise HTTPException(status_code=400, detail="Incorrect username or password.")
 
-    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.email}, expires_delta=access_token_expires
+        data={
+            "sub": user.email,
+            "role": user.role,
+        }
     )
 
     if not access_token:
@@ -44,4 +43,4 @@ def login(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Bad request."
         )
 
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", "user": user}

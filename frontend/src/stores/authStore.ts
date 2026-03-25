@@ -8,6 +8,7 @@ export interface AuthUser {
   role: string;
   phone: string;
   status: string;
+  auth_token: string;
 }
 
 interface AuthState {

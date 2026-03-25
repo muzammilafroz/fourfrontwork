@@ -30,13 +30,13 @@ class UserBase(SQLModel):
     name: str
     email: str = Field(index=True, unique=True)
     phone: str
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    role: UserRole = Field(default=UserRole.CUSTOMER)
 
 
 class User(UserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     hashed_password: str
-    role: UserRole = Field(default=UserRole.CUSTOMER)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     # Relationships
     orders: List["Order"] = Relationship(
@@ -60,9 +60,6 @@ class User(UserBase, table=True):
 
 
 class UserCreate(UserBase):
-    name: str
-    email: str
-    phone: str
     password: str
 
 
@@ -75,8 +72,8 @@ class Token(SQLModel):
     token_type: str
 
 
-class TokenData(SQLModel):
-    email: str
+class TokenPublic(Token):
+    user: UserPublic
 
 
 # --- Medicines ---
@@ -212,3 +209,8 @@ class Feedback(FeedbackBase, table=True):
 
     # Relationships
     customer: User = Relationship(back_populates="feedbacks")
+
+
+# --- Message ---
+class Message(SQLModel):
+    detail: str
