@@ -28,7 +28,7 @@ app.add_middleware(
 
 @app.get("/")
 def root():
-    return {"message": "Welcome to the FastAPI SQLModel Auth Server"}
+    return {"message": "Welcome to the FastAPI-Backend server."}
 
 if __name__ == "__main__":
     import uvicorn

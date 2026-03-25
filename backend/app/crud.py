@@ -1,19 +1,26 @@
 from sqlmodel import Session, select
-from .models import User, UserCreate
-from .auth import get_password_hash
 
-def get_user_by_username(session: Session, username: str):
-    statement = select(User).where(User.username == username)
-    return session.exec(statement).first()
+from .auth import get_password_hash
+from .models import User, UserCreate
+
+
+def get_user_by_email(session: Session, email: str) -> User | None:
+    query = select(User).where(User.email == email)
+    return session.exec(query).first()
+
 
 def create_user(session: Session, user_in: UserCreate):
-    hashed_pw = get_password_hash(user_in.password)
-    db_user = User(
-        username=user_in.username,
+    hashed_password = get_password_hash(user_in.password)
+
+    user = User(
+        name=user_in.name,
         email=user_in.email,
-        hashed_password=hashed_pw
+        phone=user_in.phone,
+        hashed_password=hashed_password,
     )
-    session.add(db_user)
+
+    session.add(user)
     session.commit()
-    session.refresh(db_user)
-    return db_user
+    session.refresh(user)
+
+    return user

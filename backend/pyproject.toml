@@ -1,7 +1,7 @@
 [project]
-name = "backend"
+name = "SE-Project_Backend"
 version = "0.1.0"
-description = "Add your description here"
+description = "Backend for authentication, data management, and API services."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
