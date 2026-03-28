@@ -6,7 +6,7 @@ from ..auth import oauth2_scheme
 from ..config import settings
 from ..crud import get_user_by_email
 from ..database import get_session
-from ..models import UserPublic, User, Message
+from ..models import Message, User, UserPublic
 
 router = APIRouter(prefix="/user", tags=["user"])
 
