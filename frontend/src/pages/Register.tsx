@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
-// import { supabase } from '@/integrations/supabase/client';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,36 +43,35 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const hash = bcrypt.hashSync(form.password, 10);
+      // const hash = bcrypt.hashSync(form.password, 10);
 
       // Customer Registration
       if (role === 'customer') {
-        // const { data, error } = await supabase
-        //   .from('users')
-        //   .insert({ name: form.name, email: form.email, phone: form.phone, password: hash, role: 'customer' })
-        //   .select()
-        //   .single();
-
-        const data = {
-          "email": "vikram@gmail.com",
-          "name": "Vikram",
-          "password": hash,
-          "status": "valid",
-          "user_id": 1,
-          "role": "customer",
-          "phone": ""
+        const payload = {
+          ...form,
+          role: "customer"
         }
-        const error = false;
+        try {
+          const res = await fetch("http://localhost:8000/auth/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          })
+          const data = await res.json();
 
-        // if (error) {
-        //   if (error.message.includes('duplicate')) { toast.error('Email already registered'); }
-        //   else throw error;
-        //   return;
-        // }
+          if (!res.ok) {
+            throw new Error(data.detail || "Registration failed.");
+          }
+          console.log("Success:", data);
+          toast.success('Account created! Welcome to MedEase.');
 
-        login({ user_id: data.user_id, name: data.name, email: data.email, role: 'customer', phone: data.phone || '', status: 'active' });
-        toast.success('Account created! Welcome to MedEase.');
-        navigate('/customer/doctors');
+          navigate("/login");
+        } catch (error) {
+          console.error("Error:", error.message);
+          toast.error("Error: Something went wrong.")
+        }
       } else {
         // Employee Registration
         // const { error } = await supabase

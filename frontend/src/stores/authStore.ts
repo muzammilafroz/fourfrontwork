@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface AuthUser {
   user_id: number;
@@ -8,6 +8,7 @@ export interface AuthUser {
   role: string;
   phone: string;
   status: string;
+  auth_token: string;
 }
 
 interface AuthState {
@@ -25,6 +26,6 @@ export const useAuthStore = create<AuthState>()(
       login: (user) => set({ user, isAuthenticated: true }),
       logout: () => set({ user: null, isAuthenticated: false }),
     }),
-    { name: 'medease-auth' }
-  )
+    { name: "medease-auth" },
+  ),
 );

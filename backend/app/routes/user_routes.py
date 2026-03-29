@@ -6,14 +6,14 @@ from ..auth import oauth2_scheme
 from ..config import settings
 from ..crud import get_user_by_email
 from ..database import get_session
-from ..models import TokenData, UserPublic
+from ..models import Message, User, UserPublic
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(prefix="/user", tags=["user"])
 
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme), session: Session = Depends(get_session)
-):
+) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials.",
@@ -30,18 +30,21 @@ async def get_current_user(
             print("Email not found.")
             raise credentials_exception
 
-        token_data = TokenData(email=email)
-
     except JWTError:
         raise credentials_exception
 
-    user = get_user_by_email(session, email=token_data.email)
+    user = get_user_by_email(session, email=email)
 
     if user is None:
         print("User not found.")
         raise credentials_exception
 
     return user
+
+
+@router.get("/logout", response_model=Message)
+def logout(_: UserPublic = Depends(get_current_user)):
+    return {"detail": "Successfully logged out."}
 
 
 @router.get("/me", response_model=UserPublic)
