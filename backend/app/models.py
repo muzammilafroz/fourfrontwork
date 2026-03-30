@@ -5,7 +5,7 @@ from typing import List, Optional
 from sqlmodel import Field, Relationship, SQLModel
 
 
-# --- Enums ---
+# Enums
 class UserRole(str, Enum):
     ADMIN = "admin"
     EMPLOYEE = "employee"
@@ -25,7 +25,7 @@ class AppointmentStatus(str, Enum):
     COMPLETED = "completed"
 
 
-# --- Users ---
+# Users
 class UserBase(SQLModel):
     name: str
     email: str = Field(index=True, unique=True)
@@ -57,6 +57,7 @@ class User(UserBase, table=True):
     )
     feedbacks: List["Feedback"] = Relationship(back_populates="customer")
     appointments: List["Appointment"] = Relationship(back_populates="customer")
+    prescriptions: List["Prescription"] = Relationship(back_populates="customer")
 
 
 class UserCreate(UserBase):
@@ -76,7 +77,7 @@ class TokenPublic(Token):
     user: UserPublic
 
 
-# --- Medicines ---
+# Medicines
 class MedicineBase(SQLModel):
     name: str
     composition: str
@@ -88,11 +89,10 @@ class MedicineBase(SQLModel):
 
 class Medicine(MedicineBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-
     cart_items: List["CartItem"] = Relationship(back_populates="medicine")
 
 
-# --- Orders ---
+# Orders
 class OrderBase(SQLModel):
     customer_name: str
     customer_phone: str
@@ -118,7 +118,7 @@ class Order(OrderBase, table=True):
     cart_items: List["CartItem"] = Relationship(back_populates="order")
 
 
-# --- Cart Items ---
+# Cart Items
 class CartItemBase(SQLModel):
     quantity: int
     price: float
@@ -135,7 +135,7 @@ class CartItem(CartItemBase, table=True):
     medicine: "Medicine" = Relationship(back_populates="cart_items")
 
 
-# --- Medicine Requests ---
+# Medicine Requests
 class MedicineRequestBase(SQLModel):
     medicine_name: str
     composition: str
@@ -160,7 +160,7 @@ class MedicineRequest(MedicineRequestBase, table=True):
     )
 
 
-# --- Doctors ---
+# Doctors
 class DoctorBase(SQLModel):
     name: str
     specialization: str
@@ -170,11 +170,10 @@ class DoctorBase(SQLModel):
 
 class Doctor(DoctorBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-
     appointments: List["Appointment"] = Relationship(back_populates="doctor")
 
 
-# --- Appointments ---
+# Appointments
 class AppointmentBase(SQLModel):
     patient_name: str
     patient_phone: str
@@ -196,7 +195,7 @@ class Appointment(AppointmentBase, table=True):
     customer: User = Relationship(back_populates="appointments")
 
 
-# --- Feedback ---
+# Feedback
 class FeedbackBase(SQLModel):
     rating: int = Field(ge=1, le=5)  # Added validation for 1-5 stars
     comment: str
@@ -206,11 +205,44 @@ class FeedbackBase(SQLModel):
 class Feedback(FeedbackBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     customer_id: int = Field(foreign_key="user.id")
-
     # Relationships
     customer: User = Relationship(back_populates="feedbacks")
 
 
-# --- Message ---
+# Message
 class Message(SQLModel):
     detail: str
+
+
+class PrescriptionBase(SQLModel):
+    # Changed from image_base64 to image_path
+    image_path: str
+    ai_summary: str
+
+
+class PrescriptionCreate(SQLModel):
+    image_base64: str
+
+
+class Medication(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    dosage: str
+    frequency: str
+    duration: Optional[str] = None
+
+    prescription_id: Optional[int] = Field(default=None, foreign_key="prescription.id")
+    prescription: Optional["Prescription"] = Relationship(back_populates="medications")
+
+
+# Prescription
+class Prescription(PrescriptionBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    customer_id: int = Field(foreign_key="user.id")
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    doctor_name: Optional[str] = None
+    date: Optional[str] = None
+
+    customer: User = Relationship(back_populates="prescriptions")
+    medications: List[Medication] = Relationship(back_populates="prescription")

@@ -61,7 +61,7 @@ const Login = () => {
           ? "/owner/overview"
           : data.user.role === "employee"
             ? "/employee/medicines"
-            : "customer/doctors";
+            : "/customer/doctors";
 
       navigate(redirectPath);
     } catch (err) {
