@@ -52,7 +52,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   return (

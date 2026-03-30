@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
 from app.database import create_db_and_tables
-from app.routes import auth_routes, user_routes
+from app.routes import auth_routes, user_routes, prescription_routes
 
 app = FastAPI(title="FastAPI Backend")
 
@@ -19,6 +19,7 @@ def on_startup():
 # Include Routers
 app.include_router(auth_routes.router)
 app.include_router(user_routes.router)
+app.include_router(prescription_routes.router)
 
 # Disable CORS Error
 origins = ["http://localhost:8080"]
