@@ -63,13 +63,13 @@ const App = () => (
           {/*<Route path="/prescription-reader" element={<PrescriptionReader />} />*/}
 
           {/* Customer */}
-          <Route path="/customer/doctors" element={<Dash roles={['customer']}><CustomerDoctors /></Dash>} />
+          {/*<Route path="/customer/doctors" element={<Dash roles={['customer']}><CustomerDoctors /></Dash>} />*/}
           {/*<Route path="/customer/book-appointment" element={<Dash roles={['customer']}><BookAppointment /></Dash>} />*/}
           {/*<Route path="/customer/appointments" element={<Dash roles={['customer']}><AppointmentHistory /></Dash>} />*/}
-          <Route path="/customer/orders" element={<Dash roles={['customer']}><TrackOrders /></Dash>} />
+          {/*<Route path="/customer/orders" element={<Dash roles={['customer']}><TrackOrders /></Dash>} />*/}
           <Route path="/customer/prescription" element={<Dash roles={['customer']}><PrescriptionReader /></Dash>} />
           {/*<Route path="/customer/ask-mochi" element={<Dash roles={['customer']}><CustomerAskMochi /></Dash>} />*/}
-          <Route path="/customer/feedback" element={<Dash roles={['customer']}><CustomerFeedback /></Dash>} />
+          {/*<Route path="/customer/feedback" element={<Dash roles={['customer']}><CustomerFeedback /></Dash>} />*/}
 
           {/* Employee */}
           {/*<Route path="/employee/medicines" element={<Dash roles={['employee']}><MedicineSearch /></Dash>} />
