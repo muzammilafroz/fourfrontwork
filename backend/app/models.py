@@ -214,12 +214,35 @@ class Message(SQLModel):
     detail: str
 
 
+class PrescriptionBase(SQLModel):
+    # Changed from image_base64 to image_path
+    image_path: str
+    ai_summary: str
+
+
+class PrescriptionCreate(SQLModel):
+    image_base64: str
+
+
+class Medication(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    dosage: str
+    frequency: str
+    duration: Optional[str] = None
+
+    prescription_id: Optional[int] = Field(default=None, foreign_key="prescription.id")
+    prescription: Optional["Prescription"] = Relationship(back_populates="medications")
+
+
 # Prescription
-class Prescription(SQLModel, table=True):
+class Prescription(PrescriptionBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     customer_id: int = Field(foreign_key="user.id")
-    image_base64: str
-    ai_summary: str
-    status: RequestStatus = Field(default=RequestStatus.PENDING)
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    doctor_name: Optional[str] = None
+    date: Optional[str] = None
+
     customer: User = Relationship(back_populates="prescriptions")
+    medications: List[Medication] = Relationship(back_populates="prescription")
