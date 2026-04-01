@@ -214,35 +214,48 @@ class Message(SQLModel):
     detail: str
 
 
-class PrescriptionBase(SQLModel):
-    # Changed from image_base64 to image_path
-    image_path: str
-    ai_summary: str
+# Medication
+class MedicationBase(SQLModel):
+    name: str
+    dosage: str
+    frequency: str
+    duration: Optional[str] = None
+
+
+class Medication(MedicationBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    prescription_id: Optional[int] = Field(default=None, foreign_key="prescription.id")
+    prescription: Optional["Prescription"] = Relationship(back_populates="medications")
+
+
+class MedicationPublic(MedicationBase):
+    id: int
+
+
+# Prescription
 
 
 class PrescriptionCreate(SQLModel):
     image_base64: str
 
 
-class Medication(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    name: str
-    dosage: str
-    frequency: str
-    duration: Optional[str] = None
-
-    prescription_id: Optional[int] = Field(default=None, foreign_key="prescription.id")
-    prescription: Optional["Prescription"] = Relationship(back_populates="medications")
+class PrescriptionBase(SQLModel):
+    doctor_name: Optional[str] = None
+    date: Optional[str] = None
+    image_path: Optional[str] = None
 
 
-# Prescription
 class Prescription(PrescriptionBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     customer_id: int = Field(foreign_key="user.id")
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
-    doctor_name: Optional[str] = None
-    date: Optional[str] = None
-
-    customer: User = Relationship(back_populates="prescriptions")
+    customer: "User" = Relationship(back_populates="prescriptions")
     medications: List[Medication] = Relationship(back_populates="prescription")
+
+
+class PrescriptionPublic(PrescriptionBase):
+    id: int
+    customer_id: int
+    created_at: datetime
+    medications: List[MedicationPublic] = []

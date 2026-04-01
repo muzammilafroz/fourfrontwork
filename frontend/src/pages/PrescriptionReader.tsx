@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/EmptyState";
 import { StatusBadge } from "@/components/StatusBadge";
 import { toast } from "sonner";
+
 import {
   Upload,
   FileText,
@@ -38,7 +39,7 @@ interface ScanResult {
 }
 
 const PrescriptionReader = () => {
-  const { user } = useAuthStore();
+  const { user, checkTokenExpiry } = useAuthStore();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>("");
   const [scanning, setScanning] = useState(false);
@@ -50,6 +51,7 @@ const PrescriptionReader = () => {
 
   useEffect(() => {
     if (!user) return;
+    checkTokenExpiry();
 
     async function getCustomerPrescriptions() {
       const url = "http://localhost:8000/prescriptions";
@@ -63,6 +65,7 @@ const PrescriptionReader = () => {
         });
 
         const data = await res.json();
+
         if (!res.ok) {
           throw new Error(data.detail || "Login failed.");
         }
@@ -125,10 +128,6 @@ const PrescriptionReader = () => {
         reader.readAsDataURL(file);
       });
 
-      const rawBase64 = base64Full.split(",")[1];
-      console.log(base64Full);
-      const mediaType = file.type || "image/jpeg";
-
       // Save prescription image.
       async function uploadPrescription(base64Image: string) {
         const url = "http://localhost:8000/prescriptions/create";
@@ -141,28 +140,19 @@ const PrescriptionReader = () => {
             method: "POST",
             headers: {
               Authorization: `Bearer ${user.auth_token}`,
+              "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
           });
           const data = await response.json();
           console.log(data);
+          setHistory([data, ...history]);
         } catch (error) {
           console.error("Error creating customer prescription:", error);
         }
       }
 
-      uploadPrescription(base64Full);
-
-      // Call scan-prescription edge function
-      // const { data, error } = await supabase.functions.invoke(
-      //   "scan-prescription",
-      //   {
-      //     body: { base64Data: rawBase64, mediaType },
-      //   },
-      // );
-
-      // if (error) throw new Error(error.message);
-      // if (data.error) throw new Error(data.error);
+      await uploadPrescription(base64Full);
 
       // const scanResult: ScanResult = data;
       // setResult(scanResult);

@@ -40,8 +40,10 @@ def extract_prescription_data(
     image_path: str,
     api_key: str = settings.GEMINI_API_KEY,
     model_name: str = settings.LLM_MODEL_NAME,
-):
+) -> PrescriptionDetails:
     """Uploads image to Gemini and returns a structured JSON object."""
+
+    print("Extracting prescription data using Gemini.")
 
     llm = ChatGoogleGenerativeAI(model=model_name, google_api_key=api_key)
 

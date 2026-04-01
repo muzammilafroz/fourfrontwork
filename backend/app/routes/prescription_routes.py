@@ -8,41 +8,66 @@ from app.crud import save_base64_image
 from app.llm import extract_prescription_data
 
 from ..database import get_session
-from ..models import Prescription, PrescriptionBase, PrescriptionCreate, User
+from ..models import (
+    Medication,
+    Prescription,
+    PrescriptionCreate,
+    PrescriptionPublic,
+    User,
+)
 from .user_routes import get_current_user
 
 router = APIRouter(prefix="/prescriptions", tags=["prescription"])
 
 
-# TODO: Create a new prescription data entry.
-@router.post("/create", response_model=PrescriptionBase)
+@router.post("/create", response_model=PrescriptionPublic)
 def create_prescription(
-    prescription: PrescriptionCreate, session: Session = Depends(get_session)
+    prescription_in: PrescriptionCreate,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
 ):
-    # session.add(prescription)
-    # session.commit()
-    # session.refresh(prescription)
-    # return prescription
 
     img_path = save_base64_image(
-        prescription.image_base64, upload_dir=Path("uploads/prescriptions")
+        prescription_in.image_base64, upload_dir=Path("uploads/prescriptions")
     )
 
     try:
         prescription_data = extract_prescription_data(img_path)
-        print(prescription_data)
-
     except Exception as e:
-        print(f"Error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"AI extraction failed: {str(e)}",
+        )
 
-    # TODO: Parse the AI response.
-    # return PrescriptionBase(
-    #     image_path=img_path,
-    #     ai_summary="",
-    # )
+    db_medications = [
+        Medication(
+            name=m.name, dosage=m.dosage, frequency=m.frequency, duration=m.duration
+        )
+        for m in prescription_data.medications
+    ]
+
+    db_prescription = Prescription(
+        image_path=img_path,
+        customer_id=current_user.id or 0,
+        doctor_name=prescription_data.doctor_name,
+        date=prescription_data.date,
+        medications=db_medications,
+    )
+
+    try:
+        session.add(db_prescription)
+        session.commit()
+        session.refresh(db_prescription)
+        return db_prescription
+    except Exception as e:
+        session.rollback()
+        print(f"Database Error: {e}")
+        raise HTTPException(
+            status_code=500, detail="Failed to save prescription to database."
+        )
 
 
-@router.get("/{prescription_id}", response_model=Prescription)
+@router.get("/{prescription_id}", response_model=PrescriptionPublic)
 def read_prescription(prescription_id: int, session: Session = Depends(get_session)):
     prescription = session.get(Prescription, prescription_id)
     if not prescription:
@@ -52,13 +77,15 @@ def read_prescription(prescription_id: int, session: Session = Depends(get_sessi
     return prescription
 
 
-@router.get("", response_model=List[Prescription])
+@router.get("", response_model=List[PrescriptionPublic])
 def read_customer_prescriptions(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):
     try:
-        statement = select(Prescription).where(Prescription.customer_id == current_user.id)
+        statement = select(Prescription).where(
+            Prescription.customer_id == current_user.id
+        )
         prescriptions = session.exec(statement).all()
     except Exception as e:
         prescriptions = []

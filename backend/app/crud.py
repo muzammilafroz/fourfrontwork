@@ -10,14 +10,15 @@ from .models import User, UserCreate
 
 
 def save_base64_image(base64_str: str, upload_dir: Path = Path("uploads")) -> str:
-    # upload_dir = Path("uploads/prescriptions")
     upload_dir.mkdir(parents=True, exist_ok=True)
 
     header = ""
+    base64_string = ""
+
     if "," in base64_str:
         header, base64_string = base64_str.split(",")
 
-    image_data = base64.b64decode(base64_str)
+    image_data = base64.b64decode(base64_string)
 
     try:
         mime_type = header.split(":")[1].split(";")[0]
@@ -25,7 +26,7 @@ def save_base64_image(base64_str: str, upload_dir: Path = Path("uploads")) -> st
     except Exception:
         extension = ".jpg"
 
-    filename = f"{uuid.uuid4()}.{extension}"
+    filename = f"{uuid.uuid4()}{extension}"
     file_path = upload_dir / filename
 
     with open(file_path, "wb") as f:
