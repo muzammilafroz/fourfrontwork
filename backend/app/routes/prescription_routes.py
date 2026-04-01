@@ -68,8 +68,16 @@ def create_prescription(
 
 
 @router.get("/{prescription_id}", response_model=PrescriptionPublic)
-def read_prescription(prescription_id: int, session: Session = Depends(get_session)):
+def read_prescription(
+    prescription_id: int,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
     prescription = session.get(Prescription, prescription_id)
+    if prescription.customer_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Prescription is not yours."
+        )
     if not prescription:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Prescription not found."
