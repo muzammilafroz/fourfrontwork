@@ -284,3 +284,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Custom
+uploads/
