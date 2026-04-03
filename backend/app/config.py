@@ -10,7 +10,7 @@ class Settings:
     GEMINI_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
     LLM_MODEL_NAME: str = "gemini-3-flash-preview"
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 12 * 60
     DATABASE_URL: str = "sqlite:///database.db"
 
 
