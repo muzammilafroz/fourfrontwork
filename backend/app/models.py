@@ -233,8 +233,6 @@ class MedicationPublic(MedicationBase):
 
 
 # Prescription
-
-
 class PrescriptionCreate(SQLModel):
     image_base64: str
 
@@ -242,7 +240,10 @@ class PrescriptionCreate(SQLModel):
 class PrescriptionBase(SQLModel):
     doctor_name: Optional[str] = None
     date: Optional[str] = None
-    image_path: Optional[str] = None
+    diagnosis: Optional[str] = None
+    summary: Optional[str] = None
+    image_path: str = ""
+    image_base64: Optional[str] = None
 
 
 class Prescription(PrescriptionBase, table=True):

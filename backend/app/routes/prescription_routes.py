@@ -4,7 +4,7 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session, select
 
-from app.crud import save_base64_image
+from app.crud import image_to_base64, save_base64_image
 from app.llm import extract_prescription_data
 
 from ..database import get_session
@@ -74,13 +74,15 @@ def read_prescription(
     current_user: User = Depends(get_current_user),
 ):
     prescription = session.get(Prescription, prescription_id)
-    if prescription.customer_id != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Prescription is not yours."
-        )
+
     if not prescription:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Prescription not found."
+        )
+
+    if prescription.customer_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail="Prescription is not yours."
         )
     return prescription
 
@@ -98,5 +100,9 @@ def read_customer_prescriptions(
     except Exception as e:
         prescriptions = []
         print(f"Error: {e}")
+
+
+    for prescription in prescriptions:
+        prescription.image_base64 = image_to_base64(prescription.image_path)
 
     return prescriptions
