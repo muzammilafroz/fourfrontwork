@@ -23,19 +23,36 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-interface ScannedMedicine {
+// interface ScannedMedicine {
+//   name: string;
+//   dosage: string;
+//   frequency: string;
+//   stockStatus: "in-stock" | "low-stock" | "out-of-stock";
+//   stockQuantity: number;
+//   price: number | null;
+//   medicineId: number | null;
+// }
+
+// interface ScanResult {
+//   medicines: ScannedMedicine[];
+//   summary: string;
+// }
+
+interface Medication {
   name: string;
   dosage: string;
   frequency: string;
-  stockStatus: "in-stock" | "low-stock" | "out-of-stock";
-  stockQuantity: number;
-  price: number | null;
-  medicineId: number | null;
+  duration: string;
 }
 
-interface ScanResult {
-  medicines: ScannedMedicine[];
+interface Prescription {
+  id: number;
+  customer_id: number;
+  created_at: string;
+  diagnosis: string;
+  image_base64: string;
   summary: string;
+  medications: Medication[];
 }
 
 const PrescriptionReader = () => {
@@ -43,7 +60,7 @@ const PrescriptionReader = () => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>("");
   const [scanning, setScanning] = useState(false);
-  const [result, setResult] = useState<ScanResult | null>(null);
+  const [result, setResult] = useState<Prescription | null>(null);
   const [history, setHistory] = useState<any[]>([]);
   const [selectedPrescription, setSelectedPrescription] = useState<any>(null);
   const [loadingHistory, setLoadingHistory] = useState(true);
@@ -144,39 +161,19 @@ const PrescriptionReader = () => {
             },
             body: JSON.stringify(payload),
           });
+
           const data = await response.json();
           console.log(data);
+          data.image_base64 = preview;
+
           setHistory([data, ...history]);
+          setResult(data);
         } catch (error) {
           console.error("Error creating customer prescription:", error);
         }
       }
 
       await uploadPrescription(base64Full);
-
-      // const scanResult: ScanResult = data;
-      // setResult(scanResult);
-
-      // // Update prescription record
-      // if (prescription) {
-      //   await supabase
-      //     .from("prescriptions")
-      //     .update({
-      //       extracted_medicines: scanResult.medicines.map((m) => m.name),
-      //       ai_summary: scanResult.summary,
-      //       status: "done",
-      //     })
-      //     .eq("prescription_id", prescription.prescription_id);
-      // }
-
-      // Refresh history
-      // const { data: histData } = await supabase
-      //   .from("prescriptions")
-      //   .select("*")
-      //   .eq("customer_id", user.user_id)
-      //   .order("scan_date", { ascending: false });
-      // setHistory(histData || []);
-
       toast.success("Prescription scanned successfully!");
     } catch (err: any) {
       toast.error(err.message || "Failed to scan prescription.");
@@ -235,22 +232,22 @@ const PrescriptionReader = () => {
     }
   };
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "in-stock":
-        return "✅ In Stock";
-      case "low-stock":
-        return "⚠️ Low Stock";
-      default:
-        return "❌ Out of Stock";
-    }
-  };
+  // const getStatusLabel = (status: string) => {
+  //   switch (status) {
+  //     case "in-stock":
+  //       return "✅ In Stock";
+  //     case "low-stock":
+  //       return "⚠️ Low Stock";
+  //     default:
+  //       return "❌ Out of Stock";
+  //   }
+  // };
 
-  const availableCount = result
-    ? result.medicines.filter((m) => m.stockStatus !== "out-of-stock").length
-    : 0;
-  const totalCount = result ? result.medicines.length : 0;
-  const unavailableCount = totalCount - availableCount;
+  // const availableCount = result
+  //   ? result.medicines.filter((m) => m.stockStatus !== "out-of-stock").length
+  //   : 0;
+  // const totalCount = result ? result.medicines.length : 0;
+  // const unavailableCount = totalCount - availableCount;
 
   return (
     <div>
@@ -343,75 +340,54 @@ const PrescriptionReader = () => {
               <p className="text-xs font-semibold text-primary uppercase tracking-wide mb-1">
                 AI Summary
               </p>
-              <p className="text-sm text-foreground">{result.summary}</p>
+              <p className="text-sm text-foreground">
+                {result.summary || "No Summary"}
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {result.medicines.map((med, i) => (
-                <div
-                  key={i}
-                  className="bg-card border border-border rounded-xl p-4 flex flex-col gap-3 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-2">
-                      <Pill className="h-4 w-4 text-primary shrink-0" />
-                      <div>
-                        <p className="font-medium text-foreground text-sm">
-                          {med.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {med.dosage !== "N/A" ? med.dosage : ""}{" "}
-                          {med.frequency !== "N/A" ? `• ${med.frequency}` : ""}
-                        </p>
-                      </div>
-                    </div>
-                    {getStatusIcon(med.stockStatus)}
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                          med.stockStatus === "in-stock"
-                            ? "bg-green-500/10 text-green-600"
-                            : med.stockStatus === "low-stock"
-                              ? "bg-yellow-500/10 text-yellow-600"
-                              : "bg-destructive/10 text-destructive"
-                        }`}
-                      >
-                        {getStatusLabel(med.stockStatus)}
-                      </span>
-                      {med.stockQuantity > 0 && (
-                        <span className="text-xs text-muted-foreground">
-                          Qty: {med.stockQuantity}
-                        </span>
-                      )}
-                    </div>
-                    {med.price && (
-                      <span className="text-xs font-medium text-foreground">
-                        ₹{med.price}
-                      </span>
-                    )}
-                  </div>
-
-                  {/*{med.stockStatus === "out-of-stock" && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full gap-1 text-xs"
-                      onClick={() => handleRequestMedicine(med)}
+            <div className="w-full overflow-hidden rounded-xl border border-border bg-card">
+              <table className="w-full text-sm text-left border-collapse">
+                <thead className="bg-muted/50 text-muted-foreground font-medium border-b border-border">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">Medication</th>
+                    <th className="px-4 py-3 font-medium">Dosage</th>
+                    <th className="px-4 py-3 font-medium">Frequency</th>
+                    <th className="px-4 py-3 font-medium">Duration</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {result.medications.map((med, i) => (
+                    <tr
+                      key={i}
+                      className="hover:bg-muted/30 transition-colors group"
                     >
-                      <ShoppingCart className="h-3 w-3" /> Request Order
-                    </Button>
-                  )}*/}
-                </div>
-              ))}
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2">
+                          <Pill className="h-4 w-4 text-primary shrink-0" />
+                          <span className="font-medium text-foreground">
+                            {med.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">
+                        {med.dosage ? med.dosage : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">
+                        {med.frequency ? med.frequency : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">
+                        {med.duration ? med.duration : "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
             {/* Summary */}
-            <div className="p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground text-center">
+            {/*<div className="p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground text-center">
               {availableCount} of {totalCount} medicines available in our store
-            </div>
+            </div>*/}
 
             {/*{unavailableCount > 0 && (
               <Button
@@ -447,28 +423,30 @@ const PrescriptionReader = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {history.map((p) => (
             <div
-              key={p.prescription_id}
+              key={p.id}
               className="bg-card border border-border rounded-xl p-4"
             >
               {p.image_base64 && (
                 <img
-                  src={`data:image/jpeg;base64,${p.image_base64}`}
+                  src={p.image_base64}
                   alt="Prescription"
                   className="w-full h-32 object-cover rounded-lg mb-3"
                 />
               )}
               <p className="text-xs text-muted-foreground mb-1">
-                {new Date(p.scan_date).toLocaleDateString()}
+                {new Date(p.created_at).toLocaleDateString()}
               </p>
               <p className="text-sm text-foreground line-clamp-2 mb-2">
-                {p.ai_summary || "No summary"}
+                {p.summary || "No summary"}
               </p>
+
               <div className="flex items-center justify-between">
-                <StatusBadge status={p.status} />
+                {/*<StatusBadge status={p.status} />*/}
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setSelectedPrescription(p)}
+                  // onClick={() => setSelectedPrescription(p)}
+                  onClick={() => setResult(p)}
                 >
                   View Details
                 </Button>
@@ -487,7 +465,7 @@ const PrescriptionReader = () => {
           <DialogHeader>
             <DialogTitle>Prescription Details</DialogTitle>
           </DialogHeader>
-          {selectedPrescription && (
+          {/*{selectedPrescription && (
             <div className="space-y-4">
               {selectedPrescription.image_base64 && (
                 <img
@@ -523,7 +501,7 @@ const PrescriptionReader = () => {
               )}
               <StatusBadge status={selectedPrescription.status} />
             </div>
-          )}
+          )}*/}
         </DialogContent>
       </Dialog>
     </div>

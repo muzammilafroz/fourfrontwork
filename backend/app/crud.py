@@ -35,6 +35,21 @@ def save_base64_image(base64_str: str, upload_dir: Path = Path("uploads")) -> st
     return str(file_path)
 
 
+def image_to_base64(file_path: str | Path) -> str:
+    file_path = Path(file_path)
+
+    if not file_path.exists():
+        raise FileNotFoundError(f"{file_path} does not exist")
+
+    mime_type, _ = mimetypes.guess_type(file_path.name)
+    mime_type = mime_type or "image/jpeg"
+
+    with open(file_path, "rb") as f:
+        encoded_string = base64.b64encode(f.read()).decode("utf-8")
+
+    return f"data:{mime_type};base64,{encoded_string}"
+
+
 def get_user_by_email(session: Session, email: str) -> User | None:
     query = select(User).where(User.email == email)
     return session.exec(query).first()

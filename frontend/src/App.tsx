@@ -14,7 +14,7 @@ import NotFound from "./pages/NotFound";
 import PrescriptionReader from "./pages/PrescriptionReader";
 
 // // Customer
-// import CustomerDoctors from "./pages/customer/Doctors";
+import CustomerDoctors from "./pages/customer/Doctors";
 // import BookAppointment from "./pages/customer/BookAppointment";
 // import AppointmentHistory from "./pages/customer/AppointmentHistory";
 // import TrackOrders from "./pages/customer/TrackOrders";
@@ -63,7 +63,7 @@ const App = () => (
           {/*<Route path="/prescription-reader" element={<PrescriptionReader />} />*/}
 
           {/* Customer */}
-          {/*<Route path="/customer/doctors" element={<Dash roles={['customer']}><CustomerDoctors /></Dash>} />*/}
+          <Route path="/customer/doctors" element={<Dash roles={['customer']}><CustomerDoctors /></Dash>} />
           {/*<Route path="/customer/book-appointment" element={<Dash roles={['customer']}><BookAppointment /></Dash>} />*/}
           {/*<Route path="/customer/appointments" element={<Dash roles={['customer']}><AppointmentHistory /></Dash>} />*/}
           {/*<Route path="/customer/orders" element={<Dash roles={['customer']}><TrackOrders /></Dash>} />*/}

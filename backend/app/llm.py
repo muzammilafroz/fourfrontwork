@@ -15,19 +15,18 @@ class Medication(BaseModel):
     frequency: str = Field(
         description="How often to take it (e.g., twice a day, every 8 hours)"
     )
-    duration: Optional[str] = Field(
-        description="How long to take the medicine (e.g., 5 days)"
-    )
+    duration: str = Field(description="How long to take the medicine (e.g., 5 days)")
 
 
 class PrescriptionDetails(BaseModel):
     patient_name: Optional[str] = Field(description="Name of the patient")
     doctor_name: Optional[str] = Field(description="Name of the prescribing doctor")
     date: Optional[str] = Field(description="Date of the prescription")
-    diagnosis: Optional[str] = Field(
-        description="The condition being treated if mentioned"
-    )
+    diagnosis: str = Field(description="The condition being treated if mentioned")
     medications: List[Medication] = Field(description="List of prescribed medicines")
+    summary: str = Field(
+        description="A concise summary of the prescription using your reasoning capabilities"
+    )
 
 
 def encode_image(image_path):
@@ -54,7 +53,7 @@ def extract_prescription_data(
         content=[
             {
                 "type": "text",
-                "text": "Extract all details from this doctor's prescription into a structured JSON format. If a field is illegible, return null for that specific field.",
+                "text": "Extract all details from this doctor's prescription into a structured JSON format. Write a short summary of the prescription in the summary field.",
             },
             {
                 "type": "image_url",

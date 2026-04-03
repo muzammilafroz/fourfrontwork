@@ -160,20 +160,16 @@ class MedicineRequest(MedicineRequestBase, table=True):
     )
 
 
-# Doctors
-class DoctorBase(SQLModel):
-    name: str
-    specialization: str
-    available_days: str
-    available_time: str
-
-
-class Doctor(DoctorBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    appointments: List["Appointment"] = Relationship(back_populates="doctor")
-
-
 # Appointments
+class AppointmentCreate(SQLModel):
+    patient_name: str
+    patient_phone: str
+    doctor_id: int
+
+    appointment_date: date
+    appointment_time: time
+
+
 class AppointmentBase(SQLModel):
     patient_name: str
     patient_phone: str
@@ -191,8 +187,33 @@ class Appointment(AppointmentBase, table=True):
     customer_id: int = Field(foreign_key="user.id")
 
     # Relationships
-    doctor: Doctor = Relationship(back_populates="appointments")
+    doctor: "Doctor" = Relationship(back_populates="appointments")
     customer: User = Relationship(back_populates="appointments")
+
+
+class AppointmentPublic(AppointmentBase):
+    id: int
+    doctor_id: int
+    customer_id: int
+    doctor: Optional["DoctorPublic"] = None
+
+
+# Doctors
+class DoctorBase(SQLModel):
+    name: str
+    specialization: str
+    available_days: str
+    available_time: str
+
+
+class Doctor(DoctorBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    appointments: List["Appointment"] = Relationship(back_populates="doctor")
+
+
+class DoctorPublic(DoctorBase):
+    id: int
+    appointments: List[AppointmentPublic] = []
 
 
 # Feedback
@@ -233,8 +254,6 @@ class MedicationPublic(MedicationBase):
 
 
 # Prescription
-
-
 class PrescriptionCreate(SQLModel):
     image_base64: str
 
@@ -242,7 +261,10 @@ class PrescriptionCreate(SQLModel):
 class PrescriptionBase(SQLModel):
     doctor_name: Optional[str] = None
     date: Optional[str] = None
-    image_path: Optional[str] = None
+    diagnosis: Optional[str] = None
+    summary: Optional[str] = None
+    image_path: str = ""
+    image_base64: Optional[str] = None
 
 
 class Prescription(PrescriptionBase, table=True):
