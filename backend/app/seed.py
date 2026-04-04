@@ -17,7 +17,7 @@ def seed_data():
         user = User(
             name="Yogi Kumar",
             email="yogi@kumar.com",
-            phone="1234567890",
+            phone="9827283360",
             hashed_password=get_password_hash("yogi_kumar"),
         )
 
