@@ -7,7 +7,7 @@ from ..database import get_session
 from ..models import CartItem, Order, User, UserRole
 from .user_routes import get_current_user
 
-router = APIRouter(prefix="/carts", tags=["carts"])
+router = APIRouter(prefix="/cart", tags=["cart"])
 
 
 @router.get("", response_model=List[CartItem])
