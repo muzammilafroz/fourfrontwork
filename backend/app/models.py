@@ -204,6 +204,7 @@ class DoctorBase(SQLModel):
     specialization: str
     available_days: str
     available_time: str
+    consultation_fee: float
 
 
 class Doctor(DoctorBase, table=True):
@@ -213,7 +214,7 @@ class Doctor(DoctorBase, table=True):
 
 class DoctorPublic(DoctorBase):
     id: int
-    appointments: List[AppointmentPublic] = []
+    # appointments: List[AppointmentPublic] = []
 
 
 # Feedback

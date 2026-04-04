@@ -5,8 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
 from app.database import create_db_and_tables
-from app.seed import seed_data
 from app.routes import (
+    appointment_routes,
     auth_routes,
     cart_routes,
     customer_routes,
@@ -19,6 +19,7 @@ from app.routes import (
     staff_routes,
     user_routes,
 )
+from app.seed import seed_data
 
 app = FastAPI(title="FastAPI Backend")
 
@@ -31,17 +32,19 @@ def on_startup():
 
 
 # Include Routers
-app.include_router(auth_routes.router, prefix="/api")
-app.include_router(user_routes.router, prefix="/api")
-app.include_router(prescription_routes.router, prefix="/api")
-app.include_router(doctor_routes.router, prefix="/api")
-app.include_router(inventory_routes.router, prefix="/api")
-app.include_router(order_routes.router, prefix="/api")
-app.include_router(cart_routes.router, prefix="/api")
-app.include_router(medicine_request_routes.router, prefix="/api")
-app.include_router(staff_routes.router, prefix="/api")
-app.include_router(customer_routes.router, prefix="/api")
-app.include_router(feedback_routes.router, prefix="/api")
+app.include_router(auth_routes.router)
+app.include_router(user_routes.router)
+app.include_router(prescription_routes.router)
+app.include_router(doctor_routes.router)
+app.include_router(appointment_routes.router)
+
+app.include_router(inventory_routes.router)
+app.include_router(order_routes.router)
+app.include_router(cart_routes.router)
+app.include_router(medicine_request_routes.router)
+app.include_router(staff_routes.router)
+app.include_router(customer_routes.router)
+app.include_router(feedback_routes.router)
 
 # Disable CORS Error
 origins = ["http://localhost:8080"]
@@ -55,7 +58,6 @@ app.add_middleware(
 )
 
 
-# Routes
 @app.get("/")
 def root():
     return {"message": "Welcome to the FastAPI-Backend server."}

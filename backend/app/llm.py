@@ -37,7 +37,7 @@ def encode_image(image_path):
 
 def extract_prescription_data(
     image_path: str,
-    api_key: str = settings.GEMINI_API_KEY,
+    api_key: str = settings.GOOGLE_API_KEY,
     model_name: str = settings.LLM_MODEL_NAME,
 ) -> PrescriptionDetails:
     """Uploads image to Gemini and returns a structured JSON object."""
