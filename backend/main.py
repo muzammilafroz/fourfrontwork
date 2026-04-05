@@ -1,6 +1,6 @@
 import uvicorn
 import yaml
-from fastapi import FastAPI, APIRouter
+from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
@@ -14,6 +14,7 @@ from app.routes import (
     feedback_routes,
     inventory_routes,
     medicine_request_routes,
+    medicines_routes,
     order_routes,
     prescription_routes,
     staff_routes,
@@ -39,6 +40,7 @@ api_router.include_router(user_routes.router)
 api_router.include_router(prescription_routes.router)
 api_router.include_router(doctor_routes.router)
 api_router.include_router(appointment_routes.router)
+api_router.include_router(medicines_routes.router)
 
 api_router.include_router(inventory_routes.router)
 api_router.include_router(order_routes.router)
