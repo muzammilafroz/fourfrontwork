@@ -11,9 +11,11 @@ Sprint Goal: Create well tested API endpoints for the frontend to access the dat
 
 ## API Documentation: Swagger UI
 
-You can find the Swagger UI in YAML file format from this Google Drive link.
+You can find the Swagger UI in YAML file format from [Google Drive](https://drive.google.com/drive/folders/1ZZuHZolvfSbi0WbClqsLtdaw4IcDF0xk?usp=drive_link).
 
 ## API Testing
+
+Find more information about the API routes using this [documentation](https://github.com/muzammilafroz/fourfrontwork/blob/main/backend/README.md). It contains all the relevant API routes.
 
 ## 1. Testing Frameworks and Tools
 
