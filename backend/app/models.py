@@ -2,6 +2,7 @@ from datetime import date, datetime, time, timezone
 from enum import Enum
 from typing import List, Optional
 
+from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -34,7 +35,8 @@ class UserStatus(str, Enum):
 # Users
 class UserBase(SQLModel):
     name: str
-    email: str = Field(index=True, unique=True)
+    # email: str = Field(index=True, unique=True)
+    email: EmailStr = Field(index=True, unique=True)
     phone: str
     role: UserRole = Field(default=UserRole.CUSTOMER)
     status: UserStatus = Field(default=UserStatus.ACTIVE)

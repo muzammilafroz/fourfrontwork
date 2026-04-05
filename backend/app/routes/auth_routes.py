@@ -14,7 +14,10 @@ router = APIRouter(prefix="/auth", tags=["auth"])
     "/register",
     response_model=UserPublic,
     summary="Create a new user",
-    responses={400: {"description": "Email already exists in the database"}},
+    responses={
+        400: {"detail": "Email already exists in the database"},
+        422: {"detail": "Incorrect email format"},
+    },
 )
 def register(user_in: UserCreate, session: Session = Depends(get_session)):
     """
@@ -35,9 +38,9 @@ def register(user_in: UserCreate, session: Session = Depends(get_session)):
     response_model=TokenPublic,
     summary="Get access token",
     responses={
-        400: {"description": "Invalid credentials"},
-        403: {"description": "User is inactive"},
-        500: {"description": "Token generation failed"},
+        400: {"detail": "Invalid credentials"},
+        403: {"detail": "User is inactive"},
+        500: {"detail": "Token generation failed"},
     },
 )
 def login(
