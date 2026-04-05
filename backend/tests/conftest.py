@@ -34,6 +34,21 @@ def client(db_session):
 
 
 @pytest.fixture
+def admin_user(db_session: Session):
+    user = User(
+        name="Admin User",
+        email="admin@test.com",
+        phone="+91-90000-00001",
+        role=UserRole.ADMIN,
+        hashed_password=get_password_hash("admin123"),
+    )
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+    return user
+
+
+@pytest.fixture
 def employee_user(db_session: Session):
     user = User(
         name="Employee User",
