@@ -216,6 +216,10 @@ class AppointmentPublic(AppointmentBase):
     doctor: Optional["DoctorPublic"] = None
 
 
+class AppointmentUpdate(SQLModel):
+    status: AppointmentStatus
+
+
 # Doctors
 class DoctorBase(SQLModel):
     name: str

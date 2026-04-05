@@ -24,11 +24,10 @@ import AppointmentHistory from "./pages/customer/AppointmentHistory";
 // // Employee
 import MedicineSearch from "./pages/employee/MedicineSearch";
 // import AddMedicine from "./pages/employee/AddMedicine";
-// import EmployeeAppointments from "./pages/employee/Appointments";
+import EmployeeAppointments from "./pages/employee/Appointments";
 // import EmployeePreorders from "./pages/employee/Preorders";
 // import CreateOrder from "./pages/employee/CreateOrder";
 // import EmployeeAskMochi from "./pages/employee/AskMochi";
-// import EmployeePrescriptionReader from "./pages/employee/PrescriptionReader";
 
 // // Owner
 // import Overview from "./pages/owner/Overview";
@@ -74,7 +73,7 @@ const App = () => (
           {/* Employee */}
           <Route path="/employee/medicines" element={<Dash roles={['employee']}><MedicineSearch /></Dash>} />
           {/*<Route path="/employee/add-medicine" element={<Dash roles={['employee']}><AddMedicine /></Dash>} />*/}
-          {/*<Route path="/employee/appointments" element={<Dash roles={['employee']}><EmployeeAppointments /></Dash>} />*/}
+          <Route path="/employee/appointments" element={<Dash roles={['employee']}><EmployeeAppointments /></Dash>} />
           {/*<Route path="/employee/preorders" element={<Dash roles={['employee']}><EmployeePreorders /></Dash>} />*/}
           {/*<Route path="/employee/create-order" element={<Dash roles={['employee']}><CreateOrder /></Dash>} />*/}
           <Route path="/employee/prescription" element={<Dash roles={['employee']}><PrescriptionReader /></Dash>} />

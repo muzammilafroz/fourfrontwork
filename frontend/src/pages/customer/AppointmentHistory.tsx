@@ -13,15 +13,6 @@ const AppointmentHistory = () => {
 
   useEffect(() => {
     if (!user) return;
-    // supabase
-    //   .from("appointments")
-    //   .select("*, doctors(name, specialization)")
-    //   .eq("customer_id", user.user_id)
-    //   .order("appointment_date", { ascending: false })
-    //   .then(({ data }) => {
-    //     setAppointments(data || []);
-    //     setLoading(false);
-    //   });
 
     async function getAppointments() {
       const url = "http://localhost:8000/api/appointments";
