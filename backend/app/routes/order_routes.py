@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
@@ -53,6 +53,9 @@ def create_order(
 ):
     if current_user.role != UserRole.CUSTOMER:
         raise HTTPException(status_code=403, detail="Only customers can create orders")
+
+    if current_user.id is None:
+        raise HTTPException(status_code=400, detail="User ID is required")
 
     order_in.customer_id = current_user.id
     order_in.customer_name = current_user.name

@@ -56,6 +56,9 @@ def create_medicine_request(
     if current_user.role != UserRole.CUSTOMER:
         raise HTTPException(status_code=403, detail="Only customers can request medicines")
 
+    if current_user.id is None:
+        raise HTTPException(status_code=400, detail="User ID is required")
+
     request_in.requested_by = current_user.id
 
     session.add(request_in)
