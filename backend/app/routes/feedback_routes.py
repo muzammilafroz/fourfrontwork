@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
 
 from ..database import get_session
-from ..models import Feedback, User, UserRole
+from ..models import Feedback, FeedbackCreate, User, UserRole
 from .user_routes import get_current_user
 
 router = APIRouter(prefix="/feedback", tags=["feedback"])
@@ -48,15 +48,15 @@ def read_feedback_item(
 def create_feedback(
     *,
     session=Depends(get_session),
-    feedback_in: Feedback,
+    feedback_in: FeedbackCreate,
     current_user: User = Depends(get_current_user),
 ):
     if current_user.role != UserRole.CUSTOMER:
         raise HTTPException(status_code=403, detail="Only customers can give feedback")
 
-    feedback_in.customer_id = current_user.id
+    feedback = Feedback(**feedback_in.model_dump(), customer_id=current_user.id)
 
-    session.add(feedback_in)
+    session.add(feedback)
     session.commit()
-    session.refresh(feedback_in)
-    return feedback_in
+    session.refresh(feedback)
+    return feedback

@@ -86,6 +86,9 @@ const Landing = () => {
           </span>
         </div>
         <div className="flex items-center gap-3">
+          <Link to="/api-docs">
+            <Button variant="outline">API Docs</Button>
+          </Link>
           <ThemeToggle />
           {isAuthenticated ? (
             <Link to={dashPath}>
@@ -123,6 +126,11 @@ const Landing = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/api-docs">
+                <Button variant="outline" size="lg" className="px-8">
+                  API Docs
+                </Button>
+              </Link>
               {isAuthenticated ? (
                 <Link to={dashPath}>
                   <Button>

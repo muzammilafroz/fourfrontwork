@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
 
 from ..database import get_session
-from ..models import User, UserRole
+from ..models import CustomerUpdate, User, UserRole
 from .user_routes import get_current_user
 
 router = APIRouter(prefix="/customers", tags=["customers"])
@@ -52,7 +52,7 @@ def update_customer(
     customer_id: int,
     *,
     session=Depends(get_session),
-    customer_data: User,
+    customer_data: CustomerUpdate,
     current_user: User = Depends(get_current_user),
 ):
     if current_user.id != customer_id and current_user.role != UserRole.ADMIN:

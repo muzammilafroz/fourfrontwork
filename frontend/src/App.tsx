@@ -11,6 +11,7 @@ import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
+import ApiDocs from "./pages/ApiDocs";
 import PrescriptionReader from "./pages/PrescriptionReader";
 
 // // Customer
@@ -60,6 +61,7 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/api-docs" element={<ApiDocs />} />
           {/*<Route path="/prescription-reader" element={<PrescriptionReader />} />*/}
 
           {/* Customer */}

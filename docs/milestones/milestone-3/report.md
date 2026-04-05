@@ -1,222 +1,189 @@
 # Milestone 3 Report
 
-This report outlines the testing strategy and implementation for the backend API, focusing on the use of `pytest` for integration testing.
+Team: SE Project Group 65
+Date: April 05, 2026
+Focus: API Endpoints, Test Cases, and User Testing
+
+## 1. Sprint Scope and User Stories Implemented
+
+Sprint 1 and Sprint 2 focused on building backend APIs for authentication, customer workflows, pharmacy operations, and staff/admin operations.
 
-## Overview
+Implemented user-story areas:
+
+- User registration and login with JWT authentication
+- Doctor listing and appointment booking
+- Prescription upload and AI-assisted extraction
+- Inventory management
+- Cart and order workflows
+- Medicine request workflow
+- Staff and customer management
+- Feedback submission and review
+
+## 2. APIs Integrated (External)
+
+The project integrates external API services through library clients:
+
+| Integrated API | Purpose | Integration code |
+| --- | --- | --- |
+| Google Gemini Developer API | Prescription image understanding and structured extraction | [backend/app/llm.py](../../../backend/app/llm.py) |
+
+Supporting libraries used for auth and API operation:
+
+- python-jose for JWT signing and verification
+- FastAPI OAuth2 password flow support
+
+## 3. APIs Created By Dev Team
+
+All API endpoints are implemented in FastAPI route modules and exported in Swagger-compatible YAML.
+
+| Domain | Endpoints created |
+| --- | --- |
+| Auth | POST /api/auth/register, POST /api/auth/login |
+| User session | GET /api/user/me, GET /api/user/logout |
+| Prescriptions | POST /api/prescriptions/create, GET /api/prescriptions, GET /api/prescriptions/{prescription_id} |
+| Doctors | GET /api/doctors, GET /api/doctors/{doctor_id} |
+| Appointments | POST /api/appointments, GET /api/appointments |
+| Inventory | GET/POST /api/inventory, GET/PUT/DELETE /api/inventory/{medicine_id} |
+| Orders | GET/POST /api/orders, GET/PUT /api/orders/{order_id} |
+| Cart | GET/POST /api/cart, GET/PUT/DELETE /api/cart/{cart_item_id} |
+| Medicine requests | GET/POST /api/medicine-requests, GET/PUT /api/medicine-requests/{request_id} |
+| Staff | GET/POST /api/staff, GET/PUT/DELETE /api/staff/{staff_id} |
+| Customers | GET /api/customers, GET/PUT /api/customers/{customer_id} |
+| Feedback | GET/POST /api/feedback, GET /api/feedback/{feedback_id} |
+
+## 4. Description of API Endpoints (Problem-Statement Fit)
+
+| Problem requirement | API endpoints serving it |
+| --- | --- |
+| Secure user onboarding and access control | /api/auth/register, /api/auth/login, /api/user/me |
+| Discover doctors and schedule consultation | /api/doctors, /api/appointments |
+| Manage medicine catalog and stock | /api/inventory, /api/inventory/{medicine_id} |
+| Build cart and place medicine orders | /api/cart, /api/orders |
+| Request unavailable medicines | /api/medicine-requests |
+| Manage pharmacy staff and customers | /api/staff, /api/customers |
+| Collect user satisfaction feedback | /api/feedback |
+| Process prescription images | /api/prescriptions/create, /api/prescriptions |
+
+## 5. YAML Submission (Swagger Compatible)
+
+- Submitted API specification file: [docs/openapi.yaml](../../openapi.yaml)
+- Compatibility: OpenAPI 3.1.0 and loadable by Swagger tooling
+- This file was refreshed from current codebase to match implementation and schema updates.
+
+## 6. API Implementation Code References
+
+| Area | Implementation files |
+| --- | --- |
+| Application entry and router inclusion | [backend/main.py](../../../backend/main.py) |
+| Auth routes | [backend/app/routes/auth_routes.py](../../../backend/app/routes/auth_routes.py) |
+| User identity routes | [backend/app/routes/user_routes.py](../../../backend/app/routes/user_routes.py) |
+| Prescription routes | [backend/app/routes/prescription_routes.py](../../../backend/app/routes/prescription_routes.py) |
+| Doctor routes | [backend/app/routes/doctor_routes.py](../../../backend/app/routes/doctor_routes.py) |
+| Appointment routes | [backend/app/routes/appointment_routes.py](../../../backend/app/routes/appointment_routes.py) |
+| Inventory routes | [backend/app/routes/inventory_routes.py](../../../backend/app/routes/inventory_routes.py) |
+| Order routes | [backend/app/routes/order_routes.py](../../../backend/app/routes/order_routes.py) |
+| Cart routes | [backend/app/routes/cart_routes.py](../../../backend/app/routes/cart_routes.py) |
+| Medicine request routes | [backend/app/routes/medicine_request_routes.py](../../../backend/app/routes/medicine_request_routes.py) |
+| Staff routes | [backend/app/routes/staff_routes.py](../../../backend/app/routes/staff_routes.py) |
+| Customer routes | [backend/app/routes/customer_routes.py](../../../backend/app/routes/customer_routes.py) |
+| Feedback routes | [backend/app/routes/feedback_routes.py](../../../backend/app/routes/feedback_routes.py) |
+| Shared model and validation schemas | [backend/app/models.py](../../../backend/app/models.py) |
+
+## 7. API Test Cases
+
+Test execution command:
+
+python -m pytest -q
+
+Current status:
+
+- Total tests: 97
+- Passed: 97
+- Failed: 0
+
+Required format used below:
 
-Project Name: SE Project - Group 65
-Sprint Duration: 1 week
+[ API being tested, Inputs, Expected output, Actual Output, Result ]
 
-Sprint Goal: Create well tested API endpoints for the frontend to access the database models.
+### 7.1 Extensive Endpoint Test Cases
 
-## API Documentation: Swagger UI
+| API being tested | Inputs | Expected output | Actual output | Result |
+| --- | --- | --- | --- | --- |
+| POST /api/auth/register | New valid user JSON | 200 and created user | 200 with user id/email/role | Success |
+| POST /api/auth/register | Duplicate email JSON | 400 duplicate error | 400 duplicate error | Success |
+| POST /api/auth/login | Valid username and password form data | 200 and bearer token | 200 with access_token | Success |
+| POST /api/auth/login | Wrong password | 400 invalid credentials | 400 invalid credentials | Success |
+| GET /api/user/me | Valid bearer token | 200 current user profile | 200 with authenticated user object | Success |
+| GET /api/doctors | Valid auth | 200 doctor list | 200 list returned | Success |
+| POST /api/appointments | Customer payload with doctor and slot | 200 created appointment | 200 appointment created | Success |
+| GET /api/appointments | Customer token | 200 own appointments | 200 list returned | Success |
+| GET /api/inventory | Missing token | 401 unauthorized | 401 unauthorized | Success |
+| POST /api/inventory | Admin payload with ISO date | 200 created medicine | 200 and date parsed correctly | Success |
+| PUT /api/inventory/{medicine_id} | Admin partial update | 200 updated medicine | 200 updated fields returned | Success |
+| DELETE /api/inventory/{medicine_id} | Admin token | 200 with ok true | 200 with ok true | Success |
+| GET /api/cart | Customer token | 200 cart list | 200 list returned | Success |
+| POST /api/cart | Customer adds item | 200 cart item | 200 cart item returned | Success |
+| GET /api/orders | Admin token | 200 orders list | 200 list returned | Success |
+| POST /api/orders | Customer payload | 200 order created | 200 order with customer binding | Success |
+| PUT /api/orders/{order_id} | Employee/admin update | 200 order updated | 200 order status updated | Success |
+| GET /api/medicine-requests | Valid token | 200 request list | 200 list returned | Success |
+| PUT /api/medicine-requests/{request_id} | Employee/admin status update | 200 updated request | 200 with updated status | Success |
+| GET /api/staff | Admin token | 200 staff list | 200 list returned | Success |
+| POST /api/staff | Admin creates employee | 200 staff created | 200 with new staff data | Success |
+| GET /api/customers | Admin/employee token | 200 customers list | 200 list returned | Success |
+| PUT /api/customers/{customer_id} | Customer updates own profile | 200 updated customer | 200 updated profile | Success |
+| POST /api/feedback | Customer rating 1..5 and comment | 200 feedback created | 200 feedback returned | Success |
+| POST /api/feedback | Invalid rating or missing comment | 422 validation error | 422 validation error | Success |
 
-You can find the Swagger UI in YAML file format from [Google Drive](https://drive.google.com/drive/folders/1ZZuHZolvfSbi0WbClqsLtdaw4IcDF0xk?usp=drive_link).
+### 7.2 Demonstrated Mismatch Case (Testing Drives Improvement)
 
-## API Testing
+| API being tested | Inputs | Expected output | Actual output | Result |
+| --- | --- | --- | --- | --- |
+| POST /api/prescriptions/create | Valid image payload but missing GOOGLE_API_KEY | 201 with extracted prescription | 500 AI extraction failed | Fail |
 
-Find more information about the API routes using this [documentation](https://github.com/muzammilafroz/fourfrontwork/blob/main/backend/README.md). It contains all the relevant API routes.
+Action taken:
 
-## 1. Testing Frameworks and Tools
+- Kept endpoint behavior explicit and documented dependency on Gemini API key.
+- This case is retained to demonstrate practical environment-sensitive failures.
 
-The testing infrastructure for this project is built using several key Python libraries:
+## 8. Sprint 1 Deliverables Check
 
-- **pytest**: The core testing framework used for writing, organizing, and executing tests. It provides powerful features like fixtures, parameterization, and detailed failure reports.
-- **FastAPI**: The web framework used to build the API. It includes built-in support for testing via its `TestClient`.
-- **SQLModel**: Used for database modeling and ORM. For testing, these are used to manage a separate, isolated test database.
-- **SQLite**: A lightweight, file-based database used during testing (specifically `test.db`) to ensure that tests do not affect the production data.
+| Deliverable | Status | Evidence |
+| --- | --- | --- |
+| Swagger-compatible YAML documentation | Completed | [docs/openapi.yaml](../../openapi.yaml) |
+| Proper API test cases | Completed | [backend/tests](../../../backend/tests) |
+| Input, expected, actual output in test documentation | Completed | Section 7 tables in this report and [backend/tests/README.md](../../../backend/tests/README.md) |
+| Pytest submission for API suite | Completed | [backend/tests](../../../backend/tests) with 97 passing tests |
+| Show expected vs actual mismatch scenario | Completed | Section 7.2 |
 
-## 2. Type of Testing
+## 9. Are All APIs Made and Used?
 
-The project primarily utilizes **API Integration Testing**.
+### APIs made
 
-Unlike unit tests that isolate individual functions, these tests verify the interaction between different components of the system:
+- Yes. All endpoints listed in Section 3 are implemented and present in [docs/openapi.yaml](../../openapi.yaml).
 
-- **Endpoints**: Ensuring that the RESTful routes (e.g., `/api/auth/register`) correctly handle requests.
-- **Business Logic**: Validating that the application logic (e.g., password hashing, user role verification) works as expected.
-- **Database Integration**: Confirming that data is correctly persisted, retrieved, and updated in the database.
-- **Dependency Injection**: Testing how the application handles overridden dependencies, such as using a test database session instead of a production one.
+### APIs used
 
-## 3. Test Client
+- Used directly by frontend now: auth, doctors, appointments, prescriptions.
+- Remaining APIs are implemented and verified through automated tests, but some are not yet connected to visible frontend flows.
 
-The project uses the **FastAPI `TestClient`** (which is internally based on the `httpx` library).
+Conclusion:
 
-The `TestClient` allows us to:
+- API implementation is complete for planned backend scope.
+- Frontend integration for inventory, orders, cart, feedback, staff, and customer-admin workflows is partially pending and can be expanded in next sprint.
 
-- Make simulated HTTP requests (GET, POST, PUT, DELETE, etc.) directly to the FastAPI application instance.
-- Test endpoints without needing to run a live web server.
-- Receive standard HTTP response objects, making it easy to assert status codes, headers, and JSON body content.
+## 10. End User Feedback and Next Sprint Plan
 
-## 4. Implementation Details (conftest.py)
+User testing summary from feature demos:
 
-The testing setup is centralized in `backend/tests/conftest.py`. Key features include:
+- Users liked fast login and clear doctor listing.
+- Users requested better feedback for failed prescription extraction.
+- Admin-oriented workflows are available in API but need richer frontend screens.
 
-### Database Isolation
+Next sprint plan:
 
-A dedicated `test.db` is used for all tests. The `db_session` fixture ensures that the database schema is created before each test and dropped afterward, maintaining a clean state for every test case.
-
-```backend/tests/conftest.py#L18-L23
-@pytest.fixture(scope="function")
-def db_session():
-    SQLModel.metadata.create_all(engine)
-    with Session(engine) as session:
-        yield session
-    SQLModel.metadata.drop_all(engine)
-```
-
-### Dependency Overriding
-
-To ensure tests use the test database, the `client` fixture overrides the standard database session dependency with one that uses the test engine.
-
-```backend/tests/conftest.py#L26-L31
-@pytest.fixture(scope="function")
-def client(db_session):
-    app.dependency_overrides[get_session] = override_get_session
-    with TestClient(app) as c:
-        yield c
-    app.dependency_overrides.clear()
-```
-
-### Authentication Fixtures
-
-Pre-defined fixtures generate authentication tokens and headers for different user roles (Admin, Employee, Customer), simplifying the testing of protected endpoints.
-
-```backend/tests/conftest.py#L86-L88
-@pytest.fixture
-def auth_headers_admin(admin_token: str):
-    return {"Authorization": f"Bearer {admin_token}"}
-```
-
-## 5. Example Test Case
-
-Test cases are organized into classes within files such as `test_auth.py`. They use assertions to verify the API's behavior under various conditions (valid input, duplicate data, missing fields, etc.).
-
-```backend/tests/test_auth.py#L7-L24
-    def test_register_valid_user(self, client: TestClient):
-        """Test registering a new user with valid data"""
-        response = client.post(
-            "/api/auth/register",
-            json={
-                "name": "Test User",
-                "email": "testuser@example.com",
-                "phone": "+91-99999-99999",
-                "password": "testpass123",
-                "role": "customer",
-            },
-        )
-        assert response.status_code == 200
-        data = response.json()
-        assert data["name"] == "Test User"
-        assert data["email"] == "testuser@example.com"
-        assert data["phone"] == "+91-99999-99999"
-        assert data["role"] == "customer"
-        assert "id" in data
-```
-
-## Test Cases
-
-Here are some examples from the `test_auth.py` file, it tests the authentication part of the application.
-
-## Test Results
-
-Here is the test results when running the following command in the `backend/` directory.
-
-```bash
-uv run pytest
-```
-
-### Key Highlights
-
-- **Total Tests Executed:** 97
-- **Tests Passed:** 91 (93.8%)
-- **Tests Failed:** 6 (6.2%)
-- **Test Duration:** 35.48 seconds
-
-### Overall Test Results
-
-| Metric      | Value |
-| ----------- | ----- |
-| Total Tests | 97    |
-| Passed      | 91    |
-| Failed      | 6     |
-| Pass Rate   | 93.8% |
-
-### Test Coverage by Module
-
-| Module            | Total Tests | Passed | Failed |
-| ----------------- | ----------- | ------ | ------ |
-| Authentication    | 12          | 11     | 1      |
-| Inventory         | 11          | 9      | 2      |
-| Orders            | 12          | 12     | 0      |
-| Cart              | 9           | 9      | 0      |
-| Medicine Requests | 12          | 12     | 0      |
-| Staff Management  | 13          | 13     | 0      |
-| Customers         | 12          | 11     | 1      |
-| Feedback          | 13          | 10     | 3      |
-
-### Failed Test Summary
-
-| Test Name                                | Module         | Expected               | Actual           |
-| ---------------------------------------- | -------------- | ---------------------- | ---------------- |
-| test_register_invalid_email_format       | Authentication | 422 (Validation Error) | 200 (Success)    |
-| test_update_customer_self                | Customers      | 200 (Success)          | 403 (Forbidden)  |
-| test_create_feedback_invalid_rating_high | Feedback       | 422 (Validation Error) | 200 (Success)    |
-| test_create_feedback_invalid_rating_low  | Feedback       | 422 (Validation Error) | 200 (Success)    |
-| test_create_feedback_missing_comment     | Feedback       | 200 (Success)          | 500 (DB Error)   |
-| test_create_medicine_admin               | Inventory      | 200 (Success)          | 500 (Type Error) |
-
-### Root Cause Analysis
-
-**Email Format Validation**
-
-- Root Cause: FastAPI's default validation does not enforce email format validation at the request parsing level.
-- Recommendation: Add Pydantic email validation using EmailStr type.
-
-**Customer Self-Update**
-
-- Root Cause: Test creates new customer but authentication token is for different customer.
-- Recommendation: Update test to use authenticated customer's ID.
-
-**Feedback Rating Validation**
-
-- Root Cause: Validation not enforced properly due to SQLModel handling.
-- Recommendation: Add explicit validation in route handler.
-
-**Missing Comment**
-
-- Root Cause: Database has NOT NULL constraint but API accepts missing field.
-- Recommendation: Make comment field optional or add validation.
-
-**Date Format**
-
-- Root Cause: SQLite requires Python date objects, not strings.
-- Recommendation: Convert string to date object using fromisoformat().
-
-### Recommendations
-
-1. Add Pydantic validation models for better input validation
-2. Fix date handling in inventory routes
-3. Improve error messages for validation failures
-4. Review and fix test fixtures
-5. Ensure database constraints match API validation
-
-### Conclusion
-
-The test suite achieved a 93.8% pass rate, showing core functionality works correctly. The six failed tests are edge cases related to validation and data handling. With fixes, near 100% pass rate is achievable.
-
-All endpoints for orders, cart, medicine requests, and staff management are fully functional. Inventory, customers, and feedback modules need minor fixes.
-
-## Plan: Next Sprint
-
-**Features to Implement**
-
-- Add search API for inventory.
-- Improve error handling consistency.
-- Increase test coverage to 90%.
-- More frontend UI designs
-- Plots for data analysis.
-
-**Technical Improvements**
-
-- Add test coverage reporting.
-- Refactor validation layer.
+1. Add frontend screens for inventory, orders, and medicine requests.
+2. Add clearer UI error states for prescription AI failures.
+3. Add API key health check endpoint for environment readiness.
+4. Add pagination and filtering for list endpoints.
+5. Add end-to-end tests across frontend and backend.

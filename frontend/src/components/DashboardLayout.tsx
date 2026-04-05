@@ -5,7 +5,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import {
   Menu, X, LogOut, Calendar, ShoppingCart, FileText, MessageCircle,
   Star, Pill, PlusCircle, ClipboardList, BarChart3, Users, UserCheck,
-  Package, Stethoscope, MessageSquare, LayoutDashboard, Receipt
+  Package, Stethoscope, MessageSquare, LayoutDashboard, Receipt, BookOpen
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -97,6 +97,20 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
               {link.label}
             </NavLink>
           ))}
+          <NavLink
+            to="/api-docs"
+            onClick={() => setSidebarOpen(false)}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                isActive
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+              }`
+            }
+          >
+            <BookOpen className="h-4 w-4 shrink-0" />
+            API Docs
+          </NavLink>
         </nav>
 
         <div className="p-3 border-t border-border">

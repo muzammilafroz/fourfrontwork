@@ -77,6 +77,11 @@ class UserPublic(UserBase):
     id: int
 
 
+class CustomerUpdate(SQLModel):
+    name: Optional[str] = None
+    phone: Optional[str] = None
+
+
 # JavaScript Web Token (JWT)
 class Token(SQLModel):
     access_token: str
@@ -100,6 +105,19 @@ class MedicineBase(SQLModel):
 class Medicine(MedicineBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     cart_items: List["CartItem"] = Relationship(back_populates="medicine")
+
+
+class MedicineCreate(MedicineBase):
+    pass
+
+
+class MedicineUpdate(SQLModel):
+    name: Optional[str] = None
+    composition: Optional[str] = None
+    brand: Optional[str] = None
+    price: Optional[float] = None
+    stock_quantity: Optional[int] = None
+    expiry_date: Optional[date] = None
 
 
 # Orders
@@ -239,6 +257,11 @@ class Feedback(FeedbackBase, table=True):
     customer_id: int = Field(foreign_key="user.id")
     # Relationships
     customer: User = Relationship(back_populates="feedbacks")
+
+
+class FeedbackCreate(SQLModel):
+    rating: int = Field(ge=1, le=5)
+    comment: str
 
 
 # Message

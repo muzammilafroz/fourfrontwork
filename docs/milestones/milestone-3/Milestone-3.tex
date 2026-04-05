@@ -1,0 +1,285 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{lmodern}
+\usepackage[strings]{underscore}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{listings}
+\lstdefinelanguage{JavaScript}{
+  keywords={break, case, catch, continue, debugger, default, delete, do, else, finally, for, function, if, in, instanceof, new, return, switch, this, throw, try, typeof, var, void, while, with, const, let, await, async, yield, import, export, from, as},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{gray}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable}
+
+\definecolor{brand}{RGB}{0,76,153}
+\definecolor{codebg}{RGB}{246,248,250}
+\definecolor{okgreen}{RGB}{0,120,60}
+\definecolor{warnred}{RGB}{180,0,0}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=brand,
+  urlcolor=brand,
+  pdftitle={Milestone 3 Final Submission},
+  pdfauthor={Group 65}
+}
+
+\setstretch{1.12}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Milestone 3 Final Submission}
+\fancyhead[R]{Group 65}
+\fancyfoot[C]{\thepage}
+
+\titleformat{\section}{\large\bfseries\color{brand}}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries\color{brand}}{\thesubsection}{0.6em}{}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  showstringspaces=false,
+  keywordstyle=\color{brand}\bfseries,
+  commentstyle=\itshape\color{gray}
+}
+
+\newcommand{\ok}{\textcolor{okgreen}{\textbf{Success}}}
+\newcommand{\fail}{\textcolor{warnred}{\textbf{Fail}}}
+\newcommand{\apipath}[1]{\texttt{#1}}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  {\Large Indian Institute of Technology Madras \par}
+  \vspace{0.2cm}
+  {\large BS in Data Science and Applications \par}
+  \vspace{1.0cm}
+
+  {\LARGE\bfseries Milestone 3 Final Submission \par}
+  \vspace{0.3cm}
+  {\Large API Endpoints, Test Cases, and User Testing \par}
+  \vspace{0.8cm}
+
+  \begin{tabular}{rl}
+    Team: & Group 65 \\
+    Project: & AI Powered Pharmacy Management System \\
+    Sprint Focus: & API design, implementation, documentation, and testing \\
+    Submission Date: & \today
+  \end{tabular}
+
+  \vspace{1.0cm}
+  \begin{tcolorbox}[colback=blue!4,colframe=brand,title=Submission Snapshot]
+    Total backend tests: 97 \\
+    Passed: 97 \\
+    Failed: 0 \\
+    API specification: OpenAPI 3.1 YAML
+  \end{tcolorbox}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Executive Summary}
+This submission covers Sprint 1 and Sprint 2 user story implementation focused on backend API development and validation. The backend APIs are implemented in FastAPI, documented in Swagger compatible YAML, and validated with integration tests using pytest. The frontend now includes an API Docs page at \apipath{/api-docs} that embeds Swagger UI from the backend.
+
+\section{API Exposure Policy}
+\subsection{Should all APIs be public?}
+No. All APIs should not be publicly writable or publicly readable by default.
+
+The correct approach for this project is:
+\begin{itemize}[leftmargin=1.2cm]
+  \item Keep authentication endpoints public for onboarding and login.
+  \item Keep read only informational endpoints public only when needed.
+  \item Keep all business sensitive or user specific endpoints protected with JWT based authorization and role checks.
+\end{itemize}
+
+This policy is already implemented in backend route guards, and is now explicitly documented through the API Docs page and OpenAPI specification.
+
+\subsection{Public vs protected examples}
+\begin{itemize}[leftmargin=1.2cm]
+  \item Public examples: \apipath{/api/auth/register}, \apipath{/api/auth/login}, \apipath{/api/doctors}
+  \item Protected examples: \apipath{/api/orders}, \apipath{/api/cart}, \apipath{/api/staff}, \apipath{/api/customers}, \apipath{/api/inventory}
+\end{itemize}
+
+\section{API Documentation Delivery}
+\subsection{Swagger compatible YAML}
+\begin{itemize}[leftmargin=1.2cm]
+  \item Repository YAML file: \apipath{docs/openapi.yaml}
+  \item OpenAPI version: 3.1.0
+  \item Generated from live FastAPI app to ensure schema and code consistency
+\end{itemize}
+
+\subsection{Web app API Docs page}
+A dedicated API Docs page has been added in the frontend:
+\begin{itemize}[leftmargin=1.2cm]
+  \item Frontend route: \apipath{/api-docs}
+  \item Purpose: Present all API details in Swagger UI format inside the web app
+  \item Data source: Embedded backend Swagger UI from \apipath{http://localhost:8000/docs}
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\textwidth}{\centering
+Optional visual: add screenshot of web app API Docs page here.\\
+Suggested file name: \apipath{api-docs-page.png}
+}}
+\caption{API Docs page in the web application}
+\end{figure}
+
+\section{List of APIs Integrated}
+\begin{longtable}{p{0.27\textwidth}p{0.28\textwidth}p{0.35\textwidth}}
+\toprule
+\textbf{Integrated API} & \textbf{Usage} & \textbf{Code location} \\
+\midrule
+Google Gemini Developer API & Prescription image understanding and structured extraction & \apipath{backend/app/llm.py} \\
+\bottomrule
+\end{longtable}
+
+\section{List of APIs Created}
+\begin{longtable}{p{0.22\textwidth}p{0.72\textwidth}}
+\toprule
+\textbf{Domain} & \textbf{Endpoints} \\
+\midrule
+Authentication & POST \apipath{/api/auth/register}, POST \apipath{/api/auth/login} \\
+User session & GET \apipath{/api/user/me}, GET \apipath{/api/user/logout} \\
+Doctors & GET \apipath{/api/doctors}, GET \apipath{/api/doctors/\{doctor\_id\}} \\
+Appointments & POST \apipath{/api/appointments}, GET \apipath{/api/appointments} \\
+Prescriptions & POST \apipath{/api/prescriptions/create}, GET \apipath{/api/prescriptions}, GET \apipath{/api/prescriptions/\{prescription\_id\}} \\
+Inventory & GET and POST \apipath{/api/inventory}, GET PUT DELETE \apipath{/api/inventory/\{medicine\_id\}} \\
+Orders & GET and POST \apipath{/api/orders}, GET and PUT \apipath{/api/orders/\{order\_id\}} \\
+Cart & GET and POST \apipath{/api/cart}, GET PUT DELETE \apipath{/api/cart/\{cart\_item\_id\}} \\
+Medicine requests & GET and POST \apipath{/api/medicine-requests}, GET and PUT \apipath{/api/medicine-requests/\{request\_id\}} \\
+Staff & GET and POST \apipath{/api/staff}, GET PUT DELETE \apipath{/api/staff/\{staff\_id\}} \\
+Customers & GET \apipath{/api/customers}, GET and PUT \apipath{/api/customers/\{customer\_id\}} \\
+Feedback & GET and POST \apipath{/api/feedback}, GET \apipath{/api/feedback/\{feedback\_id\}} \\
+\bottomrule
+\end{longtable}
+
+\section{Endpoint Description Against Problem Statement}
+\begin{longtable}{p{0.38\textwidth}p{0.54\textwidth}}
+\toprule
+\textbf{Problem statement need} & \textbf{Endpoints supporting it} \\
+\midrule
+User onboarding and secure access & \apipath{/api/auth/register}, \apipath{/api/auth/login}, \apipath{/api/user/me} \\
+Doctor discovery and booking & \apipath{/api/doctors}, \apipath{/api/appointments} \\
+Medicine catalog and stock management & \apipath{/api/inventory} and \apipath{/api/inventory/\{medicine\_id\}} \\
+Shopping cart and order placement & \apipath{/api/cart}, \apipath{/api/orders} \\
+Unavailable medicine request workflow & \apipath{/api/medicine-requests} \\
+Staff and customer administration & \apipath{/api/staff}, \apipath{/api/customers} \\
+Prescription digitization workflow & \apipath{/api/prescriptions/create}, \apipath{/api/prescriptions} \\
+User feedback capture & \apipath{/api/feedback} \\
+\bottomrule
+\end{longtable}
+
+\section{Code for API Implementation}
+\subsection{Backend code locations}
+\begin{itemize}[leftmargin=1.2cm]
+  \item Entry point and router wiring: \apipath{backend/main.py}
+  \item Route implementations: \apipath{backend/app/routes/*.py}
+  \item Data and validation models: \apipath{backend/app/models.py}
+  \item Auth helpers: \apipath{backend/app/auth.py}
+\end{itemize}
+
+\subsection{Frontend API Docs integration snippet}
+\begin{lstlisting}[language=JavaScript,caption={Frontend API Docs route and embedded Swagger UI}]
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const swaggerUrl = `${apiBaseUrl.replace(/\/$/, "")}/docs`;
+
+<iframe title="Backend Swagger UI" src={swaggerUrl} className="h-[78vh] w-full" />
+\end{lstlisting}
+
+\section{Test Cases for API Endpoints}
+Required format:
+
+[ API being tested, Inputs, Expected output, Actual output, Result ]
+
+\subsection{Extensive test case samples}
+\begin{longtable}{p{0.20\textwidth}p{0.20\textwidth}p{0.20\textwidth}p{0.20\textwidth}p{0.12\textwidth}}
+\toprule
+\textbf{API being tested} & \textbf{Inputs} & \textbf{Expected output} & \textbf{Actual output} & \textbf{Result} \\
+\midrule
+POST \apipath{/api/auth/register} & Valid user payload & 200 created user & 200 created user with id & \ok \\
+POST \apipath{/api/auth/login} & Valid credentials & 200 token response & 200 token response & \ok \\
+GET \apipath{/api/inventory} & No token & 401 unauthorized & 401 unauthorized & \ok \\
+POST \apipath{/api/inventory} & Admin with ISO date payload & 200 created medicine & 200 created medicine & \ok \\
+POST \apipath{/api/feedback} & Rating 6 and comment & 422 validation & 422 validation & \ok \\
+POST \apipath{/api/feedback} & Missing comment & 422 validation & 422 validation & \ok \\
+PUT \apipath{/api/customers/\{id\}} & Customer updates own profile & 200 updated profile & 200 updated profile & \ok \\
+PUT \apipath{/api/customers/\{id\}} & Customer updates other profile & 403 forbidden & 403 forbidden & \ok \\
+POST \apipath{/api/prescriptions/create} & Image payload with missing Gemini key & 201 extracted prescription & 500 extraction failure & \fail \\
+\bottomrule
+\end{longtable}
+
+\subsection{Automated pytest status}
+\begin{itemize}[leftmargin=1.2cm]
+  \item Command: \apipath{pytest -q}
+  \item Total tests: 97
+  \item Passed: 97
+  \item Failed: 0
+\end{itemize}
+
+\section{User Testing Feedback and Plan for Next Sprint}
+\subsection{User feedback highlights}
+\begin{itemize}[leftmargin=1.2cm]
+  \item Users appreciated simple login and clear doctor listing.
+  \item Users asked for better user facing messages when AI prescription extraction fails.
+  \item Users requested richer admin pages for inventory and order management in frontend.
+\end{itemize}
+
+\subsection{Next sprint plan}
+\begin{enumerate}[leftmargin=1.2cm]
+  \item Add frontend screens for inventory, orders, and medicine requests.
+  \item Add API health indicator page for environment readiness checks.
+  \item Improve client side error handling with clearer retry guidance.
+  \item Add end to end test flows for critical user journeys.
+  \item Add pagination and filtering support on list endpoints.
+\end{enumerate}
+
+\section{Sprint 1 Deliverables Verification}
+\begin{longtable}{p{0.45\textwidth}p{0.15\textwidth}p{0.30\textwidth}}
+\toprule
+\textbf{Deliverable} & \textbf{Status} & \textbf{Evidence} \\
+\midrule
+Swagger compatible YAML documentation & Completed & \apipath{docs/openapi.yaml} \\
+Proper API test cases & Completed & \apipath{backend/tests} \\
+Test case format with input expected actual output & Completed & This report and \apipath{backend/tests/README.md} \\
+Pytest code submission for APIs & Completed & \apipath{backend/tests/test_*.py} \\
+Showcase mismatch scenario & Completed & Prescription API case in Section 8 \\
+\bottomrule
+\end{longtable}
+
+\section{Conclusion}
+The project now has complete backend API coverage for planned features, synced OpenAPI YAML documentation, a web app API Docs page in Swagger format, and a fully passing backend automated test suite. Public and protected endpoint responsibilities are clearly separated. This submission meets the Milestone 3 requirements for API endpoints, test cases, YAML submission, implementation evidence, and user testing based sprint planning.
+
+\end{document}
