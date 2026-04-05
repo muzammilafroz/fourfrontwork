@@ -8,8 +8,10 @@ from ..models import (
     Appointment,
     AppointmentCreate,
     AppointmentPublic,
+    AppointmentUpdate,
     Doctor,
     User,
+    UserRole,
 )
 from .user_routes import get_current_user
 
@@ -86,9 +88,15 @@ def read_appointments(
     current_user: User = Depends(get_current_user),
 ):
     """
-    Retrieves a list of appointments for the currently authenticated user.
+    * If user is a customer, retrieves a list of appointments for the currently authenticated user.
+    *Tf user is a employee or admin, retrieves all appointments.
     """
-    statement = select(Appointment).where(Appointment.customer_id == current_user.id)
+    if current_user.role != UserRole.CUSTOMER:
+        statement = select(Appointment)
+    else:
+        statement = select(Appointment).where(
+            Appointment.customer_id == current_user.id
+        )
 
     if doctor_id:
         statement = statement.where(Appointment.doctor_id == doctor_id)
@@ -97,25 +105,26 @@ def read_appointments(
     return appointments
 
 
-# @router.patch("/{appointment_id}", response_model=AppointmentPublic)
-# def update_appointment(
-#     appointment_id: int,
-#     appointment_data: AppointmentUpdate,
-#     session: Session = Depends(get_session),
-# ):
-#     db_appointment = session.get(Appointment, appointment_id)
-#     if not db_appointment:
-#         raise HTTPException(status_code=404, detail="Appointment not found")
+@router.patch("/{appointment_id}", response_model=AppointmentPublic)
+def update_appointment(
+    appointment_id: int,
+    appointment_in: AppointmentUpdate,
+    session: Session = Depends(get_session),
+):
+    db_appointment = session.get(Appointment, appointment_id)
+    if not db_appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
 
-#     # Only update fields that were actually provided in the request
-#     data_dict = appointment_data.model_dump(exclude_unset=True)
-#     for key, value in data_dict.items():
-#         setattr(db_appointment, key, value)
+    # Only update fields that were actually provided in the request
+    data_dict = appointment_in.model_dump(exclude_unset=True)
+    for key, value in data_dict.items():
+        setattr(db_appointment, key, value)
 
-#     session.add(db_appointment)
-#     session.commit()
-#     session.refresh(db_appointment)
-#     return db_appointment
+    session.add(db_appointment)
+    session.commit()
+    session.refresh(db_appointment)
+
+    return db_appointment
 
 
 # @router.delete("/{appointment_id}")

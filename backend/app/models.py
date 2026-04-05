@@ -102,6 +102,14 @@ class Medicine(MedicineBase, table=True):
     cart_items: List["CartItem"] = Relationship(back_populates="medicine")
 
 
+class MedicinePublic(MedicineBase):
+    id: int
+
+
+class MedicineCreate(MedicineBase):
+    pass
+
+
 # Orders
 class OrderBase(SQLModel):
     customer_name: str
@@ -206,6 +214,10 @@ class AppointmentPublic(AppointmentBase):
     doctor_id: int
     customer_id: int
     doctor: Optional["DoctorPublic"] = None
+
+
+class AppointmentUpdate(SQLModel):
+    status: AppointmentStatus
 
 
 # Doctors
