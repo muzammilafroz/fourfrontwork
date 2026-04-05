@@ -1,13 +1,15 @@
-import pytest
 from fastapi.testclient import TestClient
 
 
 class TestCustomers:
     """Test cases for /api/customers endpoints"""
 
-    def test_get_customers_admin(self, client: TestClient, auth_headers_admin, db_session):
+    def test_get_customers_admin(
+        self, client: TestClient, auth_headers_admin, db_session
+    ):
         """Test admin can view all customers"""
         from app.models import User, UserRole
+
         customer = User(
             name="Test Customer",
             email="testcustomer@test.com",
@@ -28,7 +30,9 @@ class TestCustomers:
         response = client.get("/api/customers", headers=auth_headers_employee)
         assert response.status_code == 200
 
-    def test_get_customers_customer_forbidden(self, client: TestClient, auth_headers_customer):
+    def test_get_customers_customer_forbidden(
+        self, client: TestClient, auth_headers_customer
+    ):
         """Test customer cannot view all customers"""
         response = client.get("/api/customers", headers=auth_headers_customer)
         assert response.status_code == 403
@@ -38,9 +42,12 @@ class TestCustomers:
         response = client.get("/api/customers")
         assert response.status_code == 401
 
-    def test_get_customer_by_id_admin(self, client: TestClient, auth_headers_admin, db_session):
+    def test_get_customer_by_id_admin(
+        self, client: TestClient, auth_headers_admin, db_session
+    ):
         """Test admin can get specific customer by ID"""
         from app.models import User, UserRole
+
         customer = User(
             name="Specific Customer",
             email="specific@test.com",
@@ -52,13 +59,18 @@ class TestCustomers:
         db_session.commit()
         db_session.refresh(customer)
 
-        response = client.get(f"/api/customers/{customer.id}", headers=auth_headers_admin)
+        response = client.get(
+            f"/api/customers/{customer.id}", headers=auth_headers_admin
+        )
         assert response.status_code == 200
         assert response.json()["email"] == "specific@test.com"
 
-    def test_get_customer_by_id_employee(self, client: TestClient, auth_headers_employee, db_session):
+    def test_get_customer_by_id_employee(
+        self, client: TestClient, auth_headers_employee, db_session
+    ):
         """Test employee can get specific customer by ID"""
         from app.models import User, UserRole
+
         customer = User(
             name="Employee View Customer",
             email="employeeview@test.com",
@@ -70,18 +82,25 @@ class TestCustomers:
         db_session.commit()
         db_session.refresh(customer)
 
-        response = client.get(f"/api/customers/{customer.id}", headers=auth_headers_employee)
+        response = client.get(
+            f"/api/customers/{customer.id}", headers=auth_headers_employee
+        )
         assert response.status_code == 200
 
-    def test_get_customer_by_id_customer_own(self, client: TestClient, auth_headers_customer):
+    def test_get_customer_by_id_customer_own(
+        self, client: TestClient, auth_headers_customer
+    ):
         """Test customer can view their own profile"""
         # Customer ID is 1 based on fixture
         response = client.get("/api/customers/1", headers=auth_headers_customer)
         assert response.status_code == 200
 
-    def test_get_customer_by_id_customer_other_forbidden(self, client: TestClient, auth_headers_customer, db_session):
+    def test_get_customer_by_id_customer_other_forbidden(
+        self, client: TestClient, auth_headers_customer, db_session
+    ):
         """Test customer cannot view other customers' profiles"""
         from app.models import User, UserRole
+
         customer = User(
             name="Other Customer",
             email="other@test.com",
@@ -93,7 +112,9 @@ class TestCustomers:
         db_session.commit()
         db_session.refresh(customer)
 
-        response = client.get(f"/api/customers/{customer.id}", headers=auth_headers_customer)
+        response = client.get(
+            f"/api/customers/{customer.id}", headers=auth_headers_customer
+        )
         assert response.status_code == 403
 
     def test_get_customer_not_found(self, client: TestClient, auth_headers_admin):
@@ -101,9 +122,12 @@ class TestCustomers:
         response = client.get("/api/customers/99999", headers=auth_headers_admin)
         assert response.status_code == 404
 
-    def test_update_customer_admin(self, client: TestClient, auth_headers_admin, db_session):
+    def test_update_customer_admin(
+        self, client: TestClient, auth_headers_admin, db_session
+    ):
         """Test admin can update customer"""
         from app.models import User, UserRole
+
         customer = User(
             name="Original Name",
             email="originalcust@test.com",
@@ -123,9 +147,12 @@ class TestCustomers:
         assert response.status_code == 200
         assert response.json()["name"] == "Updated Name"
 
-    def test_update_customer_self(self, client: TestClient, auth_headers_customer, db_session):
+    def test_update_customer_self(
+        self, client: TestClient, auth_headers_customer, db_session
+    ):
         """Test customer can update their own profile"""
         from app.models import User, UserRole
+
         customer = User(
             name="Self Update",
             email="selfupdate@test.com",
@@ -144,9 +171,12 @@ class TestCustomers:
         )
         assert response.status_code == 200
 
-    def test_update_customer_other_forbidden(self, client: TestClient, auth_headers_customer, db_session):
+    def test_update_customer_other_forbidden(
+        self, client: TestClient, auth_headers_customer, db_session
+    ):
         """Test customer cannot update other customers"""
         from app.models import User, UserRole
+
         customer = User(
             name="Other Customer",
             email="othercust@test.com",

@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 
 
@@ -16,9 +15,12 @@ class TestOrders:
         response = client.get("/api/orders", headers=auth_headers_employee)
         assert response.status_code == 200
 
-    def test_get_orders_customer_only_own(self, client: TestClient, auth_headers_customer, db_session):
+    def test_get_orders_customer_only_own(
+        self, client: TestClient, auth_headers_customer, db_session
+    ):
         """Test customer can only see their own orders"""
         from app.models import Order
+
         order = Order(
             customer_name="Customer User",
             customer_phone="+91-90000-00003",
@@ -38,9 +40,12 @@ class TestOrders:
         response = client.get("/api/orders")
         assert response.status_code == 401
 
-    def test_get_order_by_id_admin(self, client: TestClient, auth_headers_admin, db_session):
+    def test_get_order_by_id_admin(
+        self, client: TestClient, auth_headers_admin, db_session
+    ):
         """Test admin can get any order by ID"""
         from app.models import Order
+
         order = Order(
             customer_name="Test Customer",
             customer_phone="+91-99999-99999",
@@ -55,9 +60,12 @@ class TestOrders:
         assert response.status_code == 200
         assert response.json()["total_price"] == 50.0
 
-    def test_get_order_by_id_customer_own(self, client: TestClient, auth_headers_customer, db_session):
+    def test_get_order_by_id_customer_own(
+        self, client: TestClient, auth_headers_customer, db_session
+    ):
         """Test customer can get their own order by ID"""
         from app.models import Order
+
         order = Order(
             customer_name="Customer User",
             customer_phone="+91-90000-00003",
@@ -71,9 +79,12 @@ class TestOrders:
         response = client.get(f"/api/orders/{order.id}", headers=auth_headers_customer)
         assert response.status_code == 200
 
-    def test_get_order_by_id_customer_other_forbidden(self, client: TestClient, auth_headers_customer, db_session):
+    def test_get_order_by_id_customer_other_forbidden(
+        self, client: TestClient, auth_headers_customer, db_session
+    ):
         """Test customer cannot access other customer's orders"""
         from app.models import Order
+
         order = Order(
             customer_name="Other Customer",
             customer_phone="+91-88888-88888",
@@ -107,7 +118,9 @@ class TestOrders:
         data = response.json()
         assert data["total_price"] == 150.0
 
-    def test_create_order_employee_forbidden(self, client: TestClient, auth_headers_employee):
+    def test_create_order_employee_forbidden(
+        self, client: TestClient, auth_headers_employee
+    ):
         """Test employee cannot create order as customer"""
         response = client.post(
             "/api/orders",
@@ -120,9 +133,12 @@ class TestOrders:
         )
         assert response.status_code == 403
 
-    def test_update_order_admin(self, client: TestClient, auth_headers_admin, db_session):
+    def test_update_order_admin(
+        self, client: TestClient, auth_headers_admin, db_session
+    ):
         """Test admin can update order"""
         from app.models import Order
+
         order = Order(
             customer_name="Test",
             customer_phone="+91-99999-99999",
@@ -141,9 +157,12 @@ class TestOrders:
         assert response.status_code == 200
         assert response.json()["total_price"] == 75.0
 
-    def test_update_order_employee_sets_employee_id(self, client: TestClient, auth_headers_employee, db_session):
+    def test_update_order_employee_sets_employee_id(
+        self, client: TestClient, auth_headers_employee, db_session
+    ):
         """Test employee updating order sets their ID"""
         from app.models import Order
+
         order = Order(
             customer_name="Test",
             customer_phone="+91-99999-99999",
@@ -161,9 +180,12 @@ class TestOrders:
         )
         assert response.status_code == 200
 
-    def test_update_order_customer_forbidden(self, client: TestClient, auth_headers_customer, db_session):
+    def test_update_order_customer_forbidden(
+        self, client: TestClient, auth_headers_customer, db_session
+    ):
         """Test customer cannot update orders"""
         from app.models import Order
+
         order = Order(
             customer_name="Customer User",
             customer_phone="+91-90000-00003",

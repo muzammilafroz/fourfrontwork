@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 
 
@@ -11,12 +10,16 @@ class TestStaff:
         assert response.status_code == 200
         assert isinstance(response.json(), list)
 
-    def test_get_staff_employee_forbidden(self, client: TestClient, auth_headers_employee):
+    def test_get_staff_employee_forbidden(
+        self, client: TestClient, auth_headers_employee
+    ):
         """Test employee cannot view staff list"""
         response = client.get("/api/staff", headers=auth_headers_employee)
         assert response.status_code == 403
 
-    def test_get_staff_customer_forbidden(self, client: TestClient, auth_headers_customer):
+    def test_get_staff_customer_forbidden(
+        self, client: TestClient, auth_headers_customer
+    ):
         """Test customer cannot view staff list"""
         response = client.get("/api/staff", headers=auth_headers_customer)
         assert response.status_code == 403
@@ -26,9 +29,12 @@ class TestStaff:
         response = client.get("/api/staff")
         assert response.status_code == 401
 
-    def test_get_staff_member_by_id_admin(self, client: TestClient, auth_headers_admin, db_session):
+    def test_get_staff_member_by_id_admin(
+        self, client: TestClient, auth_headers_admin, db_session
+    ):
         """Test admin can get specific staff member by ID"""
         from app.models import User, UserRole
+
         staff = User(
             name="Staff Member",
             email="staff@test.com",
@@ -67,7 +73,9 @@ class TestStaff:
         assert data["email"] == "newstaff@test.com"
         assert data["role"] == "employee"
 
-    def test_create_staff_employee_forbidden(self, client: TestClient, auth_headers_employee):
+    def test_create_staff_employee_forbidden(
+        self, client: TestClient, auth_headers_employee
+    ):
         """Test employee cannot create staff"""
         response = client.post(
             "/api/staff",
@@ -81,7 +89,9 @@ class TestStaff:
         )
         assert response.status_code == 403
 
-    def test_create_staff_customer_forbidden(self, client: TestClient, auth_headers_customer):
+    def test_create_staff_customer_forbidden(
+        self, client: TestClient, auth_headers_customer
+    ):
         """Test customer cannot create staff"""
         response = client.post(
             "/api/staff",
@@ -95,9 +105,12 @@ class TestStaff:
         )
         assert response.status_code == 403
 
-    def test_update_staff_admin(self, client: TestClient, auth_headers_admin, db_session):
+    def test_update_staff_admin(
+        self, client: TestClient, auth_headers_admin, db_session
+    ):
         """Test admin can update staff member"""
         from app.models import User, UserRole
+
         staff = User(
             name="Original Name",
             email="original@test.com",
@@ -128,9 +141,12 @@ class TestStaff:
         )
         assert response.status_code == 404
 
-    def test_delete_staff_admin(self, client: TestClient, auth_headers_admin, db_session):
+    def test_delete_staff_admin(
+        self, client: TestClient, auth_headers_admin, db_session
+    ):
         """Test admin can delete staff member"""
         from app.models import User, UserRole
+
         staff = User(
             name="To Delete",
             email="delete@test.com",
@@ -146,9 +162,12 @@ class TestStaff:
         assert response.status_code == 200
         assert response.json()["ok"] is True
 
-    def test_delete_staff_employee_forbidden(self, client: TestClient, auth_headers_employee, db_session):
+    def test_delete_staff_employee_forbidden(
+        self, client: TestClient, auth_headers_employee, db_session
+    ):
         """Test employee cannot delete staff"""
         from app.models import User, UserRole
+
         staff = User(
             name="Test Staff",
             email="testdelete@test.com",
@@ -160,12 +179,17 @@ class TestStaff:
         db_session.commit()
         db_session.refresh(staff)
 
-        response = client.delete(f"/api/staff/{staff.id}", headers=auth_headers_employee)
+        response = client.delete(
+            f"/api/staff/{staff.id}", headers=auth_headers_employee
+        )
         assert response.status_code == 403
 
-    def test_delete_staff_customer_forbidden(self, client: TestClient, auth_headers_customer, db_session):
+    def test_delete_staff_customer_forbidden(
+        self, client: TestClient, auth_headers_customer, db_session
+    ):
         """Test customer cannot delete staff"""
         from app.models import User, UserRole
+
         staff = User(
             name="Test Staff",
             email="testdelete2@test.com",
@@ -177,5 +201,7 @@ class TestStaff:
         db_session.commit()
         db_session.refresh(staff)
 
-        response = client.delete(f"/api/staff/{staff.id}", headers=auth_headers_customer)
+        response = client.delete(
+            f"/api/staff/{staff.id}", headers=auth_headers_customer
+        )
         assert response.status_code == 403

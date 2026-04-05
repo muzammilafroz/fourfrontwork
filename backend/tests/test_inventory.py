@@ -1,5 +1,5 @@
-import pytest
 from datetime import date
+
 from fastapi.testclient import TestClient
 
 
@@ -17,9 +17,12 @@ class TestInventory:
         response = client.get("/api/inventory")
         assert response.status_code == 401
 
-    def test_get_medicine_by_id(self, client: TestClient, auth_headers_admin, db_session):
+    def test_get_medicine_by_id(
+        self, client: TestClient, auth_headers_admin, db_session
+    ):
         """Test getting a specific medicine by ID"""
         from app.models import Medicine
+
         medicine = Medicine(
             name="Paracetamol 500mg",
             composition="Paracetamol",
@@ -32,7 +35,9 @@ class TestInventory:
         db_session.commit()
         db_session.refresh(medicine)
 
-        response = client.get(f"/api/inventory/{medicine.id}", headers=auth_headers_admin)
+        response = client.get(
+            f"/api/inventory/{medicine.id}", headers=auth_headers_admin
+        )
         assert response.status_code == 200
         data = response.json()
         assert data["name"] == "Paracetamol 500mg"
@@ -62,7 +67,9 @@ class TestInventory:
         assert data["name"] == "Aspirin 100mg"
         assert data["stock_quantity"] == 50
 
-    def test_create_medicine_employee_forbidden(self, client: TestClient, auth_headers_employee):
+    def test_create_medicine_employee_forbidden(
+        self, client: TestClient, auth_headers_employee
+    ):
         """Test employee cannot create medicine"""
         response = client.post(
             "/api/inventory",
@@ -78,7 +85,9 @@ class TestInventory:
         )
         assert response.status_code == 403
 
-    def test_create_medicine_customer_forbidden(self, client: TestClient, auth_headers_customer):
+    def test_create_medicine_customer_forbidden(
+        self, client: TestClient, auth_headers_customer
+    ):
         """Test customer cannot create medicine"""
         response = client.post(
             "/api/inventory",
@@ -94,9 +103,12 @@ class TestInventory:
         )
         assert response.status_code == 403
 
-    def test_update_medicine_admin(self, client: TestClient, auth_headers_admin, db_session):
+    def test_update_medicine_admin(
+        self, client: TestClient, auth_headers_admin, db_session
+    ):
         """Test admin can update medicine"""
         from app.models import Medicine
+
         medicine = Medicine(
             name="Original Name",
             composition="Test",
@@ -128,9 +140,12 @@ class TestInventory:
         )
         assert response.status_code == 404
 
-    def test_delete_medicine_admin(self, client: TestClient, auth_headers_admin, db_session):
+    def test_delete_medicine_admin(
+        self, client: TestClient, auth_headers_admin, db_session
+    ):
         """Test admin can delete medicine"""
         from app.models import Medicine
+
         medicine = Medicine(
             name="To Delete",
             composition="Test",
@@ -143,13 +158,18 @@ class TestInventory:
         db_session.commit()
         db_session.refresh(medicine)
 
-        response = client.delete(f"/api/inventory/{medicine.id}", headers=auth_headers_admin)
+        response = client.delete(
+            f"/api/inventory/{medicine.id}", headers=auth_headers_admin
+        )
         assert response.status_code == 200
         assert response.json()["ok"] is True
 
-    def test_delete_medicine_employee_forbidden(self, client: TestClient, auth_headers_employee, db_session):
+    def test_delete_medicine_employee_forbidden(
+        self, client: TestClient, auth_headers_employee, db_session
+    ):
         """Test employee cannot delete medicine"""
         from app.models import Medicine
+
         medicine = Medicine(
             name="Test",
             composition="Test",
@@ -162,5 +182,7 @@ class TestInventory:
         db_session.commit()
         db_session.refresh(medicine)
 
-        response = client.delete(f"/api/inventory/{medicine.id}", headers=auth_headers_employee)
+        response = client.delete(
+            f"/api/inventory/{medicine.id}", headers=auth_headers_employee
+        )
         assert response.status_code == 403

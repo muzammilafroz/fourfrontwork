@@ -109,7 +109,7 @@ class OrderBase(SQLModel):
 
 
 class Order(OrderBase, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: int = Field(default=None, primary_key=True)
 
     customer_id: int = Field(foreign_key="user.id")
     employee_id: Optional[int] = Field(default=None, foreign_key="user.id")
