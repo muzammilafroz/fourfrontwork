@@ -31,7 +31,7 @@ const BookAppointment = () => {
 
   useEffect(() => {
     async function getDoctors() {
-      const url = "http://localhost:8000/doctors";
+      const url = "http://localhost:8000/api/doctors";
 
       try {
         const res = await fetch(url);
@@ -98,7 +98,7 @@ const BookAppointment = () => {
       //   return;
       // }
 
-      const url = "http://localhost:8000/appointments";
+      const url = "http://localhost:8000/api/appointments";
 
       const res = await fetch(url, {
         method: "GET",

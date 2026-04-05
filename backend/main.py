@@ -1,6 +1,6 @@
 import uvicorn
 import yaml
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 
@@ -32,19 +32,23 @@ def on_startup():
 
 
 # Include Routers
-app.include_router(auth_routes.router)
-app.include_router(user_routes.router)
-app.include_router(prescription_routes.router)
-app.include_router(doctor_routes.router)
-app.include_router(appointment_routes.router)
+api_router = APIRouter(prefix="/api")
 
-app.include_router(inventory_routes.router)
-app.include_router(order_routes.router)
-app.include_router(cart_routes.router)
-app.include_router(medicine_request_routes.router)
-app.include_router(staff_routes.router)
-app.include_router(customer_routes.router)
-app.include_router(feedback_routes.router)
+api_router.include_router(auth_routes.router)
+api_router.include_router(user_routes.router)
+api_router.include_router(prescription_routes.router)
+api_router.include_router(doctor_routes.router)
+api_router.include_router(appointment_routes.router)
+
+api_router.include_router(inventory_routes.router)
+api_router.include_router(order_routes.router)
+api_router.include_router(cart_routes.router)
+api_router.include_router(medicine_request_routes.router)
+api_router.include_router(staff_routes.router)
+api_router.include_router(customer_routes.router)
+api_router.include_router(feedback_routes.router)
+
+app.include_router(api_router)
 
 # Disable CORS Error
 origins = ["http://localhost:8080"]

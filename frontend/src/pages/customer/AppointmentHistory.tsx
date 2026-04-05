@@ -24,7 +24,7 @@ const AppointmentHistory = () => {
     //   });
 
     async function getAppointments() {
-      const url = "http://localhost:8000/appointments";
+      const url = "http://localhost:8000/api/appointments";
 
       const res = await fetch(url, {
         method: "GET",

@@ -71,7 +71,7 @@ const PrescriptionReader = () => {
     checkTokenExpiry();
 
     async function getCustomerPrescriptions() {
-      const url = "http://localhost:8000/prescriptions";
+      const url = "http://localhost:8000/api/prescriptions";
 
       try {
         const res = await fetch(url, {
@@ -147,7 +147,7 @@ const PrescriptionReader = () => {
 
       // Save prescription image.
       async function uploadPrescription(base64Image: string) {
-        const url = "http://localhost:8000/prescriptions/create";
+        const url = "http://localhost:8000/api/prescriptions/create";
 
         try {
           const payload = {

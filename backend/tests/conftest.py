@@ -2,11 +2,10 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
 
-from main import app
+from app.auth import get_password_hash
 from app.database import get_session
 from app.models import User, UserRole
-from app.auth import get_password_hash
-
+from main import app
 
 TEST_DATABASE_URL = "sqlite:///./test.db"
 
@@ -32,21 +31,6 @@ def client(db_session):
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
-
-
-@pytest.fixture
-def admin_user(db_session: Session):
-    user = User(
-        name="Admin User",
-        email="admin@test.com",
-        phone="+91-90000-00001",
-        role=UserRole.ADMIN,
-        hashed_password=get_password_hash("admin123"),
-    )
-    db_session.add(user)
-    db_session.commit()
-    db_session.refresh(user)
-    return user
 
 
 @pytest.fixture

@@ -14,7 +14,7 @@ const CustomerDoctors = () => {
 
   useEffect(() => {
     async function getDoctors() {
-      const url = "http://localhost:8000/doctors";
+      const url = "http://localhost:8000/api/doctors";
 
       try {
         const res = await fetch(url);
