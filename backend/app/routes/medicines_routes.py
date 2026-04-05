@@ -10,6 +10,7 @@ from ..models import (
     MedicinePublic,
     # MedicineUpdate,
     User,
+    UserRole,
 )
 from .user_routes import get_current_user
 
@@ -30,11 +31,14 @@ def create_medicine(
     current_user: User = Depends(get_current_user),
 ):
     db_medicine = Medicine.model_validate(medicine_in)
-    if current_user.role in ("employee", "admin"):
-        raise HTTPException(status_code=403, detail="Only admins can add medicines")
+
+    if current_user.role == UserRole.CUSTOMER:
+        raise HTTPException(status_code=403, detail="Only staff can add medicines")
+
     session.add(db_medicine)
     session.commit()
     session.refresh(db_medicine)
+
     return db_medicine
 
 
