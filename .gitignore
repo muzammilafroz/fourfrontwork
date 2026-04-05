@@ -287,3 +287,11 @@ dist-ssr
 
 # Custom
 uploads/
+
+# LaTeX build artifacts
+*.aux
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
