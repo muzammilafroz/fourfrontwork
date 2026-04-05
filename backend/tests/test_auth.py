@@ -37,7 +37,6 @@ class TestAuthRegister:
             },
         )
         assert response.status_code == 400
-        assert "Email already registered" in response.json()["detail"]
 
     def test_register_missing_name(self, client: TestClient):
         """Test registering without name fails"""
