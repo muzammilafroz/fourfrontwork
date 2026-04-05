@@ -28,14 +28,14 @@ The following are some API routes used in our application.
 | POST | `/api/orders` | Create new order |
 | PUT | `/api/orders/{id}` | Update order status |
 
-### Carts (`/api/carts`)
+### Cart (`/api/cart`)
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/carts` | Get user's cart |
-| POST | `/api/carts` | Add item to cart |
-| PUT | `/api/carts/{id}` | Update cart item |
-| DELETE | `/api/carts/{id}` | Remove cart item |
+| GET | `/api/cart` | Get user's cart |
+| POST | `/api/cart` | Add item to cart |
+| PUT | `/api/cart/{id}` | Update cart item |
+| DELETE | `/api/cart/{id}` | Remove cart item |
 
 ### Medicine Requests (`/api/medicine-requests`)
 
