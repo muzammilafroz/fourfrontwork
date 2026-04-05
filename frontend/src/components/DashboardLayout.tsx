@@ -15,7 +15,7 @@ const customerLinks = [
   { to: '/customer/appointments', label: 'My Appointments', icon: ClipboardList },
   { to: '/customer/orders', label: 'Track Orders', icon: ShoppingCart },
   { to: '/customer/prescription', label: 'Prescription Reader', icon: FileText },
-  { to: '/customer/ask-mochi', label: 'Ask Mochi 🤖', icon: MessageCircle },
+  { to: '/customer/ask-mochi', label: 'Ask Mochi', icon: MessageCircle },
   { to: '/customer/feedback', label: 'Feedback', icon: Star },
 ];
 
@@ -26,7 +26,7 @@ const employeeLinks = [
   { to: '/employee/preorders', label: 'Preorder Requests', icon: ClipboardList },
   { to: '/employee/create-order', label: 'Create Order', icon: Receipt },
   { to: '/employee/prescription', label: 'Prescription Reader', icon: FileText },
-  { to: '/employee/ask-mochi', label: 'Ask Mochi 🤖', icon: MessageCircle },
+  { to: '/employee/ask-mochi', label: 'Ask Mochi', icon: MessageCircle },
 ];
 
 const ownerLinks = [
@@ -40,7 +40,7 @@ const ownerLinks = [
   { to: '/owner/medicine-requests', label: 'Medicine Requests', icon: ClipboardList },
   { to: '/owner/feedback', label: 'Feedback', icon: MessageSquare },
   { to: '/owner/prescription', label: 'Prescription Reader', icon: FileText },
-  { to: '/owner/ask-mochi', label: 'Ask Mochi 🤖', icon: MessageCircle },
+  { to: '/owner/ask-mochi', label: 'Ask Mochi', icon: MessageCircle },
 ];
 
 export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
