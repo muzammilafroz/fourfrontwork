@@ -5,7 +5,7 @@ from sqlmodel import Session
 from ..auth import create_access_token, verify_password
 from ..crud import create_user, get_user_by_email
 from ..database import get_session
-from ..models import TokenPublic, UserCreate, UserPublic
+from ..models import TokenPublic, UserCreate, UserPublic, UserStatus
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -29,7 +29,10 @@ def login(
     user = get_user_by_email(session, email)
 
     if (not user) or (not verify_password(form_data.password, user.hashed_password)):
-        raise HTTPException(status_code=400, detail="Incorrect username or password.")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect username or password.")
+
+    if user.status == UserStatus.INACTIVE:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Your account is inactive. Please contact admin.")
 
     access_token = create_access_token(
         data={

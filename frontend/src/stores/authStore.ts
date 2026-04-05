@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { jwtDecode } from "jwt-decode"; // Correct import for v4+
+import { jwtDecode } from "jwt-decode";
 
 export interface AuthUser {
   user_id: number;
@@ -17,7 +17,7 @@ interface AuthState {
   isAuthenticated: boolean;
   login: (user: AuthUser) => void;
   logout: () => void;
-  checkTokenExpiry: () => void; // New helper
+  checkTokenExpiry: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -25,15 +25,30 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       isAuthenticated: false,
-      login: (user) => set({ user, isAuthenticated: true }),
+
+      login: (user) => {
+        if (user.status === "inactive") {
+          // Prevent login for inactive users
+          console.error("Login failed: User is inactive");
+          return;
+        }
+        set({ user, isAuthenticated: true });
+      },
+
       logout: () => {
         set({ user: null, isAuthenticated: false });
-        // localStorage.removeItem("medease-auth");
         window.location.href = "/";
       },
+
       checkTokenExpiry: () => {
         const user = get().user;
-        if (!user || !user.auth_token) return;
+        if (!user) return;
+
+        // Force logout if user is found to be inactive
+        if (user.status === "inactive") {
+          get().logout();
+          return;
+        }
 
         try {
           const decoded: any = jwtDecode(user.auth_token);

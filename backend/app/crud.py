@@ -6,7 +6,7 @@ from pathlib import Path
 from sqlmodel import Session, select
 
 from .auth import get_password_hash
-from .models import User, UserCreate
+from .models import User, UserCreate, UserRole, UserStatus
 
 
 def save_base64_image(base64_str: str, upload_dir: Path = Path("uploads")) -> str:
@@ -63,7 +63,11 @@ def create_user(session: Session, user_in: UserCreate):
         email=user_in.email,
         phone=user_in.phone,
         hashed_password=hashed_password,
+        role=user_in.role,
     )
+
+    if user_in.role == UserRole.EMPLOYEE:
+        user.status = UserStatus.INACTIVE
 
     session.add(user)
     session.commit()

@@ -25,12 +25,19 @@ class AppointmentStatus(str, Enum):
     COMPLETED = "completed"
 
 
+class UserStatus(str, Enum):
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+    SUSPENDED = "suspended"
+
+
 # Users
 class UserBase(SQLModel):
     name: str
     email: str = Field(index=True, unique=True)
     phone: str
     role: UserRole = Field(default=UserRole.CUSTOMER)
+    status: UserStatus = Field(default=UserStatus.ACTIVE)
 
 
 class User(UserBase, table=True):
@@ -68,6 +75,7 @@ class UserPublic(UserBase):
     id: int
 
 
+# JavaScript Web Token (JWT)
 class Token(SQLModel):
     access_token: str
     token_type: str

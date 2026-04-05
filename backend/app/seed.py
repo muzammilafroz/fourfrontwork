@@ -2,7 +2,7 @@ from sqlmodel import Session, select
 
 from .crud import get_password_hash
 from .database import engine
-from .models import Doctor, User
+from .models import Doctor, User, UserRole
 
 
 def seed_data():
@@ -14,16 +14,32 @@ def seed_data():
             return
 
         # Dummy users
-        user = User(
-            name="Yogi Kumar",
-            email="yogi@kumar.com",
-            phone="9827283360",
-            hashed_password=get_password_hash("yogi_kumar"),
-        )
+        users = [
+            User(
+                name="Admin",
+                email="admin@medease.com",
+                phone="1234567890",
+                hashed_password=get_password_hash("admin"),
+                role=UserRole.ADMIN,
+            ),
+            User(
+                name="Yogi Kumar",
+                email="yogi@gmail.com",
+                phone="9827283360",
+                hashed_password=get_password_hash("yogi"),
+                role=UserRole.CUSTOMER,
+            ),
+            User(
+                name="Anjali Sharma",
+                email="anjali@gmail.com",
+                phone="8869626614",
+                hashed_password=get_password_hash("anjali"),
+                role=UserRole.EMPLOYEE,
+            ),
+        ]
 
-        session.add(user)
+        session.add_all(users)
         session.commit()
-        session.refresh(user)
 
         # Dummy doctors
         doctors = [

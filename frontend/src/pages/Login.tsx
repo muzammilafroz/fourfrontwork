@@ -42,8 +42,8 @@ const Login = () => {
       if (!res.ok) {
         throw new Error(data.detail || "Login failed.");
       }
-      console.log("Success:", data);
 
+      console.log("Success:", data);
       toast.success(`Welcome back, ${data.user.name}!`);
 
       login({
@@ -52,13 +52,13 @@ const Login = () => {
         email: data.user.email,
         role: data.user.role,
         phone: data.user.phone,
-        status: "active",
+        status: data.user.status,
         auth_token: data.access_token,
       });
 
       const redirectPath =
-        data.user.role === "owner"
-          ? "/owner/overview"
+        data.user.role === "admin"
+          ? "/admin/overview"
           : data.user.role === "employee"
             ? "/employee/medicines"
             : "/customer/doctors";
@@ -66,6 +66,8 @@ const Login = () => {
       navigate(redirectPath);
     } catch (err) {
       toast.error(err.message || "Login failed.");
+      // setTimeout(() => navigate("/"), 2000);
+      navigate("/");
     } finally {
       setLoading(false);
     }
