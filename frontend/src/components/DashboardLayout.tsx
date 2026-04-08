@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import {
@@ -113,6 +113,9 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
           </Button>
           <div className="hidden md:block" />
           <div className="flex items-center gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link to="/developer-apis">API Docs</Link>
+            </Button>
             <ThemeToggle />
           </div>
         </header>

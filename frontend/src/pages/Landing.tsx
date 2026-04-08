@@ -87,6 +87,9 @@ const Landing = () => {
         </div>
         <div className="flex items-center gap-3">
           <ThemeToggle />
+          <Link to="/developer-apis">
+            <Button variant="outline">API Docs</Button>
+          </Link>
           {isAuthenticated ? (
             <Link to={dashPath}>
               <Button>Dashboard</Button>

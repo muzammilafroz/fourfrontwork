@@ -10,6 +10,7 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ApiDocs from "./pages/ApiDocs";
 import NotFound from "./pages/NotFound";
 import PrescriptionReader from "./pages/PrescriptionReader";
 
@@ -60,6 +61,7 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/developer-apis" element={<ApiDocs />} />
           {/*<Route path="/prescription-reader" element={<PrescriptionReader />} />*/}
 
           {/* Customer */}
