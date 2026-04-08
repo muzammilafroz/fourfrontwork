@@ -67,8 +67,8 @@ const steps = [
 const Landing = () => {
   const { isAuthenticated, user } = useAuthStore();
   const dashPath =
-    user?.role === "owner"
-      ? "/owner/overview"
+    user?.role === "admin"
+      ? "/admin/overview"
       : user?.role === "employee"
         ? "/employee/medicines"
         : "/customer/doctors";
@@ -165,7 +165,7 @@ const Landing = () => {
             </h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
               A comprehensive pharmacy ecosystem designed for customers,
-              employees, and owners.
+              employees, and admins.
             </p>
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
