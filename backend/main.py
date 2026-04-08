@@ -16,6 +16,7 @@ from app.routes import (
     medicine_request_routes,
     medicines_routes,
     order_routes,
+    overview_routes,
     prescription_routes,
     staff_routes,
     user_routes,
@@ -41,6 +42,7 @@ api_router.include_router(prescription_routes.router)
 api_router.include_router(doctor_routes.router)
 api_router.include_router(appointment_routes.router)
 api_router.include_router(medicines_routes.router)
+api_router.include_router(overview_routes.router)
 
 api_router.include_router(inventory_routes.router)
 api_router.include_router(order_routes.router)

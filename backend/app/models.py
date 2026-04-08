@@ -3,6 +3,8 @@ from enum import Enum
 from typing import List, Optional
 
 from pydantic import EmailStr
+from sqlalchemy import Column
+from sqlalchemy import Enum as SAEnum
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -30,6 +32,11 @@ class UserStatus(str, Enum):
     ACTIVE = "active"
     INACTIVE = "inactive"
     SUSPENDED = "suspended"
+
+
+class PaymentStatus(str, Enum):
+    PAID = "paid"
+    PENDING = "pending"
 
 
 # Users
@@ -114,8 +121,11 @@ class MedicineCreate(MedicineBase):
 class OrderBase(SQLModel):
     customer_name: str
     customer_phone: str
-    total_price: float
+    # total_price: float
     order_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    payment_status: PaymentStatus = Field(
+        sa_column=Column(SAEnum(PaymentStatus)), default=PaymentStatus.PAID
+    )
 
 
 class Order(OrderBase, table=True):
@@ -136,6 +146,11 @@ class Order(OrderBase, table=True):
     cart_items: List["CartItem"] = Relationship(back_populates="order")
 
 
+class OrderPublic(OrderBase):
+    id: int
+    cart_items: List["CartItemPublic"]
+
+
 # Cart Items
 class CartItemBase(SQLModel):
     quantity: int
@@ -153,12 +168,18 @@ class CartItem(CartItemBase, table=True):
     medicine: "Medicine" = Relationship(back_populates="cart_items")
 
 
+class CartItemPublic(CartItemBase):
+    medicine: MedicinePublic
+
+
 # Medicine Requests
 class MedicineRequestBase(SQLModel):
     medicine_name: str
     composition: str
     requested_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    status: RequestStatus = Field(default=RequestStatus.PENDING)
+    status: RequestStatus = Field(
+        sa_column=Column(SAEnum(RequestStatus)), default=RequestStatus.PENDING
+    )
 
 
 class MedicineRequest(MedicineRequestBase, table=True):
@@ -193,7 +214,9 @@ class AppointmentBase(SQLModel):
     patient_phone: str
     appointment_date: date
     appointment_time: time
-    status: AppointmentStatus = Field(default=AppointmentStatus.SCHEDULED)
+    status: AppointmentStatus = Field(
+        sa_column=Column(SAEnum(AppointmentStatus)), default=AppointmentStatus.SCHEDULED
+    )
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     visit_fee: float
 
