@@ -4,13 +4,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
 
 from ..database import get_session
-from ..models import Order, User, UserRole
+from ..models import Order, OrderPublic, User, UserRole
 from .user_routes import get_current_user
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
 
-@router.get("", response_model=List[Order])
+@router.get("", response_model=List[OrderPublic])
 def read_orders(
     *,
     session=Depends(get_session),
