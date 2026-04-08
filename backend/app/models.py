@@ -239,6 +239,18 @@ class DoctorPublic(DoctorBase):
     # appointments: List[AppointmentPublic] = []
 
 
+class DoctorCreate(DoctorBase):
+    pass
+
+
+class DoctorUpdate(SQLModel):
+    name: Optional[str] = None
+    specialization: Optional[str] = None
+    available_days: Optional[str] = None
+    available_time: Optional[str] = None
+    consultation_fee: Optional[float] = None
+
+
 # Feedback
 class FeedbackBase(SQLModel):
     rating: int = Field(ge=1, le=5)  # Added validation for 1-5 stars
