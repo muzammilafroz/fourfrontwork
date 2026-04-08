@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from jose import JWTError, jwt
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from ..auth import oauth2_scheme
 from ..config import settings
 from ..crud import get_user_by_email
 from ..database import get_session
-from ..models import Message, User, UserPublic
+from ..models import Message, User, UserPublic, UserRole, UserStatus
 
 router = APIRouter(prefix="/user", tags=["Users"])
 
@@ -85,3 +85,80 @@ def read_users_me(current_user: User = Depends(get_current_user)):
     Returns the user object retrieved by the 'get_current_user' dependency.
     """
     return current_user
+
+
+@router.get(
+    "/all",
+    response_model=list[UserPublic],
+    summary="List all users",
+    description="Retrieves a list of all users in the system. This endpoint is typically restricted to admin users.",
+    responses={
+        200: {
+            "model": list[UserPublic],
+            "description": "A list of user profiles.",
+        },
+        401: {
+            "model": Message,
+            "description": "Unauthorized - Token is invalid or expired.",
+        },
+    },
+)
+def read_all_users(
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Retrieves all users from the database. Access may be restricted based on user roles.
+    """
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Not authorized to view all users")
+
+    # select all except admin
+    # users = session.exec(select(User).where(User.role != UserRole.ADMIN)).all()
+    users = session.exec(select(User)).all()
+    return users
+
+
+# Update a user's status to suspended or active.
+@router.put(
+    "/{user_id}/status",
+    response_model=Message,
+    summary="Block a user",
+    description="Blocks a user by setting their status to 'blocked'. Only admin users can perform this action.",
+    responses={
+        200: {
+            "model": Message,
+            "description": "User blocked successfully.",
+        },
+        401: {
+            "model": Message,
+            "description": "Unauthorized - Token is invalid or expired.",
+        },
+    },
+)
+def block_user(
+    user_id: int,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Blocks a user by updating their status in the database. Only accessible to admin users.
+    """
+    if current_user.role != UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Not authorized to block users")
+
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if user.role == UserRole.ADMIN:
+        raise HTTPException(status_code=403, detail="Cannot block an admin user")
+
+    if user.status == UserStatus.SUSPENDED:
+        user.status = UserStatus.ACTIVE
+    else:
+        user.status = UserStatus.SUSPENDED
+
+    session.add(user)
+    session.commit()
+    return {"detail": f"User with ID {user_id}'s status has been updated."}
