@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 
 from .crud import get_password_hash
 from .database import engine
-from .models import Doctor, Medicine, User, UserRole
+from .models import CartItem, Doctor, Medicine, Order, User, UserRole
 
 
 def seed_data():
@@ -16,6 +16,45 @@ def seed_data():
             return
 
         # Dummy users
+        customers = [
+            User(
+                name="Yogi Kumar",
+                email="yogi.kumar@gmail.com",
+                phone="9827283360",
+                hashed_password=get_password_hash("yogi"),
+                role=UserRole.CUSTOMER,
+            ),
+            User(
+                name="Rahul Verma",
+                email="rahul.verma@gmail.com",
+                phone="9012345678",
+                hashed_password=get_password_hash("rahul"),
+                role=UserRole.CUSTOMER,
+            ),
+            User(
+                name="Sneha Patel",
+                email="sneha.patel@yahoo.com",
+                phone="9123456780",
+                hashed_password=get_password_hash("sneha"),
+                role=UserRole.CUSTOMER,
+            ),
+        ]
+        employees = [
+            User(
+                name="Anjali Sharma",
+                email="anjali.sharma@medease.com",
+                phone="8869626614",
+                hashed_password=get_password_hash("anjali"),
+                role=UserRole.EMPLOYEE,
+            ),
+            User(
+                name="Priya Nair",
+                email="priya.nair@medease.com",
+                phone="9345678123",
+                hashed_password=get_password_hash("priya"),
+                role=UserRole.EMPLOYEE,
+            ),
+        ]
         users = [
             User(
                 name="Admin",
@@ -24,24 +63,16 @@ def seed_data():
                 hashed_password=get_password_hash("admin"),
                 role=UserRole.ADMIN,
             ),
-            User(
-                name="Yogi Kumar",
-                email="yogi@gmail.com",
-                phone="9827283360",
-                hashed_password=get_password_hash("yogi"),
-                role=UserRole.CUSTOMER,
-            ),
-            User(
-                name="Anjali Sharma",
-                email="anjali@gmail.com",
-                phone="8869626614",
-                hashed_password=get_password_hash("anjali"),
-                role=UserRole.EMPLOYEE,
-            ),
+            *customers,
+            *employees,
         ]
 
         session.add_all(users)
         session.commit()
+
+        session.refresh(users[0])
+        session.refresh(users[1])
+        session.refresh(users[4])
 
         # Dummy doctors
         doctors = [
@@ -92,7 +123,7 @@ def seed_data():
                 composition="Paracetamol 650mg",
                 brand="Micro Labs Ltd",
                 price=30.50,
-                stock_quantity=500,
+                stock_quantity=50,
                 expiry_date=date(2026, 5, 20),
             ),
             Medicine(
@@ -124,7 +155,7 @@ def seed_data():
                 composition="Metformin 500mg",
                 brand="USV Pvt Ltd",
                 price=24.25,
-                stock_quantity=600,
+                stock_quantity=60,
                 expiry_date=date(2027, 1, 5),
             ),
             Medicine(
@@ -140,7 +171,7 @@ def seed_data():
                 composition="Vitamin C (Ascorbic Acid) 500mg",
                 brand="Abbott India",
                 price=23.10,
-                stock_quantity=1000,
+                stock_quantity=100,
                 expiry_date=date(2027, 6, 1),
             ),
             Medicine(
@@ -330,6 +361,37 @@ def seed_data():
         ]
 
         session.add_all(medicines)
+        session.commit()
+        session.refresh(medicines[0])
+        session.refresh(medicines[1])
+
+        orders = [
+            Order(
+                customer_name=customers[0].name,
+                customer_phone=customers[0].phone,
+                # total_price=23.75,
+                customer_id=customers[0].id,
+                employee_id=employees[0].id,
+            )
+        ]
+        session.add_all(orders)
+        session.commit()
+
+        items = [
+            CartItem(
+                order_id=orders[0].id,
+                medicine_id=medicines[0].id,
+                quantity=2,
+                price=medicines[0].price,
+            ),
+            CartItem(
+                order_id=orders[0].id,
+                medicine_id=medicines[1].id,
+                quantity=1,
+                price=medicines[1].price,
+            ),
+        ]
+        session.add_all(items)
         session.commit()
 
         print("Dummy data inserted.")
