@@ -70,6 +70,28 @@ def read_medicines(
     return medicines
 
 
+@router.delete(
+    "/{medicine_id}",
+    summary="Delete a medicine",
+    description="Deletes a medicine from the inventory. Typically restricted to Admin users.",
+)
+def delete_medicine(
+    medicine_id: int,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    if current_user.role == UserRole.CUSTOMER:
+        raise HTTPException(status_code=403, detail="Only staff can delete medicines")
+
+    medicine = session.get(Medicine, medicine_id)
+    if not medicine:
+        raise HTTPException(status_code=404, detail="Medicine not found")
+
+    session.delete(medicine)
+    session.commit()
+    return {"ok": True}
+
+
 # @router.get(
 #     "/{medicine_id}", response_model=MedicinePublic, summary="Get medicine by ID"
 # )
@@ -80,28 +102,28 @@ def read_medicines(
 #     return medicine
 
 
-# @router.patch(
-#     "/{medicine_id}", response_model=MedicinePublic, summary="Update medicine details"
-# )
-# def update_medicine(
-#     *,
-#     session: Session = Depends(get_session),
-#     medicine_id: int,
-#     medicine_in: MedicineUpdate,
-# ):
-#     db_medicine = session.get(Medicine, medicine_id)
-#     if not db_medicine:
-#         raise HTTPException(status_code=404, detail="Medicine not found")
+@router.put(
+    "/{medicine_id}", response_model=MedicinePublic, summary="Update medicine details"
+)
+def update_medicine(
+    *,
+    session: Session = Depends(get_session),
+    medicine_id: int,
+    medicine_in: MedicineCreate,
+):
+    db_medicine = session.get(Medicine, medicine_id)
+    if not db_medicine:
+        raise HTTPException(status_code=404, detail="Medicine not found")
 
-#     # Convert input data to dict, excluding fields not set by the user
-#     medicine_data = medicine_in.model_dump(exclude_unset=True)
-#     for key, value in medicine_data.items():
-#         setattr(db_medicine, key, value)
+    # Convert input data to dict, excluding fields not set by the user
+    medicine_data = medicine_in.model_dump(exclude_unset=True)
+    for key, value in medicine_data.items():
+        setattr(db_medicine, key, value)
 
-#     session.add(db_medicine)
-#     session.commit()
-#     session.refresh(db_medicine)
-#     return db_medicine
+    session.add(db_medicine)
+    session.commit()
+    session.refresh(db_medicine)
+    return db_medicine
 
 
 # @router.delete("/{medicine_id}", summary="Delete a medicine")

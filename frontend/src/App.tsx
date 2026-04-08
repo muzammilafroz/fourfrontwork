@@ -13,7 +13,7 @@ import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import PrescriptionReader from "./pages/PrescriptionReader";
 
-// // Customer
+// Customer
 import CustomerDoctors from "./pages/customer/Doctors";
 import BookAppointment from "./pages/customer/BookAppointment";
 import AppointmentHistory from "./pages/customer/AppointmentHistory";
@@ -21,7 +21,7 @@ import AppointmentHistory from "./pages/customer/AppointmentHistory";
 // import CustomerAskMochi from "./pages/customer/AskMochi";
 // import CustomerFeedback from "./pages/customer/Feedback";
 
-// // Employee
+// Employee
 import MedicineSearch from "./pages/employee/MedicineSearch";
 import AddMedicine from "./pages/employee/AddMedicine";
 import EmployeeAppointments from "./pages/employee/Appointments";
@@ -29,18 +29,18 @@ import EmployeeAppointments from "./pages/employee/Appointments";
 // import CreateOrder from "./pages/employee/CreateOrder";
 // import EmployeeAskMochi from "./pages/employee/AskMochi";
 
-// // Owner
-// import Overview from "./pages/owner/Overview";
-// import Sales from "./pages/owner/Sales";
-// import Inventory from "./pages/owner/Inventory";
-// import DoctorsManagement from "./pages/owner/Doctors";
-// import EmployeeRequests from "./pages/owner/EmployeeRequests";
-// import UserManagement from "./pages/owner/Users";
-// import OwnerAppointments from "./pages/owner/Appointments";
-// import MedicineRequests from "./pages/owner/MedicineRequests";
-// import OwnerFeedback from "./pages/owner/Feedback";
-// import OwnerAskMochi from "./pages/owner/AskMochi";
-// import OwnerPrescriptionReader from "./pages/owner/PrescriptionReader";
+// Admin
+import Overview from "./pages/admin/Overview";
+import Sales from "./pages/admin/Sales";
+import Inventory from "./pages/admin/Inventory";
+import DoctorsManagement from "./pages/admin/Doctors";
+import EmployeeRequests from "./pages/admin/EmployeeRequests";
+import UserManagement from "./pages/admin/Users";
+import AdminAppointments from "./pages/admin/Appointments";
+// import MedicineRequests from "./pages/admin/MedicineRequests";
+// import adminFeedback from "./pages/admin/Feedback";
+// import adminAskMochi from "./pages/admin/AskMochi";
+// import adminPrescriptionReader from "./pages/admin/PrescriptionReader";
 
 const queryClient = new QueryClient();
 
@@ -79,18 +79,19 @@ const App = () => (
           <Route path="/employee/prescription" element={<Dash roles={['employee']}><PrescriptionReader /></Dash>} />
           {/*<Route path="/employee/ask-mochi" element={<Dash roles={['employee']}><EmployeeAskMochi /></Dash>} />*/}
 
-          {/* Owner */}
-          {/*<Route path="/owner/overview" element={<Dash roles={['owner']}><Overview /></Dash>} />
-          <Route path="/owner/sales" element={<Dash roles={['owner']}><Sales /></Dash>} />
-          <Route path="/owner/inventory" element={<Dash roles={['owner']}><Inventory /></Dash>} />
-          <Route path="/owner/doctors" element={<Dash roles={['owner']}><DoctorsManagement /></Dash>} />
-          <Route path="/owner/employee-requests" element={<Dash roles={['owner']}><EmployeeRequests /></Dash>} />
-          <Route path="/owner/users" element={<Dash roles={['owner']}><UserManagement /></Dash>} />
-          <Route path="/owner/appointments" element={<Dash roles={['owner']}><OwnerAppointments /></Dash>} />
-          <Route path="/owner/medicine-requests" element={<Dash roles={['owner']}><MedicineRequests /></Dash>} />
-          <Route path="/owner/feedback" element={<Dash roles={['owner']}><OwnerFeedback /></Dash>} />
-          <Route path="/owner/prescription" element={<Dash roles={['owner']}><OwnerPrescriptionReader /></Dash>} />
-          <Route path="/owner/ask-mochi" element={<Dash roles={['owner']}><OwnerAskMochi /></Dash>} />*/}
+          {/* Admin */}
+          <Route path="/admin/overview" element={<Dash roles={['admin']}><Overview /></Dash>} />
+          <Route path="/admin/sales" element={<Dash roles={['admin']}><Sales /></Dash>} />
+          <Route path="/admin/inventory" element={<Dash roles={['admin']}><Inventory /></Dash>} />
+          <Route path="/admin/doctors" element={<Dash roles={['admin']}><DoctorsManagement /></Dash>} />
+          <Route path="/admin/employee-requests" element={<Dash roles={['admin']}><EmployeeRequests /></Dash>} />
+          <Route path="/admin/users" element={<Dash roles={['admin']}><UserManagement /></Dash>} />
+          <Route path="/admin/appointments" element={<Dash roles={['admin']}><AdminAppointments /></Dash>} />
+          {/*<Route path="/admin/medicine-requests" element={<Dash roles={['admin']}><MedicineRequests /></Dash>} />*/}
+          {/*<Route path="/admin/feedback" element={<Dash roles={['admin']}><adminFeedback /></Dash>} />*/}
+           <Route path="/admin/prescription" element={<Dash roles={['admin']}><PrescriptionReader /></Dash>} />
+          {/*<Route path="/admin/prescription" element={<Dash roles={['admin']}><adminPrescriptionReader /></Dash>} />*/}
+          {/*<Route path="/admin/ask-mochi" element={<Dash roles={['admin']}><adminAskMochi /></Dash>} />*/}
 
           <Route path="*" element={<NotFound />} />
         </Routes>

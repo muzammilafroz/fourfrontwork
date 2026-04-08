@@ -32,7 +32,7 @@ Define:
 
 ## Funcational Expectations
 
-* At least two distinct user roles (e.g. owner, employee, manager).
+* At least two distinct user roles (e.g. admin, employee, manager).
 * Manage multiple interrelated workflows:
     * Orders
     * Inventory

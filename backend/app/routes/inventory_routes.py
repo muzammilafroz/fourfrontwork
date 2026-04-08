@@ -1,5 +1,4 @@
-from datetime import date
-from typing import List, Optional
+from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select

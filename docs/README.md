@@ -1,6 +1,6 @@
 # OnePharma – Phase 1 UI Prototype
 
-**Multi-tenant pharmacy management platform** connecting patients, pharmacy staff, pharmacy owners, doctors, and platform administrators on a single web application.
+**Multi-tenant pharmacy management platform** connecting patients, pharmacy staff, pharmacy admins, doctors, and platform administrators on a single web application.
 
 Phase 1 is a fully functional, serverless frontend prototype built with Vue 3 and localStorage as a temporary persistence layer. The architecture is designed so that every localStorage read/write can be replaced 1-for-1 with Flask REST API calls in Phase 2.
 
@@ -13,7 +13,7 @@ Phase 1 is a fully functional, serverless frontend prototype built with Vue 3 an
 3. [Roles and Capabilities](#roles-and-capabilities)
    - [Guest / Patient](#1-guest--patient)
    - [Pharmacy Staff](#2-pharmacy-staff)
-   - [Pharmacy Owner (Pharmacist)](#3-pharmacy-owner-pharmacist)
+   - [Pharmacy admin (Pharmacist)](#3-pharmacy-admin-pharmacist)
    - [Doctor](#4-doctor)
    - [App Admin](#5-app-admin-onepharma-platform)
 4. [Demo Credentials](#demo-credentials)
@@ -119,11 +119,11 @@ finalTotal  = grossTotal − discountAmount
 
 ---
 
-### 3. Pharmacy Owner (Pharmacist)
+### 3. Pharmacy admin (Pharmacist)
 
 **Login:** Email + password → routes to `PharmacyDashboard`.
 
-The pharmacy owner portal (`PharmacyDashboard`) has seven panels accessible via a left sidebar:
+The pharmacy admin portal (`PharmacyDashboard`) has seven panels accessible via a left sidebar:
 
 | Panel | Description |
 |-------|-------------|
@@ -205,7 +205,7 @@ All credentials are pre-seeded in `op_staff` and `op_patients` localStorage on f
 | Role | Email | Password | Portal |
 |------|-------|----------|--------|
 | App Admin | `admin@onepharma.com` | `appadmin123` | Admin Dashboard |
-| Pharmacy Owner | `owner@saha.com` | `owner123` | Pharmacy Dashboard |
+| Pharmacy admin | `admin@saha.com` | `admin123` | Pharmacy Dashboard |
 | Staff | `raj@saha.com` | `pass123` | Staff POS |
 | Staff | `priya@saha.com` | `pass123` | Staff POS |
 | Doctor | `mehta@clinic.com` | `doc123` | Doctor Dashboard (Dr. R. Mehta, General Physician) |
@@ -260,7 +260,7 @@ OnePharma/
             ├── LoginPage.js          # Staff/doctor/admin login page
             ├── PatientHome.js        # Patient portal (all patient-facing features)
             ├── StaffPos.js           # Staff POS / billing
-            ├── PharmacyDashboard.js  # Pharmacy owner management portal
+            ├── PharmacyDashboard.js  # Pharmacy admin management portal
             ├── DoctorDashboard.js    # Doctor prescription & patient queue
             └── AdminDashboard.js     # OnePharma platform admin
 ```

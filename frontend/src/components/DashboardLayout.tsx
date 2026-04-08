@@ -29,18 +29,18 @@ const employeeLinks = [
   { to: '/employee/ask-mochi', label: 'Ask Mochi', icon: MessageCircle },
 ];
 
-const ownerLinks = [
-  { to: '/owner/overview', label: 'Overview', icon: LayoutDashboard },
-  { to: '/owner/sales', label: 'Sales & Billing', icon: BarChart3 },
-  { to: '/owner/inventory', label: 'Inventory', icon: Package },
-  { to: '/owner/doctors', label: 'Doctors', icon: Stethoscope },
-  { to: '/owner/employee-requests', label: 'Employee Requests', icon: UserCheck },
-  { to: '/owner/users', label: 'User Management', icon: Users },
-  { to: '/owner/appointments', label: 'Appointments', icon: Calendar },
-  { to: '/owner/medicine-requests', label: 'Medicine Requests', icon: ClipboardList },
-  { to: '/owner/feedback', label: 'Feedback', icon: MessageSquare },
-  { to: '/owner/prescription', label: 'Prescription Reader', icon: FileText },
-  { to: '/owner/ask-mochi', label: 'Ask Mochi', icon: MessageCircle },
+const adminLinks = [
+  { to: "/admin/overview", label: "Overview", icon: LayoutDashboard },
+  { to: "/admin/sales", label: "Sales & Billing", icon: BarChart3 },
+  { to: "/admin/inventory", label: "Inventory", icon: Package },
+  { to: "/admin/doctors", label: "Doctors", icon: Stethoscope },
+  { to: "/admin/employee-requests", label: "Employee Requests", icon: UserCheck },
+  { to: "/admin/users", label: "User Management", icon: Users },
+  { to: "/admin/appointments", label: "Appointments", icon: Calendar },
+  { to: "/admin/medicine-requests", label: "Medicine Requests", icon: ClipboardList },
+  { to: "/admin/feedback", label: "Feedback", icon: MessageSquare },
+  { to: "/admin/prescription", label: "Prescription Reader", icon: FileText },
+  { to: "/admin/ask-mochi", label: "Ask Mochi", icon: MessageCircle },
 ];
 
 export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
@@ -48,7 +48,7 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const links = user?.role === 'owner' ? ownerLinks : user?.role === 'employee' ? employeeLinks : customerLinks;
+  const links = user?.role === 'admin' ? adminLinks : user?.role === 'employee' ? employeeLinks : customerLinks;
 
   const handleLogout = () => {
     logout();

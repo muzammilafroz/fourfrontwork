@@ -442,12 +442,12 @@ POST   /api/carts
   Returns: Cart
 
 PUT    /api/carts/<string:id>
-  Requires: patient auth (owner only)
+  Requires: patient auth (admin only)
   Body: { items: [...] }   (full replacement of items array)
   Returns: Cart
 
 DELETE /api/carts/<string:id>
-  Requires: patient auth (owner only)
+  Requires: patient auth (admin only)
   Returns: { "deleted": true }
 ```
 

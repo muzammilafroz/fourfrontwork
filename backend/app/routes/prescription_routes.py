@@ -96,7 +96,7 @@ def create_prescription(
     "/{prescription_id}",
     response_model=PrescriptionPublic,
     summary="Get prescription by ID",
-    description="Retrieves the details of a specific prescription. The user must be the owner of the prescription.",
+    description="Retrieves the details of a specific prescription. The user must be the admin of the prescription.",
     responses={
         200: {"description": "Prescription details retrieved successfully."},
         403: {
