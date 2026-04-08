@@ -115,7 +115,7 @@ Story: As a pharmacy manager, I want to view a visual summary of monthly sales a
 
 ### Stock Reminder System
 
-Story: As a store owner, I want to receive an automated alert when any medicine falls below its minimum threshold so that I never run out of essential stock.
+Story: As a store admin, I want to receive an automated alert when any medicine falls below its minimum threshold so that I never run out of essential stock.
 
 * Specific: Setup an automated email/SMS notification trigger based on real-time inventory counts.
 * Measurable: Notification is sent within 10 minutes of the stock hitting the "Low" threshold.

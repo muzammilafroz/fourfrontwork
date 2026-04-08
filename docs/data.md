@@ -113,8 +113,8 @@ Covers all non-patient users: app_admin, pharmacist, staff, doctor.
 {
   "id":         1,
   "name":       "Suresh Saha",
-  "email":      "owner@saha.com",
-  "password":   "owner123",          // ⚠️ plain text — Phase 1 demo only; replace with bcrypt hash
+  "email":      "admin@saha.com",
+  "password":   "admin123",          // ⚠️ plain text — Phase 1 demo only; replace with bcrypt hash
   "role":       "pharmacist",        // "app_admin" | "pharmacist" | "staff" | "doctor"
   "phone":      "+91-98765-00001",
   "joinDate":   "2022-06-01",        // ISO date string
@@ -130,7 +130,7 @@ Covers all non-patient users: app_admin, pharmacist, staff, doctor.
 | Role | Value | Description |
 |------|-------|-------------|
 | Platform admin | `app_admin` | OnePharma developers; no pharmacyId |
-| Pharmacy owner | `pharmacist` | Full pharmacy management; pharmacyId set |
+| Pharmacy admin | `pharmacist` | Full pharmacy management; pharmacyId set |
 | Pharmacy employee | `staff` | POS access; pharmacyId set |
 | Doctor | `doctor` | Doctor portal; pharmacyId + doctorId set |
 
@@ -414,7 +414,7 @@ Active staff/doctor/admin session. Written by `saveAuth(user)` which strips the 
 {
   "id":       1,
   "name":     "Suresh Saha",
-  "email":    "owner@saha.com",
+  "email":    "admin@saha.com",
   "role":     "pharmacist",
   "avatar":   "SS",
   "doctorId": null        // only present for role === 'doctor'

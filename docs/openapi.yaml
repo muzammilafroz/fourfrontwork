@@ -1479,7 +1479,7 @@ paths:
   /api/prescriptions/{prescription_id}:
     get:
       description: Retrieves the details of a specific prescription. The user must
-        be the owner of the prescription.
+        be the admin of the prescription.
       operationId: read_prescription_api_prescriptions__prescription_id__get
       parameters:
       - in: path
