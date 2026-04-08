@@ -3,7 +3,6 @@ import { useAuthStore } from "@/stores/authStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/StatusBadge";
-import { EmptyState } from "@/components/EmptyState";
 import { LoadingSkeleton } from "@/components/LoadingSkeleton";
 import {
   Dialog,
@@ -26,10 +25,15 @@ import { toast } from "sonner";
 
 const API = "http://localhost:8000/api/orders";
 
+type Medicine = {
+  name: string;
+};
+
 type OrderItem = {
   name: string;
   quantity: number;
   price: number;
+  medicine: Medicine;
 };
 
 type Order = {
@@ -64,8 +68,26 @@ const Sales = () => {
         if (!res.ok) throw new Error("Failed to load sales data");
 
         const data = await res.json();
-        console.log(data);
-        setOrders(Array.isArray(data) ? data : []);
+        // console.log(data);
+
+        const formattedOrders = data.map((order) => ({
+          id: order.id,
+          customer_name: order.customer_name,
+          customer_phone: order.customer_phone,
+          total_price: order.cart_items.reduce(
+            (sum, item) => sum + item.quantity * item.price,
+            0,
+          ),
+          order_date: order.order_date,
+          payment_status: order.payment_status,
+          cart_items: order.cart_items.map((item) => ({
+            quantity: item.quantity,
+            price: item.price,
+            name: item.medicine.name,
+          })),
+        }));
+        console.log(formattedOrders);
+        setOrders(Array.isArray(data) ? formattedOrders : []);
       } catch (err: any) {
         console.error("Sales load error:", err);
         toast.error(err.message || "Error loading sales");
