@@ -9,6 +9,7 @@ from app.routes import (
     appointment_routes,
     auth_routes,
     cart_routes,
+    chatbot_routes,
     customer_routes,
     doctor_routes,
     feedback_routes,
@@ -43,6 +44,7 @@ api_router.include_router(doctor_routes.router)
 api_router.include_router(appointment_routes.router)
 api_router.include_router(medicines_routes.router)
 api_router.include_router(overview_routes.router)
+api_router.include_router(chatbot_routes.router)
 
 api_router.include_router(inventory_routes.router)
 api_router.include_router(order_routes.router)
