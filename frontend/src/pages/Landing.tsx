@@ -31,7 +31,7 @@ const features = [
   },
   {
     icon: MessageCircle,
-    title: "Ask Mochi AI",
+    title: "Ask Chatbot AI",
     desc: "Your personal pharmacy assistant for medicine info and health questions.",
   },
   {
@@ -60,7 +60,7 @@ const steps = [
   {
     num: "03",
     title: "Get Assisted",
-    desc: "Use Mochi AI for guidance and track all your orders in one place.",
+    desc: "Use Chatbot AI for guidance and track all your orders in one place.",
   },
 ];
 

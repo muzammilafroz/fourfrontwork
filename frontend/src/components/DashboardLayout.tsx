@@ -15,7 +15,7 @@ const customerLinks = [
   { to: '/customer/appointments', label: 'My Appointments', icon: ClipboardList },
   { to: '/customer/orders', label: 'Track Orders', icon: ShoppingCart },
   { to: '/customer/prescription', label: 'Prescription Reader', icon: FileText },
-  { to: '/customer/ask-mochi', label: 'Ask Mochi', icon: MessageCircle },
+  { to: '/customer/ask-chatbot', label: 'Ask Chatbot', icon: MessageCircle },
   { to: '/customer/feedback', label: 'Feedback', icon: Star },
 ];
 
@@ -26,7 +26,7 @@ const employeeLinks = [
   { to: '/employee/preorders', label: 'Preorder Requests', icon: ClipboardList },
   { to: '/employee/create-order', label: 'Create Order', icon: Receipt },
   { to: '/employee/prescription', label: 'Prescription Reader', icon: FileText },
-  { to: '/employee/ask-mochi', label: 'Ask Mochi', icon: MessageCircle },
+  { to: '/employee/ask-chatbot', label: 'Ask Chatbot', icon: MessageCircle },
 ];
 
 const adminLinks = [
@@ -40,7 +40,7 @@ const adminLinks = [
   { to: "/admin/medicine-requests", label: "Medicine Requests", icon: ClipboardList },
   { to: "/admin/feedback", label: "Feedback", icon: MessageSquare },
   { to: "/admin/prescription", label: "Prescription Reader", icon: FileText },
-  { to: "/admin/ask-mochi", label: "Ask Mochi", icon: MessageCircle },
+  { to: "/admin/ask-chatbot", label: "Ask Chatbot", icon: MessageCircle },
 ];
 
 export const DashboardLayout = ({ children }: { children: React.ReactNode }) => {

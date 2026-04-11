@@ -18,7 +18,7 @@ import CustomerDoctors from "./pages/customer/Doctors";
 import BookAppointment from "./pages/customer/BookAppointment";
 import AppointmentHistory from "./pages/customer/AppointmentHistory";
 // import TrackOrders from "./pages/customer/TrackOrders";
-// import CustomerAskMochi from "./pages/customer/AskMochi";
+// import CustomerAskChatbot from "./pages/customer/AskChatbot";
 // import CustomerFeedback from "./pages/customer/Feedback";
 
 // Employee
@@ -27,7 +27,7 @@ import AddMedicine from "./pages/employee/AddMedicine";
 import EmployeeAppointments from "./pages/employee/Appointments";
 // import EmployeePreorders from "./pages/employee/Preorders";
 // import CreateOrder from "./pages/employee/CreateOrder";
-// import EmployeeAskMochi from "./pages/employee/AskMochi";
+// import EmployeeAskChatbot from "./pages/employee/AskChatbot";
 
 // Admin
 import Overview from "./pages/admin/Overview";
@@ -39,7 +39,7 @@ import UserManagement from "./pages/admin/Users";
 import AdminAppointments from "./pages/admin/Appointments";
 // import MedicineRequests from "./pages/admin/MedicineRequests";
 // import adminFeedback from "./pages/admin/Feedback";
-// import adminAskMochi from "./pages/admin/AskMochi";
+import AskChatbot from "./pages/admin/AskChatbot";
 // import adminPrescriptionReader from "./pages/admin/PrescriptionReader";
 
 const queryClient = new QueryClient();
@@ -67,7 +67,7 @@ const App = () => (
           <Route path="/customer/appointments" element={<Dash roles={['customer']}><AppointmentHistory /></Dash>} />
           {/*<Route path="/customer/orders" element={<Dash roles={['customer']}><TrackOrders /></Dash>} />*/}
           <Route path="/customer/prescription" element={<Dash roles={['customer']}><PrescriptionReader /></Dash>} />
-          {/*<Route path="/customer/ask-mochi" element={<Dash roles={['customer']}><CustomerAskMochi /></Dash>} />*/}
+          {/*<Route path="/customer/ask-chatbot" element={<Dash roles={['customer']}><CustomerAskChatbot /></Dash>} />*/}
           {/*<Route path="/customer/feedback" element={<Dash roles={['customer']}><CustomerFeedback /></Dash>} />*/}
 
           {/* Employee */}
@@ -77,7 +77,7 @@ const App = () => (
           {/*<Route path="/employee/preorders" element={<Dash roles={['employee']}><EmployeePreorders /></Dash>} />*/}
           {/*<Route path="/employee/create-order" element={<Dash roles={['employee']}><CreateOrder /></Dash>} />*/}
           <Route path="/employee/prescription" element={<Dash roles={['employee']}><PrescriptionReader /></Dash>} />
-          {/*<Route path="/employee/ask-mochi" element={<Dash roles={['employee']}><EmployeeAskMochi /></Dash>} />*/}
+          {/*<Route path="/employee/ask-chatbot" element={<Dash roles={['employee']}><EmployeeAskChatbot /></Dash>} />*/}
 
           {/* Admin */}
           <Route path="/admin/overview" element={<Dash roles={['admin']}><Overview /></Dash>} />
@@ -91,7 +91,7 @@ const App = () => (
           {/*<Route path="/admin/feedback" element={<Dash roles={['admin']}><adminFeedback /></Dash>} />*/}
            <Route path="/admin/prescription" element={<Dash roles={['admin']}><PrescriptionReader /></Dash>} />
           {/*<Route path="/admin/prescription" element={<Dash roles={['admin']}><adminPrescriptionReader /></Dash>} />*/}
-          {/*<Route path="/admin/ask-mochi" element={<Dash roles={['admin']}><adminAskMochi /></Dash>} />*/}
+          <Route path="/admin/ask-chatbot" element={<Dash roles={['admin']}><AskChatbot /></Dash>} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
