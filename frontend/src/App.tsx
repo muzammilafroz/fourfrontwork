@@ -34,10 +34,10 @@ import Overview from "./pages/admin/Overview";
 import Sales from "./pages/admin/Sales";
 import Inventory from "./pages/admin/Inventory";
 import DoctorsManagement from "./pages/admin/Doctors";
-import EmployeeRequests from "./pages/admin/EmployeeRequests";
+// import EmployeeRequests from "./pages/admin/EmployeeRequests";
 import UserManagement from "./pages/admin/Users";
 import AdminAppointments from "./pages/admin/Appointments";
-// import MedicineRequests from "./pages/admin/MedicineRequests";
+import MedicineRequests from "./pages/admin/MedicineRequests";
 // import adminFeedback from "./pages/admin/Feedback";
 import AskChatbot from "./pages/admin/AskChatbot";
 // import adminPrescriptionReader from "./pages/admin/PrescriptionReader";
@@ -84,13 +84,12 @@ const App = () => (
           <Route path="/admin/sales" element={<Dash roles={['admin']}><Sales /></Dash>} />
           <Route path="/admin/inventory" element={<Dash roles={['admin']}><Inventory /></Dash>} />
           <Route path="/admin/doctors" element={<Dash roles={['admin']}><DoctorsManagement /></Dash>} />
-          <Route path="/admin/employee-requests" element={<Dash roles={['admin']}><EmployeeRequests /></Dash>} />
+          {/*<Route path="/admin/employee-requests" element={<Dash roles={['admin']}><EmployeeRequests /></Dash>} />*/}
           <Route path="/admin/users" element={<Dash roles={['admin']}><UserManagement /></Dash>} />
           <Route path="/admin/appointments" element={<Dash roles={['admin']}><AdminAppointments /></Dash>} />
-          {/*<Route path="/admin/medicine-requests" element={<Dash roles={['admin']}><MedicineRequests /></Dash>} />*/}
+          <Route path="/admin/medicine-requests" element={<Dash roles={['admin']}><MedicineRequests /></Dash>} />
           {/*<Route path="/admin/feedback" element={<Dash roles={['admin']}><adminFeedback /></Dash>} />*/}
            <Route path="/admin/prescription" element={<Dash roles={['admin']}><PrescriptionReader /></Dash>} />
-          {/*<Route path="/admin/prescription" element={<Dash roles={['admin']}><adminPrescriptionReader /></Dash>} />*/}
           <Route path="/admin/ask-chatbot" element={<Dash roles={['admin']}><AskChatbot /></Dash>} />
 
           <Route path="*" element={<NotFound />} />

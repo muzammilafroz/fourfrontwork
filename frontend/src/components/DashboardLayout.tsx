@@ -34,11 +34,11 @@ const adminLinks = [
   { to: "/admin/sales", label: "Sales & Billing", icon: BarChart3 },
   { to: "/admin/inventory", label: "Inventory", icon: Package },
   { to: "/admin/doctors", label: "Doctors", icon: Stethoscope },
-  { to: "/admin/employee-requests", label: "Employee Requests", icon: UserCheck },
+  // { to: "/admin/employee-requests", label: "Employee Requests", icon: UserCheck },
   { to: "/admin/users", label: "User Management", icon: Users },
   { to: "/admin/appointments", label: "Appointments", icon: Calendar },
   { to: "/admin/medicine-requests", label: "Medicine Requests", icon: ClipboardList },
-  { to: "/admin/feedback", label: "Feedback", icon: MessageSquare },
+  // { to: "/admin/feedback", label: "Feedback", icon: MessageSquare },
   { to: "/admin/prescription", label: "Prescription Reader", icon: FileText },
   { to: "/admin/ask-chatbot", label: "Ask Chatbot", icon: MessageCircle },
 ];
