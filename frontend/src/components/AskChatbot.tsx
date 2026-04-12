@@ -326,7 +326,7 @@ const AskChatbot = ({
   const hasMessages = messages.length > 0;
 
   return (
-    <div className="flex h-[calc(100vh-6rem)] gap-4">
+    <div className="flex h-[calc(98vh-6rem)] gap-4 bg-card rounded-xl border border-border p-3">
       {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 z-50 w-80 bg-card border-r border-border transform transition-transform duration-200 ease-in-out lg:relative lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:block`}
