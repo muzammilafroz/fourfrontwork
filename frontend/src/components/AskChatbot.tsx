@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { callGemini } from "@/lib/gemini";
+import { marked } from "marked";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -314,12 +315,16 @@ const AskChatbot = ({
   };
 
   // Render markdown safely
-  const renderMarkdown = (text: string) => {
-    return text
-      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-      .replace(/\*(.*?)\*/g, "<em>$1</em>")
-      .replace(/\n/g, "<br/>")
-      .replace(/•/g, "•");
+  // const renderMarkdown = (text: string) => {
+  //   return text
+  //     .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+  //     .replace(/\*(.*?)\*/g, "<em>$1</em>")
+  //     .replace(/\n/g, "<br/>")
+  //     .replace(/•/g, "•");
+  // };
+
+  const renderMarkdown = (text: string): string => {
+    return marked.parse(text);
   };
 
   const currentSession = sessions.find((s) => s.id === currentSessionId);
@@ -484,7 +489,7 @@ const AskChatbot = ({
                           ? renderMarkdown(displayedText)
                           : renderMarkdown(msg.content),
                     }}
-                    className="prose prose-sm max-w-none"
+                    className="chat-markdown"
                   />
                 </div>
 

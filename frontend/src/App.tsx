@@ -27,7 +27,7 @@ import AddMedicine from "./pages/employee/AddMedicine";
 import EmployeeAppointments from "./pages/employee/Appointments";
 // import EmployeePreorders from "./pages/employee/Preorders";
 // import CreateOrder from "./pages/employee/CreateOrder";
-// import EmployeeAskChatbot from "./pages/employee/AskChatbot";
+import EmployeeAskChatbot from "./pages/employee/AskChatbot";
 
 // Admin
 import Overview from "./pages/admin/Overview";
@@ -77,7 +77,7 @@ const App = () => (
           {/*<Route path="/employee/preorders" element={<Dash roles={['employee']}><EmployeePreorders /></Dash>} />*/}
           {/*<Route path="/employee/create-order" element={<Dash roles={['employee']}><CreateOrder /></Dash>} />*/}
           <Route path="/employee/prescription" element={<Dash roles={['employee']}><PrescriptionReader /></Dash>} />
-          {/*<Route path="/employee/ask-chatbot" element={<Dash roles={['employee']}><EmployeeAskChatbot /></Dash>} />*/}
+          <Route path="/employee/ask-chatbot" element={<Dash roles={['employee']}><EmployeeAskChatbot /></Dash>} />
 
           {/* Admin */}
           <Route path="/admin/overview" element={<Dash roles={['admin']}><Overview /></Dash>} />
