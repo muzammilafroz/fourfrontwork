@@ -328,7 +328,7 @@ const ImageCropper = ({
 
 const DoctorsManagement = () => {
   const { user } = useAuthStore();
-  const token = user.auth_token;
+  const token = useAuthStore((state) => state.getAuthToken());
 
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [filteredDoctors, setFilteredDoctors] = useState<Doctor[]>([]);

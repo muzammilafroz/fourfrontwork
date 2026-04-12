@@ -50,7 +50,7 @@ type Order = {
 
 const Sales = () => {
   const { user } = useAuthStore();
-  const token = user.auth_token;
+  const token = useAuthStore((state) => state.getAuthToken());
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);

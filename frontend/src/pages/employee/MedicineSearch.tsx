@@ -11,6 +11,8 @@ import { Search, Pill } from "lucide-react";
 // TODO: Make the search query hit the backend.
 const MedicineSearch = () => {
   const { user } = useAuthStore();
+  const token = useAuthStore((state) => state.getAuthToken());
+
   const [medicines, setMedicines] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
   const [search, setSearch] = useState("");
@@ -21,7 +23,7 @@ const MedicineSearch = () => {
       const url = "http://localhost:8000/api/medicines";
       try {
         const res = await fetch(url, {
-          headers: { Authorization: `Bearer ${user.auth_token}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
         const safe = Array.isArray(data) ? data : [];

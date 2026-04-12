@@ -42,7 +42,7 @@ type DateFilter = "all" | "today" | "tomorrow" | "week" | "month" | "past";
 
 const OwnerAppointments = () => {
   const { user } = useAuthStore();
-  const token = user.auth_token;
+  const token = useAuthStore((state) => state.getAuthToken());
 
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [filteredAppointments, setFilteredAppointments] = useState<
