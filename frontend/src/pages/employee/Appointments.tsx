@@ -8,6 +8,8 @@ import { Calendar } from "lucide-react";
 
 const EmployeeAppointments = () => {
   const { user } = useAuthStore();
+  const token = useAuthStore((state) => state.getAuthToken());
+
   const [appointments, setAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -17,7 +19,7 @@ const EmployeeAppointments = () => {
     const res = await fetch(url, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${user.auth_token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 

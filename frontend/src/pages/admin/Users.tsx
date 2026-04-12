@@ -26,8 +26,7 @@ type User = {
 };
 
 const UserManagement = () => {
-  const { user } = useAuthStore();
-  const token = user.auth_token;
+  const token = useAuthStore((state) => state.getAuthToken());
 
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);

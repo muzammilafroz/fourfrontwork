@@ -64,7 +64,8 @@ type Charts = {
 
 const Overview = () => {
   const { user } = useAuthStore();
-  const token = user.auth_token;
+  const token = useAuthStore((state) => state.getAuthToken());
+
   const [stats, setStats] = useState<Stats>({});
   const [charts, setCharts] = useState<Charts>({});
   const [loading, setLoading] = useState(true);

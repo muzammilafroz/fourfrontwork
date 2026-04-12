@@ -52,7 +52,7 @@ const emptyForm = {
 
 const Inventory = () => {
   const { user } = useAuthStore();
-  const token = user.auth_token;
+  const token = useAuthStore((state) => state.getAuthToken());
 
   const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [loading, setLoading] = useState(true);

@@ -18,6 +18,8 @@ const schema = z.object({
 
 const AddMedicine = () => {
   const { user } = useAuthStore();
+  const token = useAuthStore((state) => state.getAuthToken());
+
   const [form, setForm] = useState({
     name: "",
     composition: "",
@@ -37,7 +39,7 @@ const AddMedicine = () => {
       const url = "http://localhost:8000/api/medicines";
       try {
         const res = await fetch(url, {
-          headers: { Authorization: `Bearer ${user.auth_token}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
 
@@ -99,7 +101,7 @@ const AddMedicine = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${user.auth_token}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(payload),
         });

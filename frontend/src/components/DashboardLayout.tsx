@@ -16,7 +16,7 @@ const customerLinks = [
   { to: '/customer/orders', label: 'Track Orders', icon: ShoppingCart },
   { to: '/customer/prescription', label: 'Prescription Reader', icon: FileText },
   { to: '/customer/ask-chatbot', label: 'Ask Chatbot', icon: MessageCircle },
-  { to: '/customer/feedback', label: 'Feedback', icon: Star },
+  // { to: '/customer/feedback', label: 'Feedback', icon: Star },
 ];
 
 const employeeLinks = [

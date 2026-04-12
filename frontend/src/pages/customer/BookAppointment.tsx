@@ -18,6 +18,8 @@ import { CheckCircle } from "lucide-react";
 const BookAppointment = () => {
   const [searchParams] = useSearchParams();
   const { user } = useAuthStore();
+  const token = useAuthStore((state) => state.getAuthToken());
+
   const [doctors, setDoctors] = useState<any[]>([]);
   const [selectedDoctor, setSelectedDoctor] = useState(
     searchParams.get("doctor") || "",
@@ -103,7 +105,7 @@ const BookAppointment = () => {
       const res = await fetch(url, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${user.auth_token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -133,7 +135,7 @@ const BookAppointment = () => {
       const response = await fetch(url, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${user.auth_token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
