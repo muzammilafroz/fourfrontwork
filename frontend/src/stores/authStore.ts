@@ -18,6 +18,8 @@ interface AuthState {
   login: (user: AuthUser) => void;
   logout: () => void;
   checkTokenExpiry: () => void;
+  /** Validates token expiry and returns the token or null */
+  getAuthToken: () => string | null;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -28,7 +30,6 @@ export const useAuthStore = create<AuthState>()(
 
       login: (user) => {
         if (user.status === "inactive") {
-          // Prevent login for inactive users
           console.error("Login failed: User is inactive");
           return;
         }
@@ -37,7 +38,10 @@ export const useAuthStore = create<AuthState>()(
 
       logout: () => {
         set({ user: null, isAuthenticated: false });
-        window.location.href = "/";
+        // Optional: clear local storage specifically if persist doesn't catch it fast enough
+        if (typeof window !== "undefined") {
+          window.location.href = "/";
+        }
       },
 
       checkTokenExpiry: () => {
@@ -55,11 +59,23 @@ export const useAuthStore = create<AuthState>()(
           const currentTime = Date.now() / 1000;
 
           if (decoded.exp < currentTime) {
+            console.warn("Token expired. Logging out...");
             get().logout();
           }
         } catch (error) {
+          console.error("Invalid token found. Logging out...");
           get().logout();
         }
+      },
+
+      getAuthToken: () => {
+        // 1. Run the validation logic
+        get().checkTokenExpiry();
+
+        // 2. Get the user from the current state (might be null if checkTokenExpiry logged them out)
+        const currentUser = get().user;
+
+        return currentUser ? currentUser.auth_token : null;
       },
     }),
     { name: "medease-auth" },

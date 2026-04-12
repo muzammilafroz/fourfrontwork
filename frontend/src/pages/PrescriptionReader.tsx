@@ -57,6 +57,8 @@ interface Prescription {
 
 const PrescriptionReader = () => {
   const { user, checkTokenExpiry } = useAuthStore();
+  const token = useAuthStore((state) => state.getAuthToken());
+
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>("");
   const [scanning, setScanning] = useState(false);
@@ -77,7 +79,7 @@ const PrescriptionReader = () => {
         const res = await fetch(url, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${user.auth_token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -156,7 +158,7 @@ const PrescriptionReader = () => {
           const response = await fetch(url, {
             method: "POST",
             headers: {
-              Authorization: `Bearer ${user.auth_token}`,
+              Authorization: `Bearer ${token}`,
               "Content-Type": "application/json",
             },
             body: JSON.stringify(payload),
