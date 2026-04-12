@@ -26,7 +26,8 @@ import {
 
 const API = "http://localhost:8000/api/medicine-requests";
 
-const statuses = ["pending", "in process", "ordered", "done", "rejected"];
+// const statuses = ["pending", "in process", "ordered", "done", "rejected"];
+const statuses = ["pending", "approved", "rejected", "completed"];
 
 const statusConfig: Record<
   string,
@@ -38,32 +39,27 @@ const statusConfig: Record<
       "bg-yellow-100 text-yellow-700 dark:bg-yellow-950/30 dark:text-yellow-400",
     icon: Clock,
   },
-  "in process": {
-    label: "In Process",
-    color: "bg-blue-100 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400",
-    icon: Package,
-  },
-  ordered: {
-    label: "Ordered",
+  approved: {
+    label: "Approved",
     color:
       "bg-purple-100 text-purple-700 dark:bg-purple-950/30 dark:text-purple-400",
-    icon: Truck,
-  },
-  done: {
-    label: "Done",
-    color:
-      "bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400",
-    icon: CheckCircle,
+    icon: Package,
   },
   rejected: {
     label: "Rejected",
     color: "bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-400",
     icon: XCircle,
   },
+  completed: {
+    label: "Compeleted",
+    color:
+      "bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400",
+    icon: CheckCircle,
+  },
 };
 
 type Request = {
-  request_id: number;
+  id: number;
   medicine_name: string;
   composition?: string;
   customer_name?: string;
@@ -95,6 +91,8 @@ const MedicineRequests = () => {
       if (!res.ok) throw new Error("Failed to load requests");
 
       const data = await res.json();
+      console.log(data);
+
       setRequests(Array.isArray(data) ? data : []);
       setFilteredRequests(Array.isArray(data) ? data : []);
     } catch (err: any) {
@@ -148,7 +146,7 @@ const MedicineRequests = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          status: newStatus,
+          status: newStatus.toUpperCase(),
           handled_by: user?.user_id,
         }),
       });
@@ -158,9 +156,7 @@ const MedicineRequests = () => {
       toast.success("Status updated!");
 
       setRequests((prev) =>
-        prev.map((r) =>
-          r.request_id === reqId ? { ...r, status: newStatus } : r,
-        ),
+        prev.map((r) => (r.id === reqId ? { ...r, status: newStatus } : r)),
       );
 
       setStatusUpdates((prev) => ({ ...prev, [reqId]: "" }));
@@ -344,7 +340,7 @@ const MedicineRequests = () => {
 
                   return (
                     <tr
-                      key={r.request_id}
+                      key={r.id}
                       className="hover:bg-muted/20 transition-colors"
                     >
                       <td className="px-4 py-2.5">
@@ -353,7 +349,7 @@ const MedicineRequests = () => {
                             {r.medicine_name}
                           </p>
                           <p className="text-xs text-muted-foreground font-mono mt-0.5">
-                            ID: {r.request_id}
+                            ID: {r.id}
                           </p>
                         </div>
                       </td>
@@ -393,15 +389,11 @@ const MedicineRequests = () => {
                       <td className="px-4 py-2.5">
                         <div className="flex items-center gap-2">
                           <Select
-                            value={
-                              statusUpdates[r.request_id] ??
-                              r.status ??
-                              "pending"
-                            }
+                            value={statusUpdates[r.id] ?? r.status ?? "pending"}
                             onValueChange={(v) =>
                               setStatusUpdates({
                                 ...statusUpdates,
-                                [r.request_id]: v,
+                                [r.id]: v,
                               })
                             }
                           >
@@ -424,14 +416,14 @@ const MedicineRequests = () => {
                             size="sm"
                             variant="outline"
                             disabled={
-                              saving === r.request_id ||
-                              !statusUpdates[r.request_id] ||
-                              statusUpdates[r.request_id] === r.status
+                              saving === r.id ||
+                              !statusUpdates[r.id] ||
+                              statusUpdates[r.id] === r.status
                             }
-                            onClick={() => handleSave(r.request_id)}
+                            onClick={() => handleSave(r.id)}
                             className="h-8 px-3 text-xs"
                           >
-                            {saving === r.request_id ? (
+                            {saving === r.id ? (
                               <div className="flex items-center gap-1">
                                 <div className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
                                 Saving...

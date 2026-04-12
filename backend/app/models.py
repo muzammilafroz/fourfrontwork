@@ -169,6 +169,7 @@ class CartItem(CartItemBase, table=True):
 
 
 class CartItemPublic(CartItemBase):
+    id: int
     medicine: MedicinePublic
 
 

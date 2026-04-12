@@ -8,37 +8,57 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { ShoppingCart, Package, Search, X, Send, ChevronRight, Loader2 } from "lucide-react";
+import {
+  ShoppingCart,
+  Package,
+  Search,
+  X,
+  Send,
+  ChevronRight,
+  Loader2,
+} from "lucide-react";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const API_BASE_URL = "http://localhost:8000";
+
+type Medicine = {
+  name: string;
+};
 
 type OrderItem = {
+  // brand: string;
   id: number;
   name: string;
-  brand: string;
   quantity: number;
   price: number;
+  medicine: Medicine;
 };
 
 type Order = {
   id: number;
-  date: string | null;
-  total: number;
-  payment_method: string;
+  order_date: string;
+  customer_name?: string;
+  customer_phone?: string;
+  total_price: number;
+  payment_method?: string;
   payment_status: string;
-  items: OrderItem[];
+  cart_items: OrderItem[];
+  employee_name?: string; // items: OrderItem[];
 };
 
 type Preorder = {
   id: number;
   medicine_name: string;
-  composition: string | null;
-  date: string;
+  composition?: string;
+  customer_name?: string;
+  customer_phone?: string;
+  requested_date: string;
   status: string;
 };
 
 const TrackOrders = () => {
-  const { user, token } = useAuthStore();
+  const { user } = useAuthStore();
+  const token = useAuthStore((state) => state.getAuthToken());
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [preorders, setPreorders] = useState<Preorder[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,10 +75,10 @@ const TrackOrders = () => {
     const fetchData = async () => {
       try {
         const [ordersRes, requestsRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/customer/orders`, {
+          fetch(`${API_BASE_URL}/api/orders`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch(`${API_BASE_URL}/customer/medicine-requests`, {
+          fetch(`${API_BASE_URL}/api/medicine-requests`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -67,12 +87,33 @@ const TrackOrders = () => {
         if (!requestsRes.ok) throw new Error("Requests fetch failed");
 
         const ordersData = await ordersRes.json();
+
+        const formattedOrders = ordersData.map((order) => ({
+          id: order.id,
+          customer_name: order.customer_name,
+          customer_phone: order.customer_phone,
+          total_price: order.cart_items.reduce(
+            (sum, item) => sum + item.quantity * item.price,
+            0,
+          ),
+          order_date: order.order_date,
+          payment_status: order.payment_status,
+          cart_items: order.cart_items.map((item) => ({
+            id: item.id,
+            quantity: item.quantity,
+            price: item.price,
+            name: item.medicine.name,
+          })),
+        }));
+
         const requestsData = await requestsRes.json();
 
-        if (!Array.isArray(ordersData)) throw new Error("Invalid orders format");
-        if (!Array.isArray(requestsData)) throw new Error("Invalid requests format");
+        if (!Array.isArray(formattedOrders))
+          throw new Error("Invalid orders format");
+        if (!Array.isArray(requestsData))
+          throw new Error("Invalid requests format");
 
-        setOrders(ordersData);
+        setOrders(formattedOrders);
         setPreorders(requestsData);
       } catch (err: any) {
         console.error(err);
@@ -93,14 +134,14 @@ const TrackOrders = () => {
     }
     setSubmitting(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/customer/medicine-request`, {
+      const res = await fetch(`${API_BASE_URL}/api/medicine-requests`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          name: medicineName.trim(),
+          medicine_name: medicineName.trim(),
           composition: composition.trim() || null,
         }),
       });
@@ -110,7 +151,7 @@ const TrackOrders = () => {
       setComposition("");
 
       // Refresh preorders list
-      const refreshRes = await fetch(`${API_BASE_URL}/customer/medicine-requests`, {
+      const refreshRes = await fetch(`${API_BASE_URL}/api/medicine-requests`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (refreshRes.ok) {
@@ -125,14 +166,18 @@ const TrackOrders = () => {
   };
 
   // Safe search (prevents null crashes)
-  const filteredOrders = orders.filter((o) =>
-    o.id.toString().includes(searchOrder) ||
-    o.items.some((i) => (i.name || "").toLowerCase().includes(searchOrder.toLowerCase()))
+  const filteredOrders = orders.filter(
+    (o) =>
+      o.id.toString().includes(searchOrder) ||
+      o.cart_items.some((i) =>
+        (i.name || "").toLowerCase().includes(searchOrder.toLowerCase()),
+      ),
   );
 
-  const filteredPreorders = preorders.filter((p) =>
-    p.medicine_name.toLowerCase().includes(searchRequest.toLowerCase()) ||
-    (p.composition || "").toLowerCase().includes(searchRequest.toLowerCase())
+  const filteredPreorders = preorders.filter(
+    (p) =>
+      p.medicine_name.toLowerCase().includes(searchRequest.toLowerCase()) ||
+      (p.composition || "").toLowerCase().includes(searchRequest.toLowerCase()),
   );
 
   const formatDate = (dateStr: string | null) => {
@@ -155,8 +200,12 @@ const TrackOrders = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Track Orders</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">View your purchase history and manage medicine requests</p>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            Track Orders
+          </h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            View your purchase history and manage medicine requests
+          </p>
         </div>
       </div>
 
@@ -181,7 +230,10 @@ const TrackOrders = () => {
               className="pl-9 pr-8 h-9 text-sm bg-muted/30 border-border/60"
             />
             {searchOrder && (
-              <button onClick={() => setSearchOrder("")} className="absolute right-3 top-1/2 -translate-y-1/2">
+              <button
+                onClick={() => setSearchOrder("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2"
+              >
                 <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
               </button>
             )}
@@ -190,48 +242,85 @@ const TrackOrders = () => {
           {filteredOrders.length === 0 ? (
             <EmptyState
               title={searchOrder ? "No matching orders" : "No orders yet"}
-              description={searchOrder ? "Try a different search term" : "Your purchases will appear here"}
-              icon={<ShoppingCart className="h-10 w-10 text-muted-foreground/30" />}
+              description={
+                searchOrder
+                  ? "Try a different search term"
+                  : "Your purchases will appear here"
+              }
+              icon={
+                <ShoppingCart className="h-10 w-10 text-muted-foreground/30" />
+              }
             />
           ) : (
             <div className="space-y-3">
               {filteredOrders.map((order) => (
-                <div key={order.id} className="bg-card rounded-xl border border-border overflow-hidden hover:border-primary/30 transition-all">
+                <div
+                  key={order.id}
+                  className="bg-card rounded-xl border border-border overflow-hidden hover:border-primary/30 transition-all"
+                >
                   <div
                     className="flex items-center justify-between p-4 cursor-pointer hover:bg-muted/20 transition-colors"
-                    onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
+                    onClick={() =>
+                      setExpandedOrder(
+                        expandedOrder === order.id ? null : order.id,
+                      )
+                    }
                   >
                     <div className="flex flex-wrap items-center gap-3">
-                      <span className="font-mono text-xs text-muted-foreground">#{order.id}</span>
-                      <span className="text-sm font-medium text-foreground">₹{order.total.toFixed(2)}</span>
+                      <span className="font-mono text-xs text-muted-foreground">
+                        #{order.id}
+                      </span>
+                      <span className="text-sm font-medium text-foreground">
+                        ₹{Number(order.total_price ?? 0).toFixed(2)}
+                      </span>
                       <StatusBadge status={order.payment_status} />
-                      <span className="text-xs text-muted-foreground">{formatDate(order.date)}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {formatDate(order.order_date)}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-muted-foreground">
-                        {order.items.length} item{order.items.length !== 1 ? "s" : ""}
+                        {order.cart_items.length} item
+                        {order.cart_items.length !== 1 ? "s" : ""}
                       </span>
-                      <ChevronRight className={`h-4 w-4 transition-transform ${expandedOrder === order.id ? "rotate-90" : ""}`} />
+                      <ChevronRight
+                        className={`h-4 w-4 transition-transform ${expandedOrder === order.id ? "rotate-90" : ""}`}
+                      />
                     </div>
                   </div>
                   {expandedOrder === order.id && (
                     <div className="border-t border-border p-4 space-y-2 bg-muted/10">
-                      {order.items.map((item) => (
-                        <div key={item.id} className="flex justify-between items-center text-sm">
+                      {order.cart_items.map((item) => (
+                        <div
+                          key={item.id}
+                          className="flex justify-between items-center text-sm"
+                        >
                           <div className="flex-1">
-                            <span className="font-medium text-foreground">{item.name}</span>
-                            {item.brand && <span className="text-xs text-muted-foreground ml-2">({item.brand})</span>}
+                            <span className="font-medium text-foreground">
+                              {item.name}
+                            </span>
+                            {/*{item.brand && (
+                              <span className="text-xs text-muted-foreground ml-2">
+                                ({item.brand})
+                              </span>
+                            )}*/}
                           </div>
                           <div className="flex items-center gap-4">
-                            <span className="text-muted-foreground">x{item.quantity}</span>
-                            <span className="font-semibold text-foreground">₹{(item.price * item.quantity).toFixed(2)}</span>
+                            <span className="text-muted-foreground">
+                              x{item.quantity}
+                            </span>
+                            <span className="font-semibold text-foreground">
+                              ₹{(item.price * item.quantity).toFixed(2)}
+                            </span>
                           </div>
                         </div>
                       ))}
                       <div className="pt-2 mt-2 border-t border-border/50 flex justify-end">
                         <div className="text-right">
                           <p className="text-xs text-muted-foreground">Total</p>
-                          <p className="text-lg font-bold text-primary">₹{order.total.toFixed(2)}</p>
+                          <p className="text-lg font-bold text-primary">
+                            ₹{Number(order.total_price ?? 0).toFixed(2)}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -253,7 +342,10 @@ const TrackOrders = () => {
               className="pl-9 pr-8 h-9 text-sm bg-muted/30 border-border/60"
             />
             {searchRequest && (
-              <button onClick={() => setSearchRequest("")} className="absolute right-3 top-1/2 -translate-y-1/2">
+              <button
+                onClick={() => setSearchRequest("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2"
+              >
                 <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
               </button>
             )}
@@ -262,17 +354,32 @@ const TrackOrders = () => {
           {filteredPreorders.length === 0 ? (
             <EmptyState
               title={searchRequest ? "No matching requests" : "No requests yet"}
-              description={searchRequest ? "Try a different search term" : "Submit a request for medicines you need"}
+              description={
+                searchRequest
+                  ? "Try a different search term"
+                  : "Submit a request for medicines you need"
+              }
               icon={<Package className="h-10 w-10 text-muted-foreground/30" />}
             />
           ) : (
             <div className="space-y-2">
               {filteredPreorders.map((req) => (
-                <div key={req.id} className="bg-card rounded-xl border border-border p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-muted/20 transition-colors">
+                <div
+                  key={req.id}
+                  className="bg-card rounded-xl border border-border p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-muted/20 transition-colors"
+                >
                   <div className="flex-1">
-                    <p className="font-medium text-foreground">{req.medicine_name}</p>
-                    {req.composition && <p className="text-xs text-muted-foreground mt-0.5">{req.composition}</p>}
-                    <p className="text-[11px] text-muted-foreground mt-1">Requested on {formatDate(req.date)}</p>
+                    <p className="font-medium text-foreground">
+                      {req.medicine_name}
+                    </p>
+                    {req.composition && (
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        {req.composition}
+                      </p>
+                    )}
+                    <p className="text-[11px] text-muted-foreground mt-1">
+                      Requested on {formatDate(req.requested_date)}
+                    </p>
                   </div>
                   <div className="flex items-center gap-3">
                     <StatusBadge status={req.status} />
@@ -284,10 +391,14 @@ const TrackOrders = () => {
 
           {/* New Request Form */}
           <div className="bg-card rounded-xl border border-border p-5 mt-4">
-            <h3 className="font-semibold text-sm text-foreground mb-3">Request a Medicine</h3>
+            <h3 className="font-semibold text-sm text-foreground mb-3">
+              Request a Medicine
+            </h3>
             <form onSubmit={handlePreorder} className="space-y-3">
               <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">Medicine Name *</Label>
+                <Label className="text-xs text-muted-foreground">
+                  Medicine Name *
+                </Label>
                 <Input
                   placeholder="e.g. Azithromycin 500mg"
                   value={medicineName}
@@ -297,7 +408,9 @@ const TrackOrders = () => {
                 />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">Composition (Optional)</Label>
+                <Label className="text-xs text-muted-foreground">
+                  Composition (Optional)
+                </Label>
                 <Input
                   placeholder="e.g. Azithromycin"
                   value={composition}
@@ -305,11 +418,21 @@ const TrackOrders = () => {
                   className="h-9 text-sm bg-muted/30 border-border/60"
                 />
               </div>
-              <Button type="submit" disabled={submitting} className="w-full gap-2" size="sm">
+              <Button
+                type="submit"
+                disabled={submitting}
+                className="w-full gap-2"
+                size="sm"
+              >
                 {submitting ? (
-                  <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Submitting...</>
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />{" "}
+                    Submitting...
+                  </>
                 ) : (
-                  <><Send className="h-3.5 w-3.5" /> Submit Request</>
+                  <>
+                    <Send className="h-3.5 w-3.5" /> Submit Request
+                  </>
                 )}
               </Button>
             </form>

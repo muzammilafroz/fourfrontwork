@@ -30,6 +30,7 @@ type Medicine = {
 };
 
 type OrderItem = {
+  id: number;
   name: string;
   quantity: number;
   price: number;
@@ -81,6 +82,7 @@ const Sales = () => {
           order_date: order.order_date,
           payment_status: order.payment_status,
           cart_items: order.cart_items.map((item) => ({
+            id: item.id,
             quantity: item.quantity,
             price: item.price,
             name: item.medicine.name,
