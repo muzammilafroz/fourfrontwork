@@ -31,5 +31,5 @@ Make sure `uv` is installed on your system.
 cd <PROJECT_NAME>/backend
 uv sync
 source .venv/bin/activate
-uv run python main.py
+uv run main.py
 ```

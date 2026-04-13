@@ -128,7 +128,7 @@ const EmployeeAppointments = () => {
                     {a.patient_phone}
                   </td>
                   <td className="p-3 text-foreground">
-                    {(a.doctors as any)?.name}
+                    {(a.doctor as any)?.name}
                   </td>
                   <td className="p-3 text-foreground">{a.appointment_date}</td>
                   <td className="p-3 text-foreground">{a.appointment_time}</td>
