@@ -68,7 +68,7 @@ def create_order(
     ).first()
 
     if not customer:
-        customer = session.exec(select(User).where(User.id == 1)).first()
+        customer = session.exec(select(User).where(User.id == 2)).first()
 
     # We exclude 'cart_items' from the dump because Order (table) doesn't have that column
     order_data = order_in.model_dump(exclude={"cart_items"})

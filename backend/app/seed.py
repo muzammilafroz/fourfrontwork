@@ -18,13 +18,6 @@ def seed_data():
         # Dummy users
         customers = [
             User(
-                name="Anonymous",
-                email="anonymous@gmail.com",
-                phone="0000000000",
-                hashed_password=get_password_hash("anon"),
-                role=UserRole.CUSTOMER,
-            ),
-            User(
                 name="Yogi Kumar",
                 email="yogi.kumar@gmail.com",
                 phone="9827283360",
@@ -69,6 +62,13 @@ def seed_data():
                 phone="1234567890",
                 hashed_password=get_password_hash("admin"),
                 role=UserRole.ADMIN,
+            ),
+            User(
+                name="Anonymous",
+                email="anonymous@gmail.com",
+                phone="0000000000",
+                hashed_password=get_password_hash("anon"),
+                role=UserRole.CUSTOMER,
             ),
             *customers,
             *employees,

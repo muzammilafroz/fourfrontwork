@@ -17,12 +17,12 @@ const MedicineSearch = () => {
   const [filtered, setFiltered] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const API_BASE = "http://localhost:8000/api";
 
   useEffect(() => {
     const load = async () => {
-      const url = "http://localhost:8000/api/medicines";
       try {
-        const res = await fetch(url, {
+        const res = await fetch(`${API_BASE}/medicines`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -37,28 +37,6 @@ const MedicineSearch = () => {
     };
 
     load();
-
-    // const channel = supabase
-    //   .channel("emp-medicines")
-    //   .on(
-    //     "postgres_changes",
-    //     { event: "*", schema: "public", table: "medicines" },
-    //     () => {
-    //       supabase
-    //         .from("medicines")
-    //         .select("*")
-    //         .order("name")
-    //         .then(({ data }) => {
-    //           setMedicines(data || []);
-    //           setFiltered(data || []);
-    //         });
-    //     },
-    //   )
-    //   .subscribe();
-
-    // return () => {
-    //   channel.unsubscribe();
-    // };
   }, []);
 
   useEffect(() => {
@@ -81,17 +59,31 @@ const MedicineSearch = () => {
   }, [search, medicines]);
 
   const handlePreorder = async (med: any) => {
-    // try {
-    //   const { error } = await supabase.from("medicine_requests").insert({
-    //     medicine_name: med.name,
-    //     composition: med.composition,
-    //   });
-    //   if (error) throw error;
-    //   toast.success(`Preorder request for ${med.name} submitted!`);
-    // } catch (err: any) {
-    //   toast.error(err.message);
-    // }
-    console.log("TODO: Implement pre-orders.", med);
+    try {
+      const payload = {
+        medicine_name: med.name,
+        composition: med.composition,
+        requested_date: new Date(),
+        status: "pending",
+        customer_name: user.name,
+        customer_phone: user.phone,
+      };
+      console.log(payload);
+
+      const res = await fetch(`${API_BASE}/medicine-requests`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error();
+      toast.success("Request submitted!");
+    } catch {
+      toast.error("Failed to submit request");
+    }
+    // console.log("TODO: Implement pre-orders.", med);
   };
 
   if (loading) return <CardSkeleton count={8} />;

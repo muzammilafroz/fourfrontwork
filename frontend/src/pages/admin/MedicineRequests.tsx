@@ -348,9 +348,6 @@ const MedicineRequests = () => {
                           <p className="font-medium text-sm text-foreground">
                             {r.medicine_name}
                           </p>
-                          <p className="text-xs text-muted-foreground font-mono mt-0.5">
-                            ID: {r.id}
-                          </p>
                         </div>
                       </td>
                       <td className="px-4 py-2.5 text-sm text-muted-foreground">
