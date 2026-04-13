@@ -18,6 +18,13 @@ def seed_data():
         # Dummy users
         customers = [
             User(
+                name="Anonymous",
+                email="anonymous@gmail.com",
+                phone="0000000000",
+                hashed_password=get_password_hash("anon"),
+                role=UserRole.CUSTOMER,
+            ),
+            User(
                 name="Yogi Kumar",
                 email="yogi.kumar@gmail.com",
                 phone="9827283360",
@@ -367,10 +374,9 @@ def seed_data():
 
         orders = [
             Order(
-                customer_name=customers[0].name,
-                customer_phone=customers[0].phone,
-                # total_price=23.75,
-                customer_id=customers[0].id,
+                customer_name=customers[1].name,
+                customer_phone=customers[1].phone,
+                customer_id=customers[1].id,
                 employee_id=employees[0].id,
             )
         ]

@@ -91,6 +91,7 @@ const MedicineSearch = () => {
     // } catch (err: any) {
     //   toast.error(err.message);
     // }
+    console.log("TODO: Implement pre-orders.", med);
   };
 
   if (loading) return <CardSkeleton count={8} />;
@@ -156,7 +157,9 @@ const MedicineSearch = () => {
                 <p className="text-xs text-muted-foreground mb-2 truncate max-w-[200px]">
                   {med.composition}
                 </p>
-                <p className="text-primary font-medium mb-1">₹ {med.price.toFixed(2)}</p>
+                <p className="text-primary font-medium mb-1">
+                  ₹ {med.price.toFixed(2)}
+                </p>
                 <p className={`text-xs font-medium mb-1 ${stock.color}`}>
                   {stock.label} ({med.stock_quantity})
                 </p>
@@ -173,7 +176,6 @@ const MedicineSearch = () => {
                 >
                   Request Medicine
                 </Button>
-
 
                 {/*{med.stock_quantity === 0 && (
                   <Button

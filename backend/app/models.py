@@ -34,11 +34,6 @@ class UserStatus(str, Enum):
     SUSPENDED = "suspended"
 
 
-class PaymentStatus(str, Enum):
-    PAID = "paid"
-    PENDING = "pending"
-
-
 # Users
 class UserBase(SQLModel):
     name: str
@@ -118,28 +113,54 @@ class MedicineCreate(MedicineBase):
 
 
 # Orders
+class DiscountType(str, Enum):
+    PERCENTAGE = "percentage"
+    FIXED = "fixed"
+    NONE = "none"
+
+
+class PaymentStatus(str, Enum):
+    PAID = "paid"
+    UNPAID = "unpaid"
+
+
+class PaymentMethod(str, Enum):
+    ONLINE = "online"
+    OFFLINE = "offline"
+
+
 class OrderBase(SQLModel):
     customer_name: str
     customer_phone: str
-    # total_price: float
     order_date: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
     payment_status: PaymentStatus = Field(
         sa_column=Column(SAEnum(PaymentStatus)), default=PaymentStatus.PAID
     )
+    payment_method: PaymentMethod = Field(
+        sa_column=Column(SAEnum(PaymentMethod)), default=PaymentMethod.OFFLINE
+    )
+
+    discount_type: DiscountType = Field(
+        sa_column=Column(SAEnum(DiscountType)), default=DiscountType.NONE
+    )
+    discount_value: float = Field(
+        default=0.0, ge=0
+    )  # ge=0 ensures no negative discounts
 
 
 class Order(OrderBase, table=True):
-    id: int = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
 
     customer_id: int = Field(foreign_key="user.id")
     employee_id: Optional[int] = Field(default=None, foreign_key="user.id")
 
     # Relationships
-    customer: User = Relationship(
+    customer: "User" = Relationship(
         back_populates="orders",
         sa_relationship_kwargs={"foreign_keys": "Order.customer_id"},
     )
-    employee: Optional[User] = Relationship(
+    employee: Optional["User"] = Relationship(
         back_populates="handled_orders",
         sa_relationship_kwargs={"foreign_keys": "Order.employee_id"},
     )
@@ -149,6 +170,10 @@ class Order(OrderBase, table=True):
 class OrderPublic(OrderBase):
     id: int
     cart_items: List["CartItemPublic"]
+
+
+class OrderCreate(OrderBase):
+    cart_items: List["CartItemCreate"]
 
 
 # Cart Items
@@ -171,6 +196,10 @@ class CartItem(CartItemBase, table=True):
 class CartItemPublic(CartItemBase):
     id: int
     medicine: MedicinePublic
+
+
+class CartItemCreate(CartItemBase):
+    medicine_id: int
 
 
 # Medicine Requests

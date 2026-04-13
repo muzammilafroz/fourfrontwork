@@ -1,10 +1,10 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import select
 
 from ..database import get_session
-from ..models import Order, OrderPublic, User, UserRole
+from ..models import CartItem, Medicine, Order, OrderCreate, OrderPublic, User, UserRole
 from .user_routes import get_current_user
 
 router = APIRouter(prefix="/orders", tags=["orders"])
@@ -27,7 +27,7 @@ def read_orders(
     return orders
 
 
-@router.get("/{order_id}", response_model=Order)
+@router.get("/{order_id}", response_model=OrderPublic)
 def read_order(
     order_id: int,
     *,
@@ -44,30 +44,71 @@ def read_order(
     return order
 
 
-@router.post("", response_model=Order)
+@router.post("", response_model=OrderPublic)
 def create_order(
     *,
     session=Depends(get_session),
-    order_in: Order,
+    order_in: OrderCreate,
     current_user: User = Depends(get_current_user),
 ):
-    if current_user.role != UserRole.CUSTOMER:
-        raise HTTPException(status_code=403, detail="Only customers can create orders")
+    if current_user.role not in (UserRole.ADMIN, UserRole.EMPLOYEE):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only employees can create orders",
+        )
 
     if current_user.id is None:
-        raise HTTPException(status_code=400, detail="User ID is required")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="User ID is required"
+        )
 
-    order_in.customer_id = current_user.id
-    order_in.customer_name = current_user.name
-    order_in.customer_phone = current_user.phone
+    # Because the Order model requires customer_id, we look up the user by phone.
+    customer = session.exec(
+        select(User).where(User.phone == order_in.customer_phone)
+    ).first()
 
-    session.add(order_in)
-    session.commit()
-    session.refresh(order_in)
-    return order_in
+    if not customer:
+        customer = session.exec(select(User).where(User.id == 1)).first()
+
+    # We exclude 'cart_items' from the dump because Order (table) doesn't have that column
+    order_data = order_in.model_dump(exclude={"cart_items"})
+    db_order = Order(**order_data, customer_id=customer.id, employee_id=current_user.id)
+
+    session.add(db_order)
+    session.flush()  # Populates db_order.id for the cart items to use
+
+    # 4. Create the Cart Items
+    for item_in in order_in.cart_items:
+        # Verify medicine exists
+        medicine = session.get(Medicine, item_in.medicine_id)
+        if not medicine:
+            raise HTTPException(
+                status_code=404, detail=f"Medicine ID {item_in.medicine_id} not found"
+            )
+
+        if medicine.stock_quantity < item_in.quantity:
+            raise HTTPException(
+                status_code=400, detail=f"Not enough stock for {medicine.name}"
+            )
+        medicine.stock_quantity -= item_in.quantity
+
+        db_cart_item = CartItem(**item_in.model_dump(), order_id=db_order.id)
+        session.add(db_cart_item)
+
+    try:
+        session.commit()
+    except Exception as e:
+        print(e)
+        session.rollback()
+        raise HTTPException(
+            status_code=500, detail="Database error during order creation"
+        )
+
+    session.refresh(db_order)
+    return db_order
 
 
-@router.put("/{order_id}", response_model=Order)
+@router.put("/{order_id}", response_model=OrderPublic)
 def update_order(
     order_id: int,
     *,
