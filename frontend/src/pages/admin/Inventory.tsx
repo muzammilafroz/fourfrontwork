@@ -433,7 +433,7 @@ const Inventory = () => {
                           }`}
                         >
                           <stockStatus.icon className="h-2.5 w-2.5" />
-                          {m.stock_quantity} units
+                          {m.stock_quantity}
                         </span>
                       </td>
                       <td className="px-4 py-2.5 text-center">

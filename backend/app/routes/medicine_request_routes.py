@@ -1,16 +1,22 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import select
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlmodel import Session, select
 
 from ..database import get_session
-from ..models import MedicineRequest, User, UserRole
+from ..models import (
+    MedicineRequest,
+    MedicineRequestCreate,
+    MedicineRequestPublic,
+    User,
+    UserRole,
+)
 from .user_routes import get_current_user
 
 router = APIRouter(prefix="/medicine-requests", tags=["medicine-requests"])
 
 
-@router.get("", response_model=List[MedicineRequest])
+@router.get("", response_model=List[MedicineRequestPublic])
 def read_medicine_requests(
     *,
     session=Depends(get_session),
@@ -29,7 +35,7 @@ def read_medicine_requests(
     return requests
 
 
-@router.get("/{request_id}", response_model=MedicineRequest)
+@router.get("/{request_id}", response_model=MedicineRequestPublic)
 def read_medicine_request(
     request_id: int,
     *,
@@ -40,34 +46,48 @@ def read_medicine_request(
     if not request:
         raise HTTPException(status_code=404, detail="Medicine request not found")
 
-    if current_user.role == UserRole.CUSTOMER and request.requested_by != current_user.id:
+    if (
+        current_user.role == UserRole.CUSTOMER
+        and request.requested_by != current_user.id
+    ):
         raise HTTPException(status_code=403, detail="Not authorized")
 
     return request
 
 
-@router.post("", response_model=MedicineRequest)
+@router.post("", response_model=MedicineRequestPublic)
 def create_medicine_request(
     *,
-    session=Depends(get_session),
-    request_in: MedicineRequest,
+    session: Session = Depends(get_session),
+    request_in: MedicineRequestCreate,
     current_user: User = Depends(get_current_user),
 ):
-    if current_user.role != UserRole.CUSTOMER:
-        raise HTTPException(status_code=403, detail="Only customers can request medicines")
+    if current_user.role not in (UserRole.ADMIN, UserRole.EMPLOYEE):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only employees can create medicine requests",
+        )
 
-    if current_user.id is None:
-        raise HTTPException(status_code=400, detail="User ID is required")
+    db_obj = MedicineRequest.model_validate(
+        request_in, update={"requested_by": current_user.id}
+    )
+    print(db_obj)
 
-    request_in.requested_by = current_user.id
+    try:
+        session.add(db_obj)
+        session.commit()
+        session.refresh(db_obj)
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while saving the request",
+        )
 
-    session.add(request_in)
-    session.commit()
-    session.refresh(request_in)
-    return request_in
+    return db_obj
 
 
-@router.put("/{request_id}", response_model=MedicineRequest)
+@router.put("/{request_id}", response_model=MedicineRequestPublic)
 def update_medicine_request(
     request_id: int,
     *,
@@ -76,7 +96,9 @@ def update_medicine_request(
     current_user: User = Depends(get_current_user),
 ):
     if current_user.role not in (UserRole.ADMIN, UserRole.EMPLOYEE):
-        raise HTTPException(status_code=403, detail="Only employees can update requests")
+        raise HTTPException(
+            status_code=403, detail="Only employees can update requests"
+        )
 
     db_request = session.get(MedicineRequest, request_id)
     if not db_request:

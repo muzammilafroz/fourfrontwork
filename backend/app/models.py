@@ -210,6 +210,8 @@ class MedicineRequestBase(SQLModel):
     status: RequestStatus = Field(
         sa_column=Column(SAEnum(RequestStatus)), default=RequestStatus.PENDING
     )
+    customer_name: str
+    customer_phone: str
 
 
 class MedicineRequest(MedicineRequestBase, table=True):
@@ -227,6 +229,14 @@ class MedicineRequest(MedicineRequestBase, table=True):
         back_populates="handled_requests",
         sa_relationship_kwargs={"foreign_keys": "MedicineRequest.handled_by"},
     )
+
+
+class MedicineRequestPublic(MedicineRequestBase):
+    id: Optional[int]
+
+
+class MedicineRequestCreate(MedicineRequestBase):
+    pass
 
 
 # Appointments
