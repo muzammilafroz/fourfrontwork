@@ -15,6 +15,7 @@ from ..models import (
     PrescriptionCreate,
     PrescriptionPublic,
     User,
+    UserRole,
 )
 from .user_routes import get_current_user
 
@@ -145,10 +146,13 @@ def read_customer_prescriptions(
     """
 
     try:
-        statement = select(Prescription).where(
-            Prescription.customer_id == current_user.id
-        )
+        statement = select(Prescription)
+
+        if current_user.role != UserRole.ADMIN:
+            statement = statement.where(Prescription.customer_id == current_user.id)
+
         prescriptions = session.exec(statement).all()
+
     except Exception as e:
         prescriptions = []
         print(f"Error: {e}")

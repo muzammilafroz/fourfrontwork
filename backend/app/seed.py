@@ -226,7 +226,7 @@ def seed_data():
                 composition="Vitamin B-Complex + Vitamin C + Zinc",
                 brand="Pfizer",
                 price=45.50,
-                stock_quantity=500,
+                stock_quantity=250,
                 expiry_date=date(2027, 5, 30),
             ),
             Medicine(
@@ -282,7 +282,7 @@ def seed_data():
                 composition="Diclofenac 100mg",
                 brand="Novartis India",
                 price=95.00,
-                stock_quantity=200,
+                stock_quantity=120,
                 expiry_date=date(2026, 9, 30),
             ),
             Medicine(
@@ -290,7 +290,7 @@ def seed_data():
                 composition="Vitamin B-Complex + Vitamin B12",
                 brand="Procter & Gamble (P&G)",
                 price=34.50,
-                stock_quantity=800,
+                stock_quantity=380,
                 expiry_date=date(2027, 12, 15),
             ),
             Medicine(
@@ -298,7 +298,7 @@ def seed_data():
                 composition="Cetirizine 10mg",
                 brand="Cipla",
                 price=18.50,
-                stock_quantity=600,
+                stock_quantity=360,
                 expiry_date=date(2026, 3, 12),
             ),
             Medicine(
@@ -314,7 +314,7 @@ def seed_data():
                 composition="Multivitamins + Minerals + Ginseng",
                 brand="Sun Pharma",
                 price=110.00,
-                stock_quantity=200,
+                stock_quantity=120,
                 expiry_date=date(2026, 10, 20),
             ),
             Medicine(
@@ -322,7 +322,7 @@ def seed_data():
                 composition="Paracetamol + Propyphenazone + Caffeine",
                 brand="Piramal Pharma",
                 price=42.00,
-                stock_quantity=1000,
+                stock_quantity=180,
                 expiry_date=date(2027, 2, 28),
             ),
             Medicine(
@@ -338,7 +338,7 @@ def seed_data():
                 composition="Loperamide 2mg",
                 brand="Micro Labs Ltd",
                 price=22.50,
-                stock_quantity=400,
+                stock_quantity=540,
                 expiry_date=date(2026, 12, 31),
             ),
             Medicine(
@@ -346,7 +346,7 @@ def seed_data():
                 composition="Etofylline 77mg + Theophylline 23mg",
                 brand="Zydus Lifesciences",
                 price=15.00,
-                stock_quantity=500,
+                stock_quantity=50,
                 expiry_date=date(2027, 1, 10),
             ),
             Medicine(
@@ -362,7 +362,7 @@ def seed_data():
                 composition="Paracetamol 500mg",
                 brand="GSK",
                 price=15.50,
-                stock_quantity=900,
+                stock_quantity=90,
                 expiry_date=date(2027, 11, 20),
             ),
         ]

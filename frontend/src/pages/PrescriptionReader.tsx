@@ -442,7 +442,7 @@ const PrescriptionReader = () => {
                 {p.summary || "No summary"}
               </p>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-end">
                 {/*<StatusBadge status={p.status} />*/}
                 <Button
                   variant="ghost"
