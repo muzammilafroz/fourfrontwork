@@ -1,10 +1,10 @@
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 
 from sqlmodel import Session, select
 
 from .crud import get_password_hash
 from .database import engine
-from .models import CartItem, Doctor, Medicine, Order, User, UserRole
+from .models import CartItem, DiscountType, Doctor, Medicine, Order, User, UserRole
 
 
 def seed_data():
@@ -77,10 +77,6 @@ def seed_data():
         session.add_all(users)
         session.commit()
 
-        session.refresh(users[0])
-        session.refresh(users[1])
-        session.refresh(users[4])
-
         # Dummy doctors
         doctors = [
             Doctor(
@@ -129,6 +125,7 @@ def seed_data():
                 name="Dolo 650",
                 composition="Paracetamol 650mg",
                 brand="Micro Labs Ltd",
+                supplier="Apollo Pharmacy",
                 price=30.50,
                 stock_quantity=50,
                 expiry_date=date(2026, 5, 20),
@@ -137,6 +134,7 @@ def seed_data():
                 name="Augmentin 625 Duo",
                 composition="Amoxycillin 500mg + Clavulanic Acid 125mg",
                 brand="GSK",
+                supplier="MedPlus Health",
                 price=201.50,
                 stock_quantity=150,
                 expiry_date=date(2027, 2, 15),
@@ -145,6 +143,7 @@ def seed_data():
                 name="Azithral 500",
                 composition="Azithromycin 500mg",
                 brand="Alembic Pharmaceuticals",
+                supplier="Entero Healthcare",
                 price=119.50,
                 stock_quantity=200,
                 expiry_date=date(2026, 11, 10),
@@ -153,6 +152,7 @@ def seed_data():
                 name="Pan 40",
                 composition="Pantoprazole 40mg",
                 brand="Alkem Laboratories",
+                supplier="Wellness Forever",
                 price=155.00,
                 stock_quantity=300,
                 expiry_date=date(2026, 8, 25),
@@ -161,6 +161,7 @@ def seed_data():
                 name="Glycomet 500",
                 composition="Metformin 500mg",
                 brand="USV Pvt Ltd",
+                supplier="Pharmarack Solutions",
                 price=24.25,
                 stock_quantity=60,
                 expiry_date=date(2027, 1, 5),
@@ -169,6 +170,7 @@ def seed_data():
                 name="Telma 40",
                 composition="Telmisartan 40mg",
                 brand="Glenmark Pharmaceuticals",
+                supplier="Netmeds Marketplace",
                 price=98.00,
                 stock_quantity=250,
                 expiry_date=date(2026, 12, 30),
@@ -177,6 +179,7 @@ def seed_data():
                 name="Limcee",
                 composition="Vitamin C (Ascorbic Acid) 500mg",
                 brand="Abbott India",
+                supplier="Tata 1mg",
                 price=23.10,
                 stock_quantity=100,
                 expiry_date=date(2027, 6, 1),
@@ -185,6 +188,7 @@ def seed_data():
                 name="Shelcal 500",
                 composition="Calcium 500mg + Vitamin D3 250 IU",
                 brand="Torrent Pharmaceuticals",
+                supplier="Frank Ross Pharmacy",
                 price=118.50,
                 stock_quantity=400,
                 expiry_date=date(2026, 9, 14),
@@ -193,6 +197,7 @@ def seed_data():
                 name="Montair LC",
                 composition="Montelukast 10mg + Levocetirizine 5mg",
                 brand="Cipla",
+                supplier="Meher Distributors",
                 price=190.00,
                 stock_quantity=180,
                 expiry_date=date(2026, 4, 18),
@@ -201,6 +206,7 @@ def seed_data():
                 name="Allegra 120mg",
                 composition="Fexofenadine 120mg",
                 brand="Sanofi India",
+                supplier="Apollo Pharmacy",
                 price=210.50,
                 stock_quantity=120,
                 expiry_date=date(2026, 10, 12),
@@ -209,6 +215,7 @@ def seed_data():
                 name="Combiflam",
                 composition="Ibuprofen 400mg + Paracetamol 325mg",
                 brand="Sanofi India",
+                supplier="MedPlus Health",
                 price=45.25,
                 stock_quantity=450,
                 expiry_date=date(2027, 3, 20),
@@ -217,6 +224,7 @@ def seed_data():
                 name="Omez 20",
                 composition="Omeprazole 20mg",
                 brand="Dr. Reddy's Laboratories",
+                supplier="Entero Healthcare",
                 price=58.00,
                 stock_quantity=350,
                 expiry_date=date(2026, 7, 11),
@@ -225,6 +233,7 @@ def seed_data():
                 name="Becosules Z",
                 composition="Vitamin B-Complex + Vitamin C + Zinc",
                 brand="Pfizer",
+                supplier="PharmEasy Supply",
                 price=45.50,
                 stock_quantity=250,
                 expiry_date=date(2027, 5, 30),
@@ -233,6 +242,7 @@ def seed_data():
                 name="Taxim-O 200",
                 composition="Cefixime 200mg",
                 brand="Alkem Laboratories",
+                supplier="Wellness Forever",
                 price=105.00,
                 stock_quantity=220,
                 expiry_date=date(2026, 1, 15),
@@ -241,6 +251,7 @@ def seed_data():
                 name="Zifi 200",
                 composition="Cefixime 200mg",
                 brand="FDC Ltd",
+                supplier="SastaSundar Ventures",
                 price=108.00,
                 stock_quantity=190,
                 expiry_date=date(2026, 11, 22),
@@ -249,6 +260,7 @@ def seed_data():
                 name="Liv.52 DS",
                 composition="Himsra + Kasani (Herbal)",
                 brand="Himalaya Wellness",
+                supplier="Himalaya Retail Store",
                 price=170.00,
                 stock_quantity=150,
                 expiry_date=date(2027, 8, 1),
@@ -257,6 +269,7 @@ def seed_data():
                 name="Atarax 25mg",
                 composition="Hydroxyzine 25mg",
                 brand="Dr. Reddy's Laboratories",
+                supplier="Vardhman Pharma",
                 price=85.00,
                 stock_quantity=140,
                 expiry_date=date(2026, 12, 10),
@@ -265,6 +278,7 @@ def seed_data():
                 name="Moxikind-CV 625",
                 composition="Amoxicillin 500mg + Potassium Clavulanate 125mg",
                 brand="Mankind Pharma",
+                supplier="Apollo Pharmacy",
                 price=195.00,
                 stock_quantity=280,
                 expiry_date=date(2026, 6, 15),
@@ -273,6 +287,7 @@ def seed_data():
                 name="Arkamine",
                 composition="Clonidine 100mcg",
                 brand="Unichem Laboratories",
+                supplier="MedPlus Health",
                 price=65.50,
                 stock_quantity=100,
                 expiry_date=date(2027, 4, 1),
@@ -281,6 +296,7 @@ def seed_data():
                 name="Voveran SR 100",
                 composition="Diclofenac 100mg",
                 brand="Novartis India",
+                supplier="Frank Ross Pharmacy",
                 price=95.00,
                 stock_quantity=120,
                 expiry_date=date(2026, 9, 30),
@@ -289,6 +305,7 @@ def seed_data():
                 name="Neurobion Forte",
                 composition="Vitamin B-Complex + Vitamin B12",
                 brand="Procter & Gamble (P&G)",
+                supplier="Tata 1mg",
                 price=34.50,
                 stock_quantity=380,
                 expiry_date=date(2027, 12, 15),
@@ -297,14 +314,16 @@ def seed_data():
                 name="Okacet",
                 composition="Cetirizine 10mg",
                 brand="Cipla",
+                supplier="Netmeds Marketplace",
                 price=18.50,
-                stock_quantity=360,
+                stock_quantity=30,
                 expiry_date=date(2026, 3, 12),
             ),
             Medicine(
                 name="Pantocid 40",
                 composition="Pantoprazole 40mg",
                 brand="Sun Pharma",
+                supplier="Entero Healthcare",
                 price=160.00,
                 stock_quantity=320,
                 expiry_date=date(2026, 11, 1),
@@ -313,6 +332,7 @@ def seed_data():
                 name="Revital H",
                 composition="Multivitamins + Minerals + Ginseng",
                 brand="Sun Pharma",
+                supplier="Wellness Forever",
                 price=110.00,
                 stock_quantity=120,
                 expiry_date=date(2026, 10, 20),
@@ -321,6 +341,7 @@ def seed_data():
                 name="Saridon",
                 composition="Paracetamol + Propyphenazone + Caffeine",
                 brand="Piramal Pharma",
+                supplier="PharmEasy Supply",
                 price=42.00,
                 stock_quantity=180,
                 expiry_date=date(2027, 2, 28),
@@ -329,6 +350,7 @@ def seed_data():
                 name="Vertin 16",
                 composition="Betahistine 16mg",
                 brand="Abbott India",
+                supplier="MedPlus Health",
                 price=175.00,
                 stock_quantity=150,
                 expiry_date=date(2026, 5, 5),
@@ -337,6 +359,7 @@ def seed_data():
                 name="Eldoper",
                 composition="Loperamide 2mg",
                 brand="Micro Labs Ltd",
+                supplier="Apollo Pharmacy",
                 price=22.50,
                 stock_quantity=540,
                 expiry_date=date(2026, 12, 31),
@@ -345,6 +368,7 @@ def seed_data():
                 name="Deriphyllin",
                 composition="Etofylline 77mg + Theophylline 23mg",
                 brand="Zydus Lifesciences",
+                supplier="Entero Healthcare",
                 price=15.00,
                 stock_quantity=50,
                 expiry_date=date(2027, 1, 10),
@@ -353,6 +377,7 @@ def seed_data():
                 name="Orofer XT",
                 composition="Ferrous Ascorbate + Folic Acid",
                 brand="Emcure Pharmaceuticals",
+                supplier="Meher Distributors",
                 price=178.00,
                 stock_quantity=220,
                 expiry_date=date(2026, 8, 15),
@@ -361,6 +386,7 @@ def seed_data():
                 name="Calpol 500",
                 composition="Paracetamol 500mg",
                 brand="GSK",
+                supplier="Tata 1mg",
                 price=15.50,
                 stock_quantity=90,
                 expiry_date=date(2027, 11, 20),
@@ -369,16 +395,35 @@ def seed_data():
 
         session.add_all(medicines)
         session.commit()
-        session.refresh(medicines[0])
-        session.refresh(medicines[1])
+
+        if not all([c.id for c in customers]):
+            print("DB Error")
+            return None
 
         orders = [
             Order(
                 customer_name=customers[1].name,
                 customer_phone=customers[1].phone,
+                order_date=datetime.now(timezone.utc) - timedelta(days=5),
                 customer_id=customers[1].id,
                 employee_id=employees[0].id,
-            )
+            ),
+            Order(
+                customer_name=customers[2].name,
+                customer_phone=customers[2].phone,
+                order_date=datetime.now(timezone.utc) - timedelta(days=4),
+                customer_id=customers[2].id,
+                employee_id=employees[1].id,
+                discount_type=DiscountType.FIXED,
+                discount_value=4,
+            ),
+            Order(
+                customer_name="Aman",
+                customer_phone="9890928815",
+                order_date=datetime.now(timezone.utc) - timedelta(days=3),
+                customer_id=users[1].id,
+                employee_id=employees[0].id,
+            ),
         ]
         session.add_all(orders)
         session.commit()
@@ -395,6 +440,24 @@ def seed_data():
                 medicine_id=medicines[1].id,
                 quantity=1,
                 price=medicines[1].price,
+            ),
+            CartItem(
+                order_id=orders[1].id,
+                medicine_id=medicines[2].id,
+                quantity=2,
+                price=medicines[2].price,
+            ),
+            CartItem(
+                order_id=orders[1].id,
+                medicine_id=medicines[3].id,
+                quantity=1,
+                price=medicines[3].price,
+            ),
+            CartItem(
+                order_id=orders[2].id,
+                medicine_id=medicines[4].id,
+                quantity=2,
+                price=medicines[4].price,
             ),
         ]
         session.add_all(items)
