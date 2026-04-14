@@ -158,8 +158,7 @@ const MedicineRequests = () => {
       setRequests((prev) =>
         prev.map((r) => (r.id === reqId ? { ...r, status: newStatus } : r)),
       );
-
-      setStatusUpdates((prev) => ({ ...prev, [reqId]: "" }));
+      setStatusUpdates((prev) => ({ ...prev, [reqId]: newStatus }));
     } catch (err: any) {
       toast.error(err.message || "Update error");
     } finally {
