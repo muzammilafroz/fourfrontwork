@@ -40,7 +40,7 @@ type Appointment = {
 
 type DateFilter = "all" | "today" | "tomorrow" | "week" | "month" | "past";
 
-const OwnerAppointments = () => {
+const AdminAppointments = () => {
   const { user } = useAuthStore();
   const token = useAuthStore((state) => state.getAuthToken());
 
@@ -549,4 +549,4 @@ const OwnerAppointments = () => {
   );
 };
 
-export default OwnerAppointments;
+export default AdminAppointments;

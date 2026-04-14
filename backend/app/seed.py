@@ -66,7 +66,7 @@ def seed_data():
             User(
                 name="Anonymous",
                 email="anonymous@gmail.com",
-                phone="0000000000",
+                phone="1234567890",
                 hashed_password=get_password_hash("anon"),
                 role=UserRole.CUSTOMER,
             ),
