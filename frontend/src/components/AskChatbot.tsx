@@ -421,7 +421,7 @@ const AskChatbot = ({
             </Button>
             <div>
               <h1 className="text-xl font-semibold tracking-tight text-foreground">
-                Ask Chatbot 🤖
+                Ask Chatbot
               </h1>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Your friendly AI pharmacy assistant

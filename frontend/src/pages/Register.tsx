@@ -15,8 +15,12 @@ const schema = z.object({
   phone: z.string().min(10, "Phone must be at least 10 digits").max(15),
   password: z
     .string()
-    .min(6, "Password must be at least 6 characters")
+    .min(4, "Password must be at least 4 characters")
     .max(100),
+  confirmPassword: z.string().min(1, "Please confirm your password"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
 
 const Register = () => {
@@ -26,6 +30,7 @@ const Register = () => {
     email: "",
     phone: "",
     password: "",
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,11 +39,11 @@ const Register = () => {
   const navigate = useNavigate();
 
   const strength =
-    form.password.length >= 8
+    form.password.length > 6
       ? form.password.match(/[A-Z]/) && form.password.match(/[0-9]/)
         ? 3
         : 2
-      : form.password.length >= 6
+      : form.password.length > 4
         ? 1
         : 0;
   const strengthLabels = ["Weak", "Fair", "Good", "Strong"];
@@ -51,7 +56,10 @@ const Register = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Zod will now check if passwords match during safeParse
     const result = schema.safeParse(form);
+
     if (!result.success) {
       const errs: Record<string, string> = {};
       result.error.issues.forEach((i) => {
@@ -60,73 +68,41 @@ const Register = () => {
       setErrors(errs);
       return;
     }
+
     setErrors({});
     setLoading(true);
 
     try {
-      // const hash = bcrypt.hashSync(form.password, 10);
+      const payload = {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        password: form.password,
+        role: role,
+      };
 
-      // Customer Registration
-      if (role === "customer") {
-        const payload = {
-          ...form,
-          role: "customer",
-        };
-        try {
-          const res = await fetch("http://localhost:8000/api/auth/register", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          });
-          const data = await res.json();
+      const res = await fetch("http://localhost:8000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-          if (!res.ok) {
-            throw new Error(data.detail || "Registration failed.");
-          }
+      const data = await res.json();
 
-          console.log("Success:", data);
-          toast.success("Account created! Welcome to MedEase.");
-
-          navigate("/login");
-        } catch (error) {
-          console.error("Error:", error.message);
-          toast.error("Error: Something went wrong.");
-        }
-      } else {
-        // Employee Registration
-        const payload = {
-          ...form,
-          role: "employee",
-        };
-        try {
-          const res = await fetch("http://localhost:8000/api/auth/register", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
-          });
-          const data = await res.json();
-
-          if (!res.ok) {
-            throw new Error(data.detail || "Registration failed.");
-          }
-
-          console.log("Success:", data);
-          toast.success(
-            "Request submitted! The admin will review your application.",
-          );
-
-          navigate("/");
-        } catch (error) {
-          console.error("Error:", error.message);
-          toast.error("Error: Something went wrong.");
-        }
+      if (!res.ok) {
+        throw new Error(data.detail || "Registration failed.");
       }
-    } catch (err) {
-      toast.error(err.message || "Registration failed");
+
+      if (role === "customer") {
+        toast.success("Account created! Welcome to MedEase.");
+        navigate("/login");
+      } else {
+        toast.success("Request submitted! The admin will review your application.");
+        navigate("/");
+      }
+    } catch (err: any) {
+      console.error("Error:", err.message);
+      toast.error(err.message || "Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -183,6 +159,7 @@ const Register = () => {
           <div>
             <Label>Full Name</Label>
             <Input
+              placeholder="Enter your full name"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
             />
@@ -190,10 +167,12 @@ const Register = () => {
               <p className="text-xs text-destructive mt-1">{errors.name}</p>
             )}
           </div>
+
           <div>
             <Label>Email</Label>
             <Input
               type="email"
+              placeholder="Enter your email address"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
             />
@@ -201,9 +180,11 @@ const Register = () => {
               <p className="text-xs text-destructive mt-1">{errors.email}</p>
             )}
           </div>
+
           <div>
             <Label>Phone</Label>
             <Input
+              placeholder="Enter your 10-digit phone number"
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
             />
@@ -211,11 +192,13 @@ const Register = () => {
               <p className="text-xs text-destructive mt-1">{errors.phone}</p>
             )}
           </div>
+
           <div>
             <Label>Password</Label>
             <div className="relative">
               <Input
                 type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
               />
@@ -246,6 +229,25 @@ const Register = () => {
                   {strengthLabels[strength]}
                 </span>
               </div>
+            )}
+          </div>
+
+          <div>
+            <Label>Confirm Password</Label>
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Confirm your password"
+                value={form.confirmPassword}
+                onChange={(e) =>
+                  setForm({ ...form, confirmPassword: e.target.value })
+                }
+              />
+            </div>
+            {errors.confirmPassword && (
+              <p className="text-xs text-destructive mt-1">
+                {errors.confirmPassword}
+              </p>
             )}
           </div>
 
