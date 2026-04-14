@@ -131,6 +131,14 @@ const DoctorsManagement = () => {
     }
   };
 
+  const placeholders: Record<string, string> = {
+    name: "e.g. Dr. Jane Doe",
+    specialization: "e.g. Cardiologist",
+    available_days: "e.g. Monday, Wednesday OR Monday - Friday",
+    available_time: "e.g. 09:00 AM - 05:00 PM",
+    image_url: "https://example.com/image.png",
+  };
+
   if (loading) return <LoadingSkeleton />;
 
   return (
@@ -219,7 +227,9 @@ const DoctorsManagement = () => {
                 </p>
               </div>
 
-              <p className="text-primary font-medium">₹{d.consultation_fee.toLocaleString()}</p>
+              <p className="text-primary font-medium">
+                ₹{d.consultation_fee.toLocaleString()}
+              </p>
               <div className="flex gap-2 mt-4 pt-3 border-t border-border">
                 <Button
                   size="sm"
@@ -278,6 +288,7 @@ const DoctorsManagement = () => {
                 <Label className="capitalize">{f.replace("_", " ")}</Label>
                 <Input
                   value={form[f]}
+                  placeholder={placeholders[f]} // 2. Apply the placeholder
                   onChange={(e) => setForm({ ...form, [f]: e.target.value })}
                 />
               </div>
@@ -286,6 +297,7 @@ const DoctorsManagement = () => {
               <Label>Fee (₹)</Label>
               <Input
                 type="number"
+                placeholder="e.g. 500"
                 value={form.consultation_fee}
                 onChange={(e) =>
                   setForm({ ...form, consultation_fee: e.target.value })
