@@ -77,6 +77,7 @@ def create_prescription(
         doctor_name=prescription_data.doctor_name,
         date=prescription_data.date,
         medications=db_medications,
+        summary=prescription_data.summary,
     )
 
     try:
