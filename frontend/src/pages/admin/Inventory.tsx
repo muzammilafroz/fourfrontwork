@@ -272,7 +272,7 @@ const Inventory = () => {
             </span>
           </div>
           <p className="text-xl font-semibold text-foreground">
-            {totalStock} units
+            {totalStock.toLocaleString()} units
           </p>
         </div>
 

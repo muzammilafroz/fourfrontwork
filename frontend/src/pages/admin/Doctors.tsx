@@ -219,7 +219,7 @@ const DoctorsManagement = () => {
                 </p>
               </div>
 
-              <p className="text-primary font-medium">₹{d.consultation_fee}</p>
+              <p className="text-primary font-medium">₹{d.consultation_fee.toLocaleString()}</p>
               <div className="flex gap-2 mt-4 pt-3 border-t border-border">
                 <Button
                   size="sm"
