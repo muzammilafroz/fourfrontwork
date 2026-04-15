@@ -262,10 +262,10 @@ const UserManagement = () => {
                   <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wide">
                     Phone
                   </th>
-                  <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  <th className="px-4 py-2.5 text-center text-xs font-medium text-muted-foreground uppercase tracking-wide">
                     Role
                   </th>
-                  <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  <th className="px-4 py-2.5 text-center text-xs font-medium text-muted-foreground uppercase tracking-wide">
                     Status
                   </th>
                   <th className="px-4 py-2.5 text-center text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -294,10 +294,10 @@ const UserManagement = () => {
                     </td>
                     <td className="px-4 py-2.5 text-sm text-muted-foreground">
                       {u.phone || (
-                        <span className="text-muted-foreground/30">—</span>
+                        <span className="text-muted-foreground/30">-</span>
                       )}
                     </td>
-                    <td className="px-4 py-2.5">
+                    <td className="px-4 py-2.5 text-center">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
                         ${
@@ -308,10 +308,10 @@ const UserManagement = () => {
                               : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400"
                         }`}
                       >
-                        {u.role}
+                        {u.role.charAt(0).toUpperCase() + u.role.slice(1)}
                       </span>
                     </td>
-                    <td className="px-4 py-2.5">
+                    <td className="px-4 py-2.5 text-center">
                       <StatusBadge status={u.status} />
                     </td>
                     <td className="px-4 py-2.5 text-center">

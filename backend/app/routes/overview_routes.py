@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -26,7 +26,6 @@ def role_overview(db: Session = Depends(get_session)):
     today = datetime.now().date()
     last_7_days = today - timedelta(days=6)
 
-    # 1. Stats using SQL aggregation
     # Total Sales Today
     total_sales = (
         db.query(func.coalesce(func.sum(CartItem.price * CartItem.quantity), 0))
@@ -62,7 +61,7 @@ def role_overview(db: Session = Depends(get_session)):
     avg_rating = db.query(func.avg(Feedback.rating)).scalar() or 0
     avg_rating = round(float(avg_rating), 1)
 
-    # # 2. Sales for last 7 days
+    # Sales for last 7 days
     sales_map = {(today - timedelta(days=i)): float(0) for i in range(7)}
 
     recent_orders: list = (
@@ -78,16 +77,18 @@ def role_overview(db: Session = Depends(get_session)):
         .order_by(func.date(Order.order_date))
         .all()
     )
+
     for row in recent_orders:
-        if row.date in sales_map:
-            sales_map[row.date] = float(row.daily_total)
+        row_date = date.fromisoformat(row.date)
+        if row_date in sales_map.keys():
+            sales_map[row_date] = float(row.daily_total)
 
     sales_time = [
         {"date": d.strftime("%m-%d"), "total": sales_map[d]}
         for d in sorted(sales_map.keys())
     ]
 
-    # 3. Top 5 demanded medicines (Joining Order -> CartItem -> Medicine)
+    # Top 5 demanded medicines (Joining Order -> CartItem -> Medicine)
     medicine_demand = (
         db.query(Medicine.name, func.sum(CartItem.quantity).label("total_qty"))
         .join(CartItem, Medicine.id == CartItem.medicine_id)
@@ -99,7 +100,7 @@ def role_overview(db: Session = Depends(get_session)):
 
     demand = [{"name": m.name[:15], "qty": int(m.total_qty)} for m in medicine_demand]
 
-    # # 4. Inventory stats
+    # Inventory stats
     out_of_stock = db.query(Medicine).filter(Medicine.stock_quantity == 0).count()
     low_stock = (
         db.query(Medicine)
@@ -114,7 +115,7 @@ def role_overview(db: Session = Depends(get_session)):
         {"name": "In Stock", "value": in_stock},
     ]
 
-    # 5. Rating Distribution (Since mood/category aren't in your Feedback model)
+    # Rating Distribution (Since mood/category aren't in your Feedback model)
     rating_data = (
         db.query(Feedback.rating, func.count(Feedback.id).label("count"))
         .group_by(Feedback.rating)
@@ -123,7 +124,7 @@ def role_overview(db: Session = Depends(get_session)):
 
     rating_dist = [{"name": f"{r.rating} Stars", "count": r.count} for r in rating_data]
 
-    # 6. Doctor performance (Appointments)
+    # Doctor performance (Appointments)
     doctor_stats = (
         db.query(
             Doctor.name,

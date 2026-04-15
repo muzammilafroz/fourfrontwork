@@ -58,6 +58,48 @@ const Sales = () => {
   const [selectedBill, setSelectedBill] = useState<Order | null>(null);
   const [search, setSearch] = useState("");
 
+  const formatOrders = (data) => {
+    const orders = Array.isArray(data) ? data : [data];
+
+    const formatted = orders.map((order) => {
+      const total_price = order.cart_items.reduce(
+        (sum, item) => sum + item.quantity * item.price,
+        0,
+      );
+
+      let final_price = total_price;
+
+      if (order.discount_type === "percentage") {
+        final_price = total_price - (total_price * order.discount_value) / 100;
+      } else if (order.discount_type === "fixed") {
+        final_price = total_price - order.discount_value;
+      }
+
+      return {
+        id: order.id,
+        customer_name: order.customer_name,
+        customer_phone: order.customer_phone,
+        total_price,
+        final_price,
+        order_date: order.order_date,
+        payment_status: order.payment_status,
+        payment_method: order.payment_method,
+        cart_items: order.cart_items.map((item) => ({
+          id: item.id,
+          quantity: item.quantity,
+          price: item.price,
+          name: item.medicine.name,
+        })),
+        discount: {
+          type: order.discount_type,
+          value: order.discount_value,
+        },
+      };
+    });
+
+    return Array.isArray(data) ? formatted : formatted[0];
+  };
+
   useEffect(() => {
     const load = async () => {
       try {
@@ -69,26 +111,11 @@ const Sales = () => {
         if (!res.ok) throw new Error("Failed to load sales data");
 
         const data = await res.json();
-        // console.log(data);
+        console.log(data);
 
-        const formattedOrders = data.map((order) => ({
-          id: order.id,
-          customer_name: order.customer_name,
-          customer_phone: order.customer_phone,
-          total_price: order.cart_items.reduce(
-            (sum, item) => sum + item.quantity * item.price,
-            0,
-          ),
-          order_date: order.order_date,
-          payment_status: order.payment_status,
-          cart_items: order.cart_items.map((item) => ({
-            id: item.id,
-            quantity: item.quantity,
-            price: item.price,
-            name: item.medicine.name,
-          })),
-        }));
+        const formattedOrders = formatOrders(data);
         console.log(formattedOrders);
+
         setOrders(Array.isArray(data) ? formattedOrders : []);
       } catch (err: any) {
         console.error("Sales load error:", err);
@@ -290,7 +317,7 @@ const Sales = () => {
             </span>
           </div>
           <p className="text-xl font-semibold text-foreground">
-            ₹{totalRevenue.toFixed(2)}
+            ₹{totalRevenue.toFixed(2).toLocaleString()}
           </p>
         </div>
 
@@ -318,7 +345,7 @@ const Sales = () => {
             </span>
           </div>
           <p className="text-xl font-semibold text-foreground">
-            ₹{avgOrder.toFixed(2)}
+            ₹{avgOrder.toFixed(2).toLocaleString()}
           </p>
         </div>
       </div>
@@ -359,7 +386,7 @@ const Sales = () => {
                   <th className="px-4 py-2.5 text-right text-xs font-medium text-muted-foreground uppercase tracking-wide">
                     Amount
                   </th>
-                  <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  <th className="px-4 py-2.5 text-center text-xs font-medium text-muted-foreground uppercase tracking-wide">
                     Status
                   </th>
                   <th className="px-4 py-2.5 text-center text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -397,7 +424,7 @@ const Sales = () => {
                     <td className="px-4 py-2.5 text-right font-semibold text-sm text-primary">
                       ₹{o.total_price.toFixed(2)}
                     </td>
-                    <td className="px-4 py-2.5">
+                    <td className="px-4 py-2.5 text-center">
                       <StatusBadge status={o.payment_status} />
                     </td>
                     <td className="px-4 py-2.5 text-center">
@@ -427,7 +454,7 @@ const Sales = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={printBill}
+                onClick={() => window.print()}
                 className="gap-1 h-7 text-xs print:hidden"
               >
                 <Printer className="h-3 w-3" />
@@ -453,10 +480,10 @@ const Sales = () => {
 
                 <div className="mb-2 text-[11px]">
                   <p className="font-medium text-gray-900">
-                    {selectedBill.customer_name || "Walk-in Customer"}
+                    {selectedBill.customer_name}
                   </p>
                   <p className="text-gray-600">
-                    Phone: {selectedBill.customer_phone || "-"}
+                    Phone: {selectedBill.customer_phone}
                   </p>
                 </div>
 
@@ -470,53 +497,92 @@ const Sales = () => {
                         Qty
                       </th>
                       <th className="py-1 text-right font-medium text-gray-600">
+                        Price
+                      </th>
+                      <th className="py-1 text-right font-medium text-gray-600">
                         Total
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {(selectedBill.cart_items || []).map((item, i) => (
-                      <tr key={i} className="border-b border-gray-100">
-                        <td className="py-1">
-                          <span className="font-medium text-gray-900">
-                            {item.name}
-                          </span>
-                        </td>
-                        <td className="py-1 text-center text-gray-600">
-                          {item.quantity}
-                        </td>
-                        <td className="py-1 text-right font-medium text-gray-900">
-                          ₹{(item.price * item.quantity).toFixed(2)}
-                        </td>
-                      </tr>
-                    ))}
+                    {(selectedBill.cart_items || []).map(
+                      (item: any, i: number) => (
+                        <tr key={i} className="border-b border-gray-100">
+                          <td className="py-1">
+                            <span className="font-medium text-gray-900">
+                              {item.medicine?.name || item.name}
+                            </span>
+                          </td>
+                          <td className="py-1 text-center text-gray-600">
+                            {item.quantity}
+                          </td>
+                          <td className="py-1 text-right text-gray-600">
+                            ₹{item.price.toFixed(2)}
+                          </td>
+                          <td className="py-1 text-right font-medium text-gray-900">
+                            ₹{(item.quantity * item.price).toFixed(2)}
+                          </td>
+                        </tr>
+                      ),
+                    )}
                   </tbody>
                 </table>
 
-                <div className="border-t border-gray-200 pt-2">
-                  <div className="flex justify-between text-[11px] mb-0.5">
-                    <span className="text-gray-600">Total:</span>
-                    <span className="font-bold text-gray-900">
-                      ₹{selectedBill.total_price.toFixed(2)}
+                <div className="border-gray-200 pt-2">
+                  {selectedBill.discount.type != "none" && (
+                    <div className="flex justify-between text-[11px] mb-0.5">
+                      <span className="text-gray-600">Subtotal:</span>
+                      <span className="text-gray-900">
+                        ₹{selectedBill.total_price?.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+
+                  {selectedBill.discount.type != "none" &&
+                    selectedBill.discount.value > 0 && (
+                      <div className="flex justify-between text-[11px] mb-0.5">
+                        <span className="text-gray-600">Discount:</span>
+                        {selectedBill.discount.type == "fixed" && (
+                          <span className="text-green-600">
+                            -₹{selectedBill.discount.value?.toFixed(2)}
+                          </span>
+                        )}
+                        {selectedBill.discount.type == "percentage" && (
+                          <span className="text-green-600">
+                            -₹
+                            {(
+                              (selectedBill.discount.value / 100) *
+                              selectedBill.total_price
+                            ).toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                  <div className="flex justify-between text-sm font-bold pt-1 border-t border-gray-200 mt-1">
+                    <span className="text-gray-900">Total:</span>
+                    <span className="text-primary">
+                      ₹{selectedBill.final_price?.toFixed(2)}
                     </span>
                   </div>
-                  <div className="flex justify-between text-[10px] text-gray-500 mt-1">
-                    <span className="capitalize">
-                      {selectedBill.payment_method || "offline"}
-                    </span>
-                    <span
-                      className={`px-1.5 py-0.5 rounded-full text-[9px] font-medium
-                      ${
-                        selectedBill.payment_status === "paid"
-                          ? "bg-green-100 text-green-700"
-                          : selectedBill.payment_status === "pending"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-gray-100 text-gray-700"
-                      }`}
-                    >
-                      {selectedBill.payment_status}
-                    </span>
-                  </div>
+                </div>
+
+                <div className="mt-2 pt-1 border-t border-gray-200 text-[10px] text-gray-500 flex justify-between">
+                  <span className="capitalize">
+                    {selectedBill.payment_method}
+                  </span>
+                  <span
+                    className={`px-1.5 py-0.5 rounded-full text-[9px] font-medium capitalize
+                    ${
+                      selectedBill.payment_status === "paid"
+                        ? "bg-green-100 text-green-700"
+                        : selectedBill.payment_status === "unpaid"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {selectedBill.payment_status}
+                  </span>
                 </div>
 
                 <p className="text-center text-[9px] text-gray-400 mt-2 pt-1 border-t border-gray-100">

@@ -272,7 +272,7 @@ const Inventory = () => {
             </span>
           </div>
           <p className="text-xl font-semibold text-foreground">
-            {totalStock} units
+            {totalStock.toLocaleString()} units
           </p>
         </div>
 
@@ -415,7 +415,7 @@ const Inventory = () => {
                       </td>
                       <td className="px-4 py-2.5 text-sm text-muted-foreground">
                         {m.supplier || (
-                          <span className="text-muted-foreground/30">—</span>
+                          <span className="text-muted-foreground/30">-</span>
                         )}
                       </td>
                       <td className="px-4 py-2.5 text-right font-semibold text-sm text-primary">

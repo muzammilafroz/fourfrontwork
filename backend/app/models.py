@@ -94,6 +94,7 @@ class MedicineBase(SQLModel):
     name: str
     composition: str
     brand: str
+    supplier: str
     price: float
     stock_quantity: int
     expiry_date: date

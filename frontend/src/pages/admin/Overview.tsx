@@ -136,7 +136,7 @@ const Overview = () => {
   const statCards = [
     {
       label: "Sales Today",
-      value: `₹${stats.totalSales?.toLocaleString() ?? 0}`,
+      value: `₹${stats.totalSales?.toFixed(2).toLocaleString() ?? 0}`,
       icon: DollarSign,
     },
     {
@@ -154,13 +154,13 @@ const Overview = () => {
       value: stats.appointmentsToday ?? 0,
       icon: Calendar,
     },
-    { label: "Avg Rating", value: `${stats.avgRating ?? 0} ⭐`, icon: Star },
-    { label: "Employee Requests", value: stats.empRequests ?? 0, icon: Users },
-    {
-      label: "Visits Today",
-      value: stats.visitedToday ?? 0,
-      icon: Stethoscope,
-    },
+    // { label: "Avg Rating", value: `${stats.avgRating ?? 0} ⭐`, icon: Star },
+    // { label: "Employee Requests", value: stats.empRequests ?? 0, icon: Users },
+    // {
+    //   label: "Visits Today",
+    //   value: stats.visitedToday ?? 0,
+    //   icon: Stethoscope,
+    // },
   ];
 
   const hasSalesData = charts.salesTime && charts.salesTime.length > 0;
@@ -347,7 +347,7 @@ const Overview = () => {
         </ChartCard>
 
         {/* FEEDBACK MOOD */}
-        <ChartCard title="Feedback Mood" subtitle="Customer sentiment analysis">
+        {/*<ChartCard title="Feedback Mood" subtitle="Customer sentiment analysis">
           {hasMoodData ? (
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={charts.mood}>
@@ -384,10 +384,10 @@ const Overview = () => {
               icon={<Smile className="h-8 w-8" />}
             />
           )}
-        </ChartCard>
+        </ChartCard>*/}
 
         {/* FEEDBACK CATEGORIES */}
-        <ChartCard title="Feedback Categories" subtitle="By topic">
+        {/*<ChartCard title="Feedback Categories" subtitle="By topic">
           {hasCategoryData ? (
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
@@ -424,7 +424,7 @@ const Overview = () => {
               icon={<Activity className="h-8 w-8" />}
             />
           )}
-        </ChartCard>
+        </ChartCard>*/}
 
         {/* DOCTOR VISITS */}
         <ChartCard title="Doctor Visits" subtitle="Visit statistics">

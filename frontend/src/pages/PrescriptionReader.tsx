@@ -409,10 +409,22 @@ const PrescriptionReader = () => {
       <h2 className="text-lg font-serif font-semibold text-foreground mb-4">
         Prescription History
       </h2>
+
       {loadingHistory ? (
-        <div className="space-y-3">
-          {[1, 2].map((i) => (
-            <div key={i} className="h-24 bg-muted rounded-xl animate-pulse" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="border border-border rounded-xl p-4 space-y-3 animate-pulse"
+            >
+              <div className="h-32 bg-muted rounded-lg w-full" />
+              <div className="flex justify-between">
+                <div className="h-3 bg-muted rounded w-1/4" />
+                <div className="h-3 bg-muted rounded w-1/4" />
+              </div>
+              <div className="h-4 bg-muted rounded w-full" />
+              <div className="h-8 bg-muted rounded w-20 ml-auto" />
+            </div>
           ))}
         </div>
       ) : history.length === 0 ? (
@@ -426,29 +438,47 @@ const PrescriptionReader = () => {
           {history.map((p) => (
             <div
               key={p.id}
-              className="bg-card border border-border rounded-xl p-4"
+              className="group bg-card border border-border rounded-xl p-4 transition-all duration-200 flex flex-col"
             >
-              {p.image_base64 && (
+              {p.image_base64 ? (
                 <img
                   src={p.image_base64}
-                  alt="Prescription"
-                  className="w-full h-32 object-cover rounded-lg mb-3"
+                  alt="Prescription Scan"
+                  className="w-full h-32 object-cover rounded-lg mb-3 bg-muted"
                 />
+              ) : (
+                <div className="w-full h-32 bg-muted rounded-lg mb-3 flex items-center justify-center">
+                  <FileText className="h-6 w-6 text-muted-foreground/40" />
+                </div>
               )}
-              <p className="text-xs text-muted-foreground mb-1">
-                {new Date(p.created_at).toLocaleDateString()}
-              </p>
-              <p className="text-sm text-foreground line-clamp-2 mb-2">
-                {p.summary || "No summary"}
+
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <time className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">
+                  {new Date(p.created_at).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </time>
+                <span className="text-[10px] font-mono text-muted-foreground/70 bg-muted px-1.5 py-0.5 rounded">
+                  Customer ID: {p.customer_id}
+                </span>
+              </div>
+
+              <p className="text-sm text-foreground line-clamp-2 mb-4 flex-grow leading-relaxed">
+                {p.summary || (
+                  <span className="text-muted-foreground italic">
+                    No summary available
+                  </span>
+                )}
               </p>
 
-              <div className="flex items-center justify-between">
-                {/*<StatusBadge status={p.status} />*/}
+              <div className="flex items-center justify-end pt-2 border-t border-border/50">
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
-                  // onClick={() => setSelectedPrescription(p)}
                   onClick={() => setResult(p)}
+                  className="transition-colors"
                 >
                   View Details
                 </Button>

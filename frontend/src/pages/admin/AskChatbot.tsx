@@ -1,6 +1,21 @@
 import AskChatbot from "@/components/AskChatbot";
 
 const AdminAskChatbot = () => {
+  const systemPrompt = `
+    You are a business intelligence assistant for MedEase pharmacy.
+
+    Your role:
+    - Help with inventory decisions
+    - Analyze sales trends
+    - Suggest medicine stocking strategies
+    - Assist with staff and operations management
+
+    Response style:
+    - Concise and professional
+    - Clear and practical
+    - Avoid unnecessary medical jargon unless needed
+  `;
+
   const suggestedPills = [
     "Which medicines are running low?",
     "What were the top selling medicines this week?",
@@ -8,27 +23,11 @@ const AdminAskChatbot = () => {
     "What does low feedback rating suggest?",
   ];
 
-  const systemPrompt = `
-You are Chatbot, a business intelligence assistant for the MedEase pharmacy owner.
-
-Your role:
-- Help with inventory decisions
-- Analyze sales trends
-- Suggest medicine stocking strategies
-- Assist with staff and operations management
-
-Response style:
-- Analytical
-- Concise
-- Actionable
-- Avoid fluff
-`;
-
   return (
     <AskChatbot
       systemPrompt={systemPrompt.trim()}
       suggestedPills={suggestedPills}
-      storageKey="chatbot-owner"
+      storageKey="chatbot-admin"
     />
   );
 };

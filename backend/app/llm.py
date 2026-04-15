@@ -19,14 +19,14 @@ class Medication(BaseModel):
 
 
 class PrescriptionDetails(BaseModel):
+    summary: str = Field(
+        description="A professional medical summary of the prescription. Include the purpose of the visit (if known), a brief overview of the treatment plan, and any specific warnings or instructions mentioned."
+    )
     patient_name: Optional[str] = Field(description="Name of the patient")
     doctor_name: Optional[str] = Field(description="Name of the prescribing doctor")
     date: Optional[str] = Field(description="Date of the prescription")
     diagnosis: str = Field(description="The condition being treated if mentioned")
     medications: List[Medication] = Field(description="List of prescribed medicines")
-    summary: str = Field(
-        description="A concise summary of the prescription using your reasoning capabilities"
-    )
 
 
 def encode_image(image_path):
@@ -53,7 +53,12 @@ def extract_prescription_data(
         content=[
             {
                 "type": "text",
-                "text": "Extract all details from this doctor's prescription into a structured JSON format. Write a short summary of the prescription in the summary field.",
+                "text": (
+                    "Analyze this doctor's prescription image thoroughly. "
+                    "1. Extract all structured data (medications, patient info, etc.). "
+                    "2. In the 'summary' field, provide a clear explanation of what this "
+                    "prescription is for and the overall treatment plan based on the medications listed."
+                ),
             },
             {
                 "type": "image_url",

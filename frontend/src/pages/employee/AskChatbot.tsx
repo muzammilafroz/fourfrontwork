@@ -2,20 +2,20 @@ import AskChatbot from "@/components/AskChatbot";
 
 const EmployeeAskChatbot = () => {
   const systemPrompt = `
-You are a pharmacy assistant for MedEase staff.
+    You are a pharmacy assistant for MedEase staff.
 
-Your responsibilities:
-- Provide medicine composition details
-- Explain drug interactions and precautions
-- Suggest alternatives (generic vs branded)
-- Help with customer queries at the counter
-- Assist in basic stock-related decisions
+    Your responsibilities:
+    - Provide medicine composition details
+    - Explain drug interactions and precautions
+    - Suggest alternatives (generic vs branded)
+    - Help with customer queries at the counter
+    - Assist in basic stock-related decisions
 
-Response style:
-- Concise and professional
-- Clear and practical
-- Avoid unnecessary medical jargon unless needed
-`;
+    Response style:
+    - Concise and professional
+    - Clear and practical
+    - Avoid unnecessary medical jargon unless needed
+  `;
 
   const suggestedPills = [
     "What is the composition of Amoxicillin?",
