@@ -277,7 +277,7 @@ class AppointmentPublic(AppointmentBase):
     id: int
     doctor_id: int
     customer_id: int
-    doctor: Optional["DoctorPublic"] = None
+    doctor: "DoctorPublic"
 
 
 class AppointmentUpdate(SQLModel):
