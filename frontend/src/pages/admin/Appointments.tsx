@@ -190,7 +190,8 @@ const AdminAppointments = () => {
     const aptDate = new Date(apt.appointment_date);
     const today = new Date();
     return (
-      aptDate.toDateString() === today.toDateString() && apt.visited === true
+      aptDate.toDateString() === today.toDateString() &&
+      apt.status !== "cancelled"
     );
   }).length;
 
@@ -449,9 +450,6 @@ const AdminAppointments = () => {
                   <th className="px-4 py-2.5 text-left text-xs font-medium text-muted-foreground uppercase tracking-wide">
                     Status
                   </th>
-                  <th className="px-4 py-2.5 text-center text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                    Visited
-                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/50">
@@ -464,11 +462,6 @@ const AdminAppointments = () => {
                   const isTomorrow =
                     appointmentDate.toDateString() ===
                     new Date(today.getTime() + 86400000).toDateString();
-                  const isPast =
-                    appointmentDate < today &&
-                    !a.visited &&
-                    a.status !== "cancelled";
-
                   return (
                     <tr
                       key={a.id}
@@ -499,7 +492,7 @@ const AdminAppointments = () => {
                           <span
                             className={`text-sm ${isToday ? "font-semibold text-primary" : "text-foreground"}`}
                           >
-                            {new Date(a.appointment_date).toLocaleDateString()}
+                            {a.appointment_date}
                           </span>
                           {isToday && (
                             <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400">
@@ -511,31 +504,13 @@ const AdminAppointments = () => {
                               Tomorrow
                             </span>
                           )}
-                          {isPast && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-400">
-                              Past
-                            </span>
-                          )}
                         </div>
                       </td>
                       <td className="px-4 py-2.5 text-sm text-foreground">
-                        {a.appointment_time}
+                        {a.appointment_time.slice(0, -3)}
                       </td>
                       <td className="px-4 py-2.5">
                         <StatusBadge status={a.status} />
-                      </td>
-                      <td className="px-4 py-2.5 text-center">
-                        {a.visited ? (
-                          <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400">
-                            <CheckCircle className="h-4 w-4" />
-                            <span className="text-xs">Yes</span>
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-muted-foreground">
-                            <XCircle className="h-4 w-4" />
-                            <span className="text-xs">No</span>
-                          </span>
-                        )}
                       </td>
                     </tr>
                   );

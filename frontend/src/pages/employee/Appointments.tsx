@@ -131,7 +131,7 @@ const EmployeeAppointments = () => {
                     {(a.doctor as any)?.name}
                   </td>
                   <td className="p-3 text-foreground">{a.appointment_date}</td>
-                  <td className="p-3 text-foreground">{a.appointment_time}</td>
+                  <td className="p-3 text-foreground">{a.appointment_time.slice(0, -3)}</td>
                   <td className="p-3">
                     <Switch
                       checked={a.status === "completed"}

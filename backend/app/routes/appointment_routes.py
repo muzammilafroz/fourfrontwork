@@ -55,7 +55,21 @@ def create_appointment(
     if not customer:
         raise HTTPException(status_code=404, detail="Customer not found")
 
-    print(appointment_in)
+    # Check for existing appointment (same doctor, date, time)
+    existing_appointment = session.exec(
+        select(Appointment).where(
+            Appointment.doctor_id == appointment_in.doctor_id,
+            Appointment.appointment_date == appointment_in.appointment_date,
+            Appointment.appointment_time == appointment_in.appointment_time,
+        )
+    ).first()
+
+    if existing_appointment:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This time slot is already booked for this doctor.",
+        )
+
     db_appointment = Appointment.model_validate(
         appointment_in,
         update={
@@ -89,17 +103,15 @@ def read_appointments(
 ):
     """
     * If user is a customer, retrieves a list of appointments for the currently authenticated user.
-    *Tf user is a employee or admin, retrieves all appointments.
+    * If user is a employee or admin, retrieves all appointments.
     """
-    if current_user.role != UserRole.CUSTOMER:
-        statement = select(Appointment)
-    else:
-        statement = select(Appointment).where(
-            Appointment.customer_id == current_user.id
-        )
+    statement = select(Appointment)
 
+    # Enforce customer restriction
     if doctor_id:
         statement = statement.where(Appointment.doctor_id == doctor_id)
+    elif current_user.role == UserRole.CUSTOMER:
+        statement = statement.where(Appointment.customer_id == current_user.id)
 
     appointments = session.exec(statement).all()
     return appointments
@@ -125,6 +137,14 @@ def update_appointment(
     session.refresh(db_appointment)
 
     return db_appointment
+
+
+# @router.post("/check", response_model=AppointmentPublic)
+# def check_appointment(
+#     appointment_in: AppointmentCheck,
+#     session: Session = Depends(get_session),
+# ):
+#     pass
 
 
 # @router.delete("/{appointment_id}")
