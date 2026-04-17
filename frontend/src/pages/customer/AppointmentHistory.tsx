@@ -72,10 +72,10 @@ const AppointmentHistory = () => {
                 <th className="text-left p-3 font-medium text-muted-foreground">
                   Time
                 </th>
-                <th className="text-left p-3 font-medium text-muted-foreground">
+                <th className="text-center p-3 font-medium text-muted-foreground">
                   Status
                 </th>
-                <th className="text-left p-3 font-medium text-muted-foreground">
+                <th className="text-center p-3 font-medium text-muted-foreground">
                   Visited
                 </th>
               </tr>
@@ -93,11 +93,11 @@ const AppointmentHistory = () => {
                     {a.doctor.specialization}
                   </td>
                   <td className="p-3 text-foreground">{a.appointment_date}</td>
-                  <td className="p-3 text-foreground">{a.appointment_time}</td>
-                  <td className="p-3">
+                  <td className="p-3 text-foreground">{a.appointment_time.slice(0, -3)}</td>
+                  <td className="p-3 text-center">
                     <StatusBadge status={a.status} />
                   </td>
-                  <td className="p-3">{a.visited ? "✅" : "—"}</td>
+                  <td className="p-3 text-center">{a.visited ? "✅" : "-"}</td>
                 </tr>
               ))}
             </tbody>

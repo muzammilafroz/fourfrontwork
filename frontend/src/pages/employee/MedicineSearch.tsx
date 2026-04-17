@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuthStore } from "@/stores/authStore";
 
 import { CardSkeleton } from "@/components/LoadingSkeleton";
@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Search, Pill } from "lucide-react";
 
-// TODO: Make the search query hit the backend.
 const MedicineSearch = () => {
   const { user } = useAuthStore();
   const token = useAuthStore((state) => state.getAuthToken());
@@ -17,6 +16,9 @@ const MedicineSearch = () => {
   const [filtered, setFiltered] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const inputRef = useRef(null);
+
   const API_BASE = "http://localhost:8000/api";
 
   useEffect(() => {
@@ -39,22 +41,47 @@ const MedicineSearch = () => {
     load();
   }, []);
 
+  const searchMedicine = async (query: string) => {
+    try {
+      // NOTE: Alt way to do query params
+
+      // const params = new URLSearchParams();
+      // params.append("search", query);
+      // console.log(`${API_BASE}/medicines?${params}`);
+      // console.log(encodeURIComponent(query));
+
+      const url = `${API_BASE}/medicines?search=${encodeURIComponent(query)}`;
+      console.log(url);
+
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch");
+
+      const data = await res.json();
+      const safe = Array.isArray(data) ? data : [];
+
+      // Update the filtered list with the API results
+      setFiltered(safe);
+    } catch (error) {
+      toast.error("Search failed");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!search.trim()) {
         setFiltered(medicines);
       } else {
-        const q = search.toLowerCase();
-        setFiltered(
-          medicines.filter(
-            (m) =>
-              m.name.toLowerCase().includes(q) ||
-              m.composition?.toLowerCase().includes(q) ||
-              m.brand?.toLowerCase().includes(q),
-          ),
-        );
+        searchMedicine(search).then(() => {
+          inputRef.current?.focus();
+        });
       }
-    }, 300);
+    }, 500);
     return () => clearTimeout(timer);
   }, [search, medicines]);
 
@@ -83,7 +110,6 @@ const MedicineSearch = () => {
     } catch {
       toast.error("Failed to submit request");
     }
-    // console.log("TODO: Implement pre-orders.", med);
   };
 
   if (loading) return <CardSkeleton count={8} />;
@@ -91,7 +117,7 @@ const MedicineSearch = () => {
   const getStockBadge = (qty: number) => {
     if (qty === 0)
       return { label: "🔴 Out of Stock", color: "text-destructive" };
-    if (qty <= 10) return { label: "🟡 Low Stock", color: "text-warning" };
+    if (qty <= 50) return { label: "🟡 Low Stock", color: "text-warning" };
     return { label: "🟢 In Stock", color: "text-success" };
   };
 
@@ -103,6 +129,7 @@ const MedicineSearch = () => {
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
+          ref={inputRef}
           placeholder="Search by name, composition, or brand"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -143,9 +170,6 @@ const MedicineSearch = () => {
                 <p className="text-xs text-muted-foreground mb-1">
                   {med.brand}
                 </p>
-                {/*<p className="text-xs text-muted-foreground mb-2">
-                  {med.composition}
-                </p>*/}
                 <p className="text-xs text-muted-foreground mb-2 truncate max-w-[200px]">
                   {med.composition}
                 </p>
@@ -159,7 +183,6 @@ const MedicineSearch = () => {
                   Exp: {med.expiry_date || "N/A"}
                 </p>
 
-                {/*TODO: Implement a medicine request feature.*/}
                 <Button
                   size="sm"
                   variant="outline"
@@ -168,17 +191,6 @@ const MedicineSearch = () => {
                 >
                   Request Medicine
                 </Button>
-
-                {/*{med.stock_quantity === 0 && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="w-full mb-2"
-                    onClick={() => handlePreorder(med)}
-                  >
-                    Request Preorder
-                  </Button>
-                )}*/}
 
                 {alternatives.length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-2">

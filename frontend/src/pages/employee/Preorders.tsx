@@ -132,7 +132,7 @@ const EmployeePreorders = () => {
               </Label>
               <Input
                 id="customerName"
-                placeholder="Patient name"
+                placeholder="Enter patient name"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 className="h-9 text-sm bg-muted/30 border-border/60"
@@ -148,7 +148,7 @@ const EmployeePreorders = () => {
               </Label>
               <Input
                 id="customerPhone"
-                placeholder="+91 00000 00000"
+                placeholder="Enter phone number"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
                 className="h-9 text-sm bg-muted/30 border-border/60"
@@ -181,7 +181,7 @@ const EmployeePreorders = () => {
               </Label>
               <Input
                 id="composition"
-                placeholder="Active ingredients (optional)"
+                placeholder="Active ingredients"
                 value={composition}
                 onChange={(e) => setComposition(e.target.value)}
                 className="h-9 text-sm bg-muted/30 border-border/60"

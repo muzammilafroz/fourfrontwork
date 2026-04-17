@@ -427,7 +427,7 @@ const CreateOrder = () => {
                   </Label>
                   <Input
                     id="customerPhone"
-                    placeholder="Enter 10-digit phone number"
+                    placeholder="Enter phone number"
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     className="h-9 text-sm bg-muted/30 border-border/60"

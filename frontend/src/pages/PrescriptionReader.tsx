@@ -184,45 +184,6 @@ const PrescriptionReader = () => {
     }
   };
 
-  // const handleRequestMedicine = async (med: ScannedMedicine) => {
-  //   if (!user) return;
-  //   try {
-  //     const { error } = await supabase.from("medicine_requests").insert({
-  //       medicine_name: med.name,
-  //       customer_name: user.name,
-  //       customer_phone: user.phone,
-  //       requested_by: user.user_id,
-  //       composition: med.dosage,
-  //     });
-  //     if (error) throw error;
-  //     toast.success(`${med.name} request submitted!`);
-  //   } catch (err: any) {
-  //     toast.error(err.message);
-  //   }
-  // };
-
-  // const handleRequestAll = async () => {
-  //   if (!result || !user) return;
-  //   const unavailable = result.medicines.filter(
-  //     (m) => m.stockStatus === "out-of-stock",
-  //   );
-  //   if (unavailable.length === 0) return;
-  //   try {
-  //     const rows = unavailable.map((m) => ({
-  //       medicine_name: m.name,
-  //       customer_name: user.name,
-  //       customer_phone: user.phone,
-  //       requested_by: user.user_id,
-  //       composition: m.dosage,
-  //     }));
-  //     const { error } = await supabase.from("medicine_requests").insert(rows);
-  //     if (error) throw error;
-  //     toast.success(`${unavailable.length} medicine(s) requested!`);
-  //   } catch (err: any) {
-  //     toast.error(err.message);
-  //   }
-  // };
-
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "in-stock":
@@ -234,27 +195,10 @@ const PrescriptionReader = () => {
     }
   };
 
-  // const getStatusLabel = (status: string) => {
-  //   switch (status) {
-  //     case "in-stock":
-  //       return "✅ In Stock";
-  //     case "low-stock":
-  //       return "⚠️ Low Stock";
-  //     default:
-  //       return "❌ Out of Stock";
-  //   }
-  // };
-
-  // const availableCount = result
-  //   ? result.medicines.filter((m) => m.stockStatus !== "out-of-stock").length
-  //   : 0;
-  // const totalCount = result ? result.medicines.length : 0;
-  // const unavailableCount = totalCount - availableCount;
-
   return (
     <div>
-      <h1 className="text-2xl font-serif font-bold text-foreground mb-6">
-        💊 Prescription Reader
+      <h1 className="text-2xl font-serif font-semibold text-foreground mb-6">
+        Prescription Reader
       </h1>
 
       {/* Upload Area */}

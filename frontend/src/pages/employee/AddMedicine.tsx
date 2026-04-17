@@ -93,6 +93,7 @@ const AddMedicine = () => {
           new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
             .toISOString()
             .split("T")[0],
+        supplier: form.supplier,
       };
 
       try {
@@ -148,10 +149,10 @@ const AddMedicine = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-serif font-bold text-foreground mb-6">
-        Add Medicine to Inventory
-      </h1>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="max-w-lg mx-auto">
+        <h1 className="text-2xl font-serif font-bold text-foreground mb-6">
+          Add Medicine to Inventory
+        </h1>
         <form
           onSubmit={handleSubmit}
           className="bg-card rounded-xl border border-border p-6 space-y-4"
@@ -162,6 +163,7 @@ const AddMedicine = () => {
                 <Label className="capitalize">{field}</Label>
                 <Input
                   value={form[field]}
+                  placeholder={`Enter ${field}`}
                   onChange={(e) =>
                     setForm({ ...form, [field]: e.target.value })
                   }
@@ -179,6 +181,7 @@ const AddMedicine = () => {
               <Label>Price (₹)</Label>
               <Input
                 type="number"
+                placeholder="E.g. 75.50"
                 step="0.50"
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
@@ -191,6 +194,7 @@ const AddMedicine = () => {
               <Label>Stock Qty</Label>
               <Input
                 type="number"
+                placeholder="E.g. 50"
                 step="50"
                 value={form.stock_quantity}
                 onChange={(e) =>
@@ -213,56 +217,6 @@ const AddMedicine = () => {
             {loading ? "Adding..." : "Add Medicine"}
           </Button>
         </form>
-
-        <div>
-          <div className="mb-3">
-            <Input
-              placeholder="Search inventory..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-          <div className="bg-card rounded-xl border border-border overflow-x-auto max-h-[500px] overflow-y-auto">
-            <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-card">
-                <tr className="border-b border-border bg-muted/50">
-                  <th className="text-left p-3 text-muted-foreground font-medium">
-                    Name
-                  </th>
-                  <th className="text-left p-3 text-muted-foreground font-medium">
-                    Brand
-                  </th>
-                  <th className="text-left p-3 text-muted-foreground font-medium">
-                    Price
-                  </th>
-                  <th className="text-left p-3 text-muted-foreground font-medium">
-                    Stock
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((m) => {
-                  const stock = getStockBadge(m.stock_quantity);
-                  return (
-                    <tr
-                      key={m.id}
-                      className="border-b border-border last:border-0"
-                    >
-                      <td className="p-3 text-foreground">{m.name}</td>
-                      <td className="p-3 text-muted-foreground">{m.brand}</td>
-                      <td className="p-3 text-foreground text-right">
-                        ₹ {m.price.toFixed(2)}
-                      </td>
-                      <td className="p-3 text-right">
-                        <span className={stock.color}>{m.stock_quantity}</span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
       </div>
     </div>
   );
