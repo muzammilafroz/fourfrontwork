@@ -8,7 +8,6 @@ from ..models import (
     Medicine,
     MedicineCreate,
     MedicinePublic,
-    # MedicineUpdate,
     User,
     UserRole,
 )

@@ -20,7 +20,7 @@ const AdminAskChatbot = () => {
     "Which medicines are running low?",
     "What were the top selling medicines this week?",
     "How should I handle frequent preorder requests?",
-    "What does low feedback rating suggest?",
+    "What medicines are close to expiry?",
   ];
 
   return (
