@@ -5,9 +5,19 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field
 
 from .config import settings
-from .tools import get_low_stock_medicines, get_top_selling_medicines
+from .tools import (
+    get_expiring_medicines,
+    get_frequent_requests,
+    get_low_stock_medicines,
+    get_top_selling_medicines,
+)
 
-tools = [get_low_stock_medicines, get_top_selling_medicines]
+tools = [
+    get_expiring_medicines,
+    get_frequent_requests,
+    get_low_stock_medicines,
+    get_top_selling_medicines,
+]
 tools_map = {tool.name: tool for tool in tools}
 
 # Initialize LLM and bind tools
