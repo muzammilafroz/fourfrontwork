@@ -1,12 +1,14 @@
 import base64
 import mimetypes
 import uuid
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from sqlalchemy import desc, func, select
 from sqlmodel import Session, select
 
 from .auth import get_password_hash
-from .models import User, UserCreate, UserRole, UserStatus
+from .models import CartItem, Medicine, Order, User, UserCreate, UserRole, UserStatus
 
 
 def save_base64_image(base64_str: str, upload_dir: Path = Path("uploads")) -> str:
@@ -74,3 +76,26 @@ def create_user(session: Session, user_in: UserCreate):
     session.refresh(user)
 
     return user
+
+
+def get_low_stock_medicines_db(session: Session, limit: int = 5):
+    statement = select(Medicine).order_by(Medicine.stock_quantity.asc()).limit(limit)
+    return session.exec(statement).all()
+
+
+def get_top_selling_medicines_db(session: Session, limit: int = 5):
+    one_week_ago = datetime.now(timezone.utc) - timedelta(days=7)
+
+    total_sold = func.sum(CartItem.quantity).label("total_sold")
+
+    statement = (
+        select(Medicine.id, Medicine.name, total_sold)
+        .join(CartItem)
+        .join(Order)
+        .where(Order.order_date >= one_week_ago)
+        .group_by(Medicine.id, Medicine.name)
+        .order_by(desc(total_sold))
+        .limit(limit)
+    )
+
+    return session.exec(statement).all()

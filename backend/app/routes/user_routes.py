@@ -143,7 +143,7 @@ def read_all_users(
         },
     },
 )
-def block_user(
+def toggle_status(
     user_id: int,
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user),
@@ -161,10 +161,10 @@ def block_user(
     if user.role == UserRole.ADMIN:
         raise HTTPException(status_code=403, detail="Cannot block an admin user")
 
-    if user.status == UserStatus.SUSPENDED:
-        user.status = UserStatus.ACTIVE
-    else:
+    if user.status == UserStatus.ACTIVE:
         user.status = UserStatus.SUSPENDED
+    else:
+        user.status = UserStatus.ACTIVE
 
     session.add(user)
     session.commit()
