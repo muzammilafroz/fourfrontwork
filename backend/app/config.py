@@ -9,6 +9,8 @@ class Settings:
     SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "secret-key")
     GOOGLE_API_KEY: str = os.getenv("GOOGLE_API_KEY", "")
     LLM_MODEL_NAME: str = "gemini-3-flash-preview"
+    LLM_TEMPERATURE: float = 0.7
+
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 12 * 60
     DATABASE_URL: str = "sqlite:///database.db"
