@@ -84,8 +84,14 @@ const UserManagement = () => {
   const toggleBlock = async () => {
     if (!confirmUser) return;
 
-    const newStatus =
-      confirmUser.status === "suspended" ? "active" : "suspended";
+    let newStatus: string;
+
+    if (confirmUser.status === "active") {
+      newStatus = "suspended";
+    } else {
+      // covers both "suspended" and "inactive"
+      newStatus = "active";
+    }
 
     try {
       setSaving(true);
@@ -319,12 +325,12 @@ const UserManagement = () => {
                         <Button
                           size="sm"
                           variant={
-                            u.status === "suspended" ? "default" : "destructive"
+                            u.status === "active" ? "destructive" : "default"
                           }
                           onClick={() => setConfirmUser(u)}
                           className="h-7 px-3 text-xs"
                         >
-                          {u.status === "suspended" ? "Unblock" : "Block"}
+                          {u.status === "active" ? "Block" : "Unblock"}
                         </Button>
                       )}
                     </td>
@@ -341,21 +347,19 @@ const UserManagement = () => {
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-base font-semibold">
-              {confirmUser?.status === "suspended"
-                ? "Unblock User"
-                : "Block User"}
+              {confirmUser?.status === "active" ? "Block User" : "Unblock User"}
             </DialogTitle>
           </DialogHeader>
 
           <p className="text-sm text-muted-foreground">
             Are you sure you want to{" "}
-            {confirmUser?.status === "suspended" ? "unblock" : "block"}
+            {confirmUser?.status === "active" ? "block" : "unblock"}
             <span className="font-medium text-foreground">
               {" "}
               {confirmUser?.name}
             </span>
             ?
-            {confirmUser?.status !== "suspended" &&
+            {confirmUser?.status === "active" &&
               " They will not be able to access the system."}
           </p>
 
@@ -370,7 +374,7 @@ const UserManagement = () => {
             <Button
               disabled={saving}
               variant={
-                confirmUser?.status === "suspended" ? "default" : "destructive"
+                confirmUser?.status === "active" ? "destructive" : "default"
               }
               onClick={toggleBlock}
               className="h-8 text-xs gap-1.5"
@@ -380,10 +384,10 @@ const UserManagement = () => {
                   <div className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   Processing...
                 </>
-              ) : confirmUser?.status === "suspended" ? (
-                "Unblock User"
-              ) : (
+              ) : confirmUser?.status === "active" ? (
                 "Block User"
+              ) : (
+                "Unblock User"
               )}
             </Button>
           </DialogFooter>
