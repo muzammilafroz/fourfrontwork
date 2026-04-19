@@ -66,6 +66,12 @@ def login(
             detail="Your account is inactive. Please contact admin.",
         )
 
+    if user.status == UserStatus.SUSPENDED:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Your account is suspended. Please contact admin.",
+        )
+
     access_token = create_access_token(
         data={
             "sub": user.email,
