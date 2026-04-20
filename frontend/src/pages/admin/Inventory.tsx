@@ -111,7 +111,7 @@ const Inventory = () => {
   const getStockStatus = (quantity: number) => {
     if (quantity === 0)
       return { label: "Out of Stock", color: "red", icon: AlertCircle };
-    if (quantity <= 10)
+    if (quantity <= 50)
       return { label: "Low Stock", color: "yellow", icon: AlertCircle };
     return { label: "In Stock", color: "green", icon: Package };
   };
@@ -127,7 +127,7 @@ const Inventory = () => {
     0,
   );
   const lowStockItems = medicines.filter(
-    (m) => m.stock_quantity <= 10 && m.stock_quantity > 0,
+    (m) => m.stock_quantity <= 50 && m.stock_quantity > 0,
   ).length;
   const outOfStockItems = medicines.filter(
     (m) => m.stock_quantity === 0,

@@ -181,7 +181,7 @@ const AdminAppointments = () => {
     return aptDate >= today && apt.status !== "cancelled";
   }).length;
   const completedAppointments = appointments.filter(
-    (apt) => apt.visited === true,
+    (apt) => apt.status === "completed",
   ).length;
   const cancelledAppointments = appointments.filter(
     (apt) => apt.status === "cancelled",
@@ -495,12 +495,12 @@ const AdminAppointments = () => {
                             {a.appointment_date}
                           </span>
                           {isToday && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400 ml-2">
                               Today
                             </span>
                           )}
                           {isTomorrow && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400 ml-2">
                               Tomorrow
                             </span>
                           )}

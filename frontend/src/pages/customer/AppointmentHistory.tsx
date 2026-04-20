@@ -82,22 +82,21 @@ const AppointmentHistory = () => {
             </thead>
             <tbody>
               {appointments.map((a) => (
-                <tr
-                  key={a.id}
-                  className="border-b border-border last:border-0"
-                >
-                  <td className="p-3 text-foreground">
-                    {a.doctor.name}
-                  </td>
+                <tr key={a.id} className="border-b border-border last:border-0">
+                  <td className="p-3 text-foreground">{a.doctor.name}</td>
                   <td className="p-3 text-muted-foreground">
                     {a.doctor.specialization}
                   </td>
                   <td className="p-3 text-foreground">{a.appointment_date}</td>
-                  <td className="p-3 text-foreground">{a.appointment_time.slice(0, -3)}</td>
+                  <td className="p-3 text-foreground">
+                    {a.appointment_time.slice(0, -3)}
+                  </td>
                   <td className="p-3 text-center">
                     <StatusBadge status={a.status} />
                   </td>
-                  <td className="p-3 text-center">{a.visited ? "✅" : "-"}</td>
+                  <td className="p-3 text-center">
+                    {a.status == "completed" ? "✅" : "-"}
+                  </td>
                 </tr>
               ))}
             </tbody>

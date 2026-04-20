@@ -62,22 +62,16 @@ def create_medicine_request(
     request_in: MedicineRequestCreate,
     current_user: User = Depends(get_current_user),
 ):
-    if current_user.role not in (UserRole.ADMIN, UserRole.EMPLOYEE):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only employees can create medicine requests",
-        )
 
     db_obj = MedicineRequest.model_validate(
         request_in, update={"requested_by": current_user.id}
     )
-    print(db_obj)
 
     try:
         session.add(db_obj)
         session.commit()
-        session.refresh(db_obj)
     except Exception as e:
+        print(e)
         session.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

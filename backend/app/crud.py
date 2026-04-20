@@ -1,14 +1,23 @@
 import base64
 import mimetypes
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-from sqlalchemy import desc, func, select
+from sqlalchemy import desc, func
 from sqlmodel import Session, select
 
 from .auth import get_password_hash
-from .models import CartItem, Medicine, Order, User, UserCreate, UserRole, UserStatus
+from .models import (
+    CartItem,
+    Medicine,
+    MedicineRequest,
+    Order,
+    User,
+    UserCreate,
+    UserRole,
+    UserStatus,
+)
 
 
 def save_base64_image(base64_str: str, upload_dir: Path = Path("uploads")) -> str:
@@ -79,7 +88,11 @@ def create_user(session: Session, user_in: UserCreate):
 
 
 def get_low_stock_medicines_db(session: Session, limit: int = 5):
-    statement = select(Medicine).order_by(Medicine.stock_quantity.asc()).limit(limit)
+    statement = (
+        select(Medicine.name, Medicine.stock_quantity)
+        .order_by(Medicine.stock_quantity.asc())
+        .limit(limit)
+    )
     return session.exec(statement).all()
 
 
@@ -96,6 +109,43 @@ def get_top_selling_medicines_db(session: Session, limit: int = 5):
         .group_by(Medicine.id, Medicine.name)
         .order_by(desc(total_sold))
         .limit(limit)
+    )
+
+    return session.exec(statement).all()
+
+
+def get_frequent_requests_db(session: Session, min_requests: int = 3):
+    """
+    Returns medicine names requested at least `min_requests` times,
+    along with their request counts.
+    """
+    statement = (
+        select(
+            MedicineRequest.medicine_name,
+            func.count(MedicineRequest.id).label("request_count"),
+        )
+        .group_by(MedicineRequest.medicine_name)
+        .having(func.count(MedicineRequest.id) >= min_requests)
+        .order_by(desc("request_count"))
+    )
+
+    return session.exec(statement).all()
+
+
+def get_expiring_medicines_db(session: Session, days_buffer: int = 30):
+    """
+    Returns (medicine_name, expiry_date) for medicines expiring soon.
+    """
+    today = date.today()
+    expiry_threshold = today + timedelta(days=days_buffer)
+
+    statement = (
+        select(Medicine.name, Medicine.expiry_date)
+        .where(
+            Medicine.expiry_date >= today,
+            Medicine.expiry_date <= expiry_threshold,
+        )
+        .order_by(Medicine.expiry_date)
     )
 
     return session.exec(statement).all()

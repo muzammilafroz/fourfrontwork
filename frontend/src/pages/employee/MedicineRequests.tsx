@@ -21,7 +21,7 @@ type Request = {
   status: string;
 };
 
-const EmployeePreorders = () => {
+const EmployeeMedicineRequest = () => {
   const { user } = useAuthStore();
   const token = useAuthStore((state) => state.getAuthToken());
 
@@ -98,7 +98,7 @@ const EmployeePreorders = () => {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-            Preorder Requests
+            Medicine Requests
           </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             Log medicine requests not currently in stock
@@ -294,4 +294,4 @@ const EmployeePreorders = () => {
   );
 };
 
-export default EmployeePreorders;
+export default EmployeeMedicineRequest;
