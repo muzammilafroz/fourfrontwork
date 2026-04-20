@@ -11,16 +11,21 @@ from .database import engine
 
 
 @tool
-def get_low_stock_medicines() -> str:
+def get_low_stock_medicines(limit: int = 5) -> str:
     """Returns a readable list of low stock medicines."""
     try:
         with Session(engine) as session:
-            medicines = get_low_stock_medicines_db(session)
+            medicines = get_low_stock_medicines_db(session, limit)
 
             if not medicines:
                 return "No medicines are low on stock."
 
-            return "\n".join(f"{name} (Stock: {stock})" for name, stock in medicines)
+            lines = [
+                f"{i}. {name} — Stock: {stock} units"
+                for i, (name, stock) in enumerate(medicines)
+            ]
+            return "Medicines with low stock:\n" + "\n".join(lines)
+
     except Exception as e:
         return f"Error fetching low stock medicines: {str(e)}"
 
@@ -35,11 +40,12 @@ def get_top_selling_medicines(limit: int = 5):
             if not results:
                 return "No sales found in the last 7 days."
 
-            lines = ["Top selling medicines (last 7 days):"]
-            for i, (_, name, total) in enumerate(results, start=1):
-                lines.append(f"{i}. {name} — {int(total or 0)} units sold")
+            lines = [
+                f"{i}. {name} — {int(total or 0)} units sold"
+                for i, (_, name, total) in enumerate(results, start=1)
+            ]
 
-            return "\n".join(lines)
+            return "Top selling medicines (last 7 days):\n" + "\n".join(lines)
 
     except Exception as e:
         return f"Error fetching top selling medicines: {str(e)}"
