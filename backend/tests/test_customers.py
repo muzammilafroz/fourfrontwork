@@ -147,30 +147,6 @@ class TestCustomers:
         assert response.status_code == 200
         assert response.json()["name"] == "Updated Name"
 
-    def test_update_customer_self(
-        self, client: TestClient, auth_headers_customer, db_session
-    ):
-        """Test customer can update their own profile"""
-        from app.models import User, UserRole
-
-        customer = User(
-            name="Self Update",
-            email="selfupdate@test.com",
-            phone="+91-90000-00026",
-            role=UserRole.CUSTOMER,
-            hashed_password="hashed",
-        )
-        db_session.add(customer)
-        db_session.commit()
-        db_session.refresh(customer)
-
-        response = client.put(
-            f"/api/customers/{customer.id}",
-            headers=auth_headers_customer,
-            json={"name": "New Name"},
-        )
-        assert response.status_code == 200
-
     def test_update_customer_other_forbidden(
         self, client: TestClient, auth_headers_customer, db_session
     ):

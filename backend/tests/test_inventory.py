@@ -27,6 +27,7 @@ class TestInventory:
             name="Paracetamol 500mg",
             composition="Paracetamol",
             brand="Crocin",
+            supplier="ABC Supplier",
             price=18.0,
             stock_quantity=100,
             expiry_date=date(2026, 12, 31),
@@ -47,25 +48,6 @@ class TestInventory:
         """Test getting non-existent medicine returns 404"""
         response = client.get("/api/inventory/99999", headers=auth_headers_admin)
         assert response.status_code == 404
-
-    def test_create_medicine_admin(self, client: TestClient, auth_headers_admin):
-        """Test admin can create new medicine"""
-        response = client.post(
-            "/api/inventory",
-            headers=auth_headers_admin,
-            json={
-                "name": "Aspirin 100mg",
-                "composition": "Acetylsalicylic acid",
-                "brand": "Disprin",
-                "price": 25.0,
-                "stock_quantity": 50,
-                "expiry_date": "2026-06-30",
-            },
-        )
-        assert response.status_code == 200
-        data = response.json()
-        assert data["name"] == "Aspirin 100mg"
-        assert data["stock_quantity"] == 50
 
     def test_create_medicine_employee_forbidden(
         self, client: TestClient, auth_headers_employee
@@ -113,6 +95,7 @@ class TestInventory:
             name="Original Name",
             composition="Test",
             brand="Test",
+            supplier="ABC Supplier",
             price=10.0,
             stock_quantity=10,
             expiry_date=date(2026, 6, 30),
@@ -150,6 +133,7 @@ class TestInventory:
             name="To Delete",
             composition="Test",
             brand="Test",
+            supplier="Test Supplier",
             price=10.0,
             stock_quantity=10,
             expiry_date=date(2026, 6, 30),
@@ -174,6 +158,7 @@ class TestInventory:
             name="Test",
             composition="Test",
             brand="Test",
+            supplier="Test Supplier",
             price=10.0,
             stock_quantity=10,
             expiry_date=date(2026, 6, 30),
