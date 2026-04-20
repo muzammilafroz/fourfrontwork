@@ -1,10 +1,20 @@
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, time, timedelta, timezone
 
 from sqlmodel import Session, select
 
 from .crud import get_password_hash
 from .database import engine
-from .models import CartItem, DiscountType, Doctor, Medicine, Order, User, UserRole
+from .models import (
+    Appointment,
+    AppointmentStatus,
+    CartItem,
+    DiscountType,
+    Doctor,
+    Medicine,
+    Order,
+    User,
+    UserRole,
+)
 
 
 def seed_data():
@@ -388,7 +398,7 @@ def seed_data():
                 brand="GSK",
                 supplier="Tata 1mg",
                 price=15.50,
-                stock_quantity=90,
+                stock_quantity=0,
                 expiry_date=date(2027, 11, 20),
             ),
         ]
@@ -402,15 +412,22 @@ def seed_data():
 
         orders = [
             Order(
-                customer_name=customers[1].name,
-                customer_phone=customers[1].phone,
-                order_date=datetime.now(timezone.utc) - timedelta(days=5),
-                customer_id=customers[1].id,
+                customer_name="Sakshi",
+                customer_phone="9980620823",
+                order_date=datetime.now(timezone.utc) - timedelta(days=6),
+                customer_id=users[1].id,
                 employee_id=employees[0].id,
             ),
             Order(
-                customer_name=customers[2].name,
-                customer_phone=customers[2].phone,
+                customer_name=customers[0].name,
+                customer_phone=customers[0].phone,
+                order_date=datetime.now(timezone.utc) - timedelta(days=5),
+                customer_id=customers[0].id,
+                employee_id=employees[0].id,
+            ),
+            Order(
+                customer_name=customers[1].name,
+                customer_phone=customers[1].phone,
                 order_date=datetime.now(timezone.utc) - timedelta(days=4),
                 customer_id=customers[2].id,
                 employee_id=employees[1].id,
@@ -423,6 +440,29 @@ def seed_data():
                 order_date=datetime.now(timezone.utc) - timedelta(days=3),
                 customer_id=users[1].id,
                 employee_id=employees[0].id,
+            ),
+            Order(
+                customer_name="Rakesh",
+                customer_phone="8820920811",
+                order_date=datetime.now(timezone.utc) - timedelta(days=2),
+                customer_id=users[1].id,
+                employee_id=employees[1].id,
+            ),
+            Order(
+                customer_name=customers[2].name,
+                customer_phone=customers[2].phone,
+                order_date=datetime.now(timezone.utc) - timedelta(days=1),
+                customer_id=customers[2].id,
+                employee_id=employees[0].id,
+                discount_type=DiscountType.PERCENTAGE,
+                discount_value=5,
+            ),
+            Order(
+                customer_name="Esha",
+                customer_phone="8991826817",
+                order_date=datetime.now(timezone.utc) - timedelta(days=0),
+                customer_id=users[1].id,
+                employee_id=employees[1].id,
             ),
         ]
         session.add_all(orders)
@@ -456,11 +496,82 @@ def seed_data():
             CartItem(
                 order_id=orders[2].id,
                 medicine_id=medicines[4].id,
-                quantity=2,
+                quantity=6,
                 price=medicines[4].price,
+            ),
+            CartItem(
+                order_id=orders[3].id,
+                medicine_id=medicines[5].id,
+                quantity=2,
+                price=medicines[5].price,
+            ),
+            CartItem(
+                order_id=orders[3].id,
+                medicine_id=medicines[6].id,
+                quantity=3,
+                price=medicines[6].price,
+            ),
+            CartItem(
+                order_id=orders[4].id,
+                medicine_id=medicines[7].id,
+                quantity=4,
+                price=medicines[7].price,
+            ),
+            CartItem(
+                order_id=orders[5].id,
+                medicine_id=medicines[8].id,
+                quantity=3,
+                price=medicines[8].price,
+            ),
+            CartItem(
+                order_id=orders[6].id,
+                medicine_id=medicines[9].id,
+                quantity=1,
+                price=medicines[9].price,
+            ),
+            CartItem(
+                order_id=orders[6].id,
+                medicine_id=medicines[10].id,
+                quantity=1,
+                price=medicines[10].price,
             ),
         ]
         session.add_all(items)
+        session.commit()
+
+        appointments = [
+            Appointment(
+                doctor_id=doctors[0].id,
+                visit_fee=doctors[0].consultation_fee,
+                customer_id=customers[0].id,
+                patient_name=customers[0].name,
+                patient_phone=customers[0].phone,
+                appointment_date=datetime.now(timezone.utc) - timedelta(days=6),
+                appointment_time=time(10, 0),
+                status=AppointmentStatus.COMPLETED,
+            ),
+            Appointment(
+                doctor_id=doctors[1].id,
+                visit_fee=doctors[1].consultation_fee,
+                customer_id=customers[1].id,
+                patient_name=customers[1].name,
+                patient_phone=customers[1].phone,
+                appointment_date=datetime.now(timezone.utc) + timedelta(days=1),
+                appointment_time=time(14, 0),
+            ),
+            Appointment(
+                doctor_id=doctors[2].id,
+                visit_fee=doctors[2].consultation_fee,
+                customer_id=customers[2].id,
+                patient_name=customers[2].name,
+                patient_phone=customers[2].phone,
+                appointment_date=datetime.now(timezone.utc) - timedelta(days=1),
+                appointment_time=time(12, 0),
+                status=AppointmentStatus.COMPLETED,
+            ),
+        ]
+
+        session.add_all(appointments)
         session.commit()
 
         print("Dummy data inserted.")
