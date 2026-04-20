@@ -407,10 +407,7 @@ const Sales = () => {
                     </td>
                     <td className="px-4 py-2.5">
                       <div className="text-sm text-foreground">
-                        {new Date(o.order_date).toLocaleDateString()}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {new Date(o.order_date).toLocaleTimeString()}
+                        {new Date(o.order_date).toLocaleDateString("en-CA")}
                       </div>
                     </td>
                     <td className="px-4 py-2.5">

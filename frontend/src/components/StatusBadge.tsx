@@ -29,13 +29,12 @@ const statusIcons: Record<string, string> = {
 export const StatusBadge = ({ status }: StatusBadgeProps) => {
   const lower = status.toLowerCase();
   const color = statusColors[lower] || "bg-muted text-muted-foreground";
-  const icon = statusIcons[lower] || "";
+  // const icon = statusIcons[lower] || "";
 
   return (
     <span
       className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all ${color}`}
     >
-      {icon && <span>{icon}</span>}
       <span className="capitalize">{status}</span>
     </span>
   );
