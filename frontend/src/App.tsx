@@ -25,7 +25,7 @@ import CustomerAskChatbot from "./pages/customer/AskChatbot";
 import MedicineSearch from "./pages/employee/MedicineSearch";
 import AddMedicine from "./pages/employee/AddMedicine";
 import EmployeeAppointments from "./pages/employee/Appointments";
-import EmployeePreorders from "./pages/employee/Preorders";
+import EmployeePreorders from "./pages/employee/MedicineRequests";
 import CreateOrder from "./pages/employee/CreateOrder";
 import EmployeeAskChatbot from "./pages/employee/AskChatbot";
 
@@ -44,8 +44,16 @@ import AskChatbot from "./pages/admin/AskChatbot";
 
 const queryClient = new QueryClient();
 
-const Dash = ({ children, roles }: { children: React.ReactNode; roles: string[] }) => (
-  <RouteGuard allowedRoles={roles}><DashboardLayout>{children}</DashboardLayout></RouteGuard>
+const Dash = ({
+  children,
+  roles,
+}: {
+  children: React.ReactNode;
+  roles: string[];
+}) => (
+  <RouteGuard allowedRoles={roles}>
+    <DashboardLayout>{children}</DashboardLayout>
+  </RouteGuard>
 );
 
 const App = () => (
@@ -62,35 +70,189 @@ const App = () => (
           {/*<Route path="/prescription-reader" element={<PrescriptionReader />} />*/}
 
           {/* Customer */}
-          <Route path="/customer/doctors" element={<Dash roles={['customer']}><CustomerDoctors /></Dash>} />
-          <Route path="/customer/book-appointment" element={<Dash roles={['customer']}><BookAppointment /></Dash>} />
-          <Route path="/customer/appointments" element={<Dash roles={['customer']}><AppointmentHistory /></Dash>} />
-          <Route path="/customer/orders" element={<Dash roles={['customer']}><TrackOrders /></Dash>} />
-          <Route path="/customer/prescription" element={<Dash roles={['customer']}><PrescriptionReader /></Dash>} />
-          <Route path="/customer/ask-chatbot" element={<Dash roles={['customer']}><CustomerAskChatbot /></Dash>} />
+          <Route
+            path="/customer/doctors"
+            element={
+              <Dash roles={["customer"]}>
+                <CustomerDoctors />
+              </Dash>
+            }
+          />
+          <Route
+            path="/customer/book-appointment"
+            element={
+              <Dash roles={["customer"]}>
+                <BookAppointment />
+              </Dash>
+            }
+          />
+          <Route
+            path="/customer/appointments"
+            element={
+              <Dash roles={["customer"]}>
+                <AppointmentHistory />
+              </Dash>
+            }
+          />
+          <Route
+            path="/customer/orders"
+            element={
+              <Dash roles={["customer"]}>
+                <TrackOrders />
+              </Dash>
+            }
+          />
+          <Route
+            path="/customer/prescription"
+            element={
+              <Dash roles={["customer"]}>
+                <PrescriptionReader />
+              </Dash>
+            }
+          />
+          <Route
+            path="/customer/ask-chatbot"
+            element={
+              <Dash roles={["customer"]}>
+                <CustomerAskChatbot />
+              </Dash>
+            }
+          />
           {/*<Route path="/customer/feedback" element={<Dash roles={['customer']}><CustomerFeedback /></Dash>} />*/}
 
           {/* Employee */}
-          <Route path="/employee/medicines" element={<Dash roles={['employee']}><MedicineSearch /></Dash>} />
-          <Route path="/employee/add-medicine" element={<Dash roles={['employee']}><AddMedicine /></Dash>} />
-          <Route path="/employee/appointments" element={<Dash roles={['employee']}><EmployeeAppointments /></Dash>} />
-          <Route path="/employee/preorders" element={<Dash roles={['employee']}><EmployeePreorders /></Dash>} />
-          <Route path="/employee/create-order" element={<Dash roles={['employee']}><CreateOrder /></Dash>} />
-          <Route path="/employee/prescription" element={<Dash roles={['employee']}><PrescriptionReader /></Dash>} />
-          <Route path="/employee/ask-chatbot" element={<Dash roles={['employee']}><EmployeeAskChatbot /></Dash>} />
+          <Route
+            path="/employee/medicines"
+            element={
+              <Dash roles={["employee"]}>
+                <MedicineSearch />
+              </Dash>
+            }
+          />
+          <Route
+            path="/employee/add-medicine"
+            element={
+              <Dash roles={["employee"]}>
+                <AddMedicine />
+              </Dash>
+            }
+          />
+          <Route
+            path="/employee/appointments"
+            element={
+              <Dash roles={["employee"]}>
+                <EmployeeAppointments />
+              </Dash>
+            }
+          />
+          <Route
+            path="/employee/preorders"
+            element={
+              <Dash roles={["employee"]}>
+                <EmployeePreorders />
+              </Dash>
+            }
+          />
+          <Route
+            path="/employee/create-order"
+            element={
+              <Dash roles={["employee"]}>
+                <CreateOrder />
+              </Dash>
+            }
+          />
+          <Route
+            path="/employee/prescription"
+            element={
+              <Dash roles={["employee"]}>
+                <PrescriptionReader />
+              </Dash>
+            }
+          />
+          <Route
+            path="/employee/ask-chatbot"
+            element={
+              <Dash roles={["employee"]}>
+                <EmployeeAskChatbot />
+              </Dash>
+            }
+          />
 
           {/* Admin */}
-          <Route path="/admin/overview" element={<Dash roles={['admin']}><Overview /></Dash>} />
-          <Route path="/admin/sales" element={<Dash roles={['admin']}><Sales /></Dash>} />
-          <Route path="/admin/inventory" element={<Dash roles={['admin']}><Inventory /></Dash>} />
-          <Route path="/admin/doctors" element={<Dash roles={['admin']}><DoctorsManagement /></Dash>} />
+          <Route
+            path="/admin/overview"
+            element={
+              <Dash roles={["admin"]}>
+                <Overview />
+              </Dash>
+            }
+          />
+          <Route
+            path="/admin/sales"
+            element={
+              <Dash roles={["admin"]}>
+                <Sales />
+              </Dash>
+            }
+          />
+          <Route
+            path="/admin/inventory"
+            element={
+              <Dash roles={["admin"]}>
+                <Inventory />
+              </Dash>
+            }
+          />
+          <Route
+            path="/admin/doctors"
+            element={
+              <Dash roles={["admin"]}>
+                <DoctorsManagement />
+              </Dash>
+            }
+          />
           {/*<Route path="/admin/employee-requests" element={<Dash roles={['admin']}><EmployeeRequests /></Dash>} />*/}
-          <Route path="/admin/users" element={<Dash roles={['admin']}><UserManagement /></Dash>} />
-          <Route path="/admin/appointments" element={<Dash roles={['admin']}><AdminAppointments /></Dash>} />
-          <Route path="/admin/medicine-requests" element={<Dash roles={['admin']}><MedicineRequests /></Dash>} />
+          <Route
+            path="/admin/users"
+            element={
+              <Dash roles={["admin"]}>
+                <UserManagement />
+              </Dash>
+            }
+          />
+          <Route
+            path="/admin/appointments"
+            element={
+              <Dash roles={["admin"]}>
+                <AdminAppointments />
+              </Dash>
+            }
+          />
+          <Route
+            path="/admin/medicine-requests"
+            element={
+              <Dash roles={["admin"]}>
+                <MedicineRequests />
+              </Dash>
+            }
+          />
           {/*<Route path="/admin/feedback" element={<Dash roles={['admin']}><adminFeedback /></Dash>} />*/}
-           <Route path="/admin/prescription" element={<Dash roles={['admin']}><PrescriptionReader /></Dash>} />
-          <Route path="/admin/ask-chatbot" element={<Dash roles={['admin']}><AskChatbot /></Dash>} />
+          <Route
+            path="/admin/prescription"
+            element={
+              <Dash roles={["admin"]}>
+                <PrescriptionReader />
+              </Dash>
+            }
+          />
+          <Route
+            path="/admin/ask-chatbot"
+            element={
+              <Dash roles={["admin"]}>
+                <AskChatbot />
+              </Dash>
+            }
+          />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

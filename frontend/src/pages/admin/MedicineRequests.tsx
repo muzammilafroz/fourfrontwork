@@ -170,9 +170,11 @@ const MedicineRequests = () => {
   const totalRequests = requests.length;
   const pendingRequests = requests.filter((r) => r.status === "pending").length;
   const inProcessRequests = requests.filter(
-    (r) => r.status === "in process",
+    (r) => r.status === "approved",
   ).length;
-  const completedRequests = requests.filter((r) => r.status === "done").length;
+  const completedRequests = requests.filter(
+    (r) => r.status === "completed",
+  ).length;
   const rejectedRequests = requests.filter(
     (r) => r.status === "rejected",
   ).length;

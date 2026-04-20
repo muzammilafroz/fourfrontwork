@@ -133,6 +133,12 @@ const TrackOrders = () => {
       return;
     }
     setSubmitting(true);
+    const payload = {
+      medicine_name: medicineName.trim(),
+      composition: composition.trim() || null,
+      customer_name: user.name,
+      customer_phone: user.phone,
+    };
     try {
       const res = await fetch(`${API_BASE_URL}/api/medicine-requests`, {
         method: "POST",
@@ -140,10 +146,7 @@ const TrackOrders = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          medicine_name: medicineName.trim(),
-          composition: composition.trim() || null,
-        }),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("Request failed");
       toast.success("Request submitted successfully");
