@@ -286,25 +286,6 @@ const Sales = () => {
         </Button>
       </div>
 
-      {/* Search Bar */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search by customer name, phone number, or order ID..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-9 pr-8 h-9 text-sm bg-muted/30 border-border/60"
-        />
-        {search && (
-          <button
-            onClick={clearSearch}
-            className="absolute right-3 top-1/2 -translate-y-1/2"
-          >
-            <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-          </button>
-        )}
-      </div>
-
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div className="bg-card rounded-xl border border-border p-3">
@@ -348,6 +329,25 @@ const Sales = () => {
             ₹{avgOrder.toFixed(2).toLocaleString()}
           </p>
         </div>
+      </div>
+
+      {/* Search Bar */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search by customer name, phone number, or order ID..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-9 pr-8 h-9 text-sm bg-muted/30 border-border/60"
+        />
+        {search && (
+          <button
+            onClick={clearSearch}
+            className="absolute right-3 top-1/2 -translate-y-1/2"
+          >
+            <X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+          </button>
+        )}
       </div>
 
       {/* Orders Table */}
