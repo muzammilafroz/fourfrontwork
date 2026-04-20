@@ -11,7 +11,9 @@ from .models import (
     DiscountType,
     Doctor,
     Medicine,
+    MedicineRequest,
     Order,
+    RequestStatus,
     User,
     UserRole,
 )
@@ -569,9 +571,70 @@ def seed_data():
                 appointment_time=time(12, 0),
                 status=AppointmentStatus.COMPLETED,
             ),
+            Appointment(
+                doctor_id=doctors[3].id,
+                visit_fee=doctors[3].consultation_fee,
+                customer_id=customers[1].id,
+                patient_name=customers[1].name,
+                patient_phone=customers[1].phone,
+                appointment_date=datetime.now(timezone.utc) + timedelta(days=0),
+                appointment_time=time(16, 0),
+            ),
         ]
 
         session.add_all(appointments)
+        session.commit()
+
+        medicine_requests = [
+            MedicineRequest(
+                medicine_name="Omeprazole",
+                composition="20mg Delayed Release",
+                requested_date=datetime.now(timezone.utc) - timedelta(days=5),
+                status=RequestStatus.APPROVED,
+                customer_name=customers[0].name,
+                customer_phone=customers[0].phone,
+                requested_by=2,
+            ),
+            MedicineRequest(
+                medicine_name="Amlodipine",
+                composition="5mg Besylate",
+                requested_date=datetime.now(timezone.utc) - timedelta(days=2),
+                status=RequestStatus.APPROVED,
+                customer_name=customers[1].name,
+                customer_phone=customers[1].phone,
+                requested_by=3,
+            ),
+            MedicineRequest(
+                medicine_name="Albuterol",
+                composition="90mcg Inhaler",
+                requested_date=datetime.now(timezone.utc) - timedelta(days=0),
+                status=RequestStatus.PENDING,
+                customer_name=customers[2].name,
+                customer_phone=customers[2].phone,
+                requested_by=4,
+            ),
+            MedicineRequest(
+                medicine_name="Lisinopril",
+                composition="10mg USP",
+                requested_date=datetime.now(timezone.utc) - timedelta(days=1),
+                status=RequestStatus.REJECTED,
+                customer_name="Junaid",
+                customer_phone="8890917238",
+                requested_by=5,
+            ),
+            MedicineRequest(
+                medicine_name="Sertraline",
+                composition="50mg HCl",
+                requested_date=datetime.now(timezone.utc) - timedelta(days=4),
+                status=RequestStatus.COMPLETED,
+                customer_name="Hema",
+                customer_phone="7790192601",
+                requested_by=6,
+            ),
+        ]
+        medicine_requests = sorted(medicine_requests, key=lambda x: x.requested_date)
+
+        session.add_all(medicine_requests)
         session.commit()
 
         print("Dummy data inserted.")
